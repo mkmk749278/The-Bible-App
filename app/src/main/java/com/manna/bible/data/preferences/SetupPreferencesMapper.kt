@@ -33,6 +33,9 @@ object SetupPreferencesMapper {
         const val LECTIONARY = "lectionary"
         const val SETUP_COMPLETED = "setupCompleted"
         const val SHOW_DEUTEROCANONICAL = "showDeuterocanonical"
+
+        /** Last-read `Reading_Position` (canonical `OSIS.CHAPTER.VERSE`); standalone, not part of [SetupState]. */
+        const val LAST_READ_POSITION = "lastReadPosition"
     }
 
     /**

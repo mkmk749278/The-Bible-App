@@ -211,6 +211,17 @@ class DenominationSettingsViewModelTest {
             lastShowDeuterocanonical = value
             state.value = state.value.copy(showDeuterocanonical = value)
         }
+
+        private val lastReadPositionFlow = MutableStateFlow<String?>(null)
+        override val lastReadPosition: Flow<String?> = lastReadPositionFlow
+
+        override suspend fun setActiveTranslation(translationId: String) {
+            state.value = state.value.copy(bibleTranslationId = translationId)
+        }
+
+        override suspend fun setLastReadPosition(ref: String) {
+            lastReadPositionFlow.value = ref
+        }
     }
 
     /** Fake [CanonEngine] mirroring the real denomination -> canon/numbering mapping. */

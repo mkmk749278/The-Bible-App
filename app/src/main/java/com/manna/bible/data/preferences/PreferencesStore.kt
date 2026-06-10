@@ -26,6 +26,12 @@ interface PreferencesStore {
     /** Emits the current persisted [SetupState], updating whenever preferences change. */
     val setupState: Flow<SetupState>
 
+    /**
+     * Emits the persisted last-read `Reading_Position` (canonical `OSIS.CHAPTER.VERSE`), or null
+     * when none has been persisted yet (Req 7).
+     */
+    val lastReadPosition: Flow<String?>
+
     /** Persists every field of [state], removing keys for null selection fields. */
     suspend fun saveSetup(state: SetupState)
 
@@ -37,6 +43,12 @@ interface PreferencesStore {
 
     /** Persists only the Protestant deuterocanonical visibility toggle (Req 15). */
     suspend fun setShowDeuterocanonical(value: Boolean)
+
+    /** Persists the active translation id (`bibleTranslationId`) (Req 6.2). */
+    suspend fun setActiveTranslation(translationId: String)
+
+    /** Persists the last-read `Reading_Position` as a canonical `OSIS.CHAPTER.VERSE` string (Req 7.1). */
+    suspend fun setLastReadPosition(ref: String)
 }
 
 /**
@@ -60,10 +72,14 @@ class DataStorePreferencesStore @Inject constructor(
         val LECTIONARY = stringPreferencesKey(SetupPreferencesMapper.Keys.LECTIONARY)
         val SETUP_COMPLETED = booleanPreferencesKey(SetupPreferencesMapper.Keys.SETUP_COMPLETED)
         val SHOW_DEUTEROCANONICAL = booleanPreferencesKey(SetupPreferencesMapper.Keys.SHOW_DEUTEROCANONICAL)
+        val LAST_READ_POSITION = stringPreferencesKey(SetupPreferencesMapper.Keys.LAST_READ_POSITION)
     }
 
     override val setupState: Flow<SetupState> =
         dataStore.data.map { prefs -> SetupPreferencesMapper.fromMap(prefs.asMap().mapKeys { it.key.name }) }
+
+    override val lastReadPosition: Flow<String?> =
+        dataStore.data.map { prefs -> prefs[Keys.LAST_READ_POSITION] }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -97,6 +113,14 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setShowDeuterocanonical(value: Boolean) {
         dataStore.edit { prefs -> prefs[Keys.SHOW_DEUTEROCANONICAL] = value }
+    }
+
+    override suspend fun setActiveTranslation(translationId: String) {
+        dataStore.edit { prefs -> prefs[Keys.BIBLE_TRANSLATION_ID] = translationId }
+    }
+
+    override suspend fun setLastReadPosition(ref: String) {
+        dataStore.edit { prefs -> prefs[Keys.LAST_READ_POSITION] = ref }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {

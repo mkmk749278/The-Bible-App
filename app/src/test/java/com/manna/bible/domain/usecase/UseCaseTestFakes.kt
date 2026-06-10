@@ -56,9 +56,19 @@ internal class FakeLectionaryProvider : LectionaryProvider {
 internal class FakePreferencesStore(private val failOnSave: Boolean = false) : PreferencesStore {
     var savedState: SetupState? = null
     var updatedProfile: CanonProfile? = null
+    var activeTranslationId: String? = null
+    private val lastReadPositionFlow = kotlinx.coroutines.flow.MutableStateFlow<String?>(null)
+
+    /** Seeds the persisted last-read position for restore tests. */
+    fun seedLastReadPosition(ref: String?) {
+        lastReadPositionFlow.value = ref
+    }
 
     override val setupState: Flow<SetupState>
         get() = flowOf(savedState ?: error("no state"))
+
+    override val lastReadPosition: Flow<String?>
+        get() = lastReadPositionFlow
 
     override suspend fun saveSetup(state: SetupState) {
         if (failOnSave) throw RuntimeException("disk full")
@@ -73,4 +83,14 @@ internal class FakePreferencesStore(private val failOnSave: Boolean = false) : P
     }
 
     override suspend fun setShowDeuterocanonical(value: Boolean) = Unit
+
+    override suspend fun setActiveTranslation(translationId: String) {
+        if (failOnSave) throw RuntimeException("disk full")
+        activeTranslationId = translationId
+    }
+
+    override suspend fun setLastReadPosition(ref: String) {
+        if (failOnSave) throw RuntimeException("disk full")
+        lastReadPositionFlow.value = ref
+    }
 }

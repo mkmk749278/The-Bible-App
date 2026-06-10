@@ -249,4 +249,7 @@ private class FakePreferencesStore(private val failOnSave: Boolean = false) : Pr
     override suspend fun setSetupCompleted(value: Boolean) = Unit
     override suspend fun updateDenomination(profile: CanonProfile) = Unit
     override suspend fun setShowDeuterocanonical(value: Boolean) = Unit
+    override val lastReadPosition: Flow<String?> get() = flowOf(null)
+    override suspend fun setActiveTranslation(translationId: String) = Unit
+    override suspend fun setLastReadPosition(ref: String) = Unit
 }
