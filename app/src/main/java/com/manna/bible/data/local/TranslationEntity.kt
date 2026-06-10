@@ -24,7 +24,24 @@ data class TranslationEntity(
     val hasDeuterocanon: Boolean,
     val isDownloaded: Boolean,
     val sizeBytes: Long,
-    val isDefaultForCanon: Boolean
+    val isDefaultForCanon: Boolean,
+    /**
+     * True when this translation's content ships inside the app (seeded from
+     * assets) rather than being downloaded. Defaults to `false` so existing rows
+     * and the additive migration remain safe.
+     */
+    val isBundled: Boolean = false,
+    /**
+     * Version of the content currently stored for this translation. Bundled
+     * content is seeded under its asset version; downloads commit a version only
+     * once all chapters are written. Defaults to `0` (no content committed yet).
+     */
+    val contentVersion: Int = 0,
+    /**
+     * Number of verses stored for this translation. Defaults to `0` until content
+     * is seeded or downloaded.
+     */
+    val verseCount: Int = 0
 )
 
 /**
@@ -49,8 +66,17 @@ fun TranslationEntity.toDomain(): Translation = Translation(
  *
  * @param sizeBytes download size metadata to retain on the entity; defaults to 0
  *   since the domain model does not track it.
+ * @param isBundled whether the translation's content ships in the app; defaults
+ *   to `false` since the domain model does not track it.
+ * @param contentVersion stored content version; defaults to `0`.
+ * @param verseCount number of stored verses; defaults to `0`.
  */
-fun Translation.toEntity(sizeBytes: Long = 0L): TranslationEntity = TranslationEntity(
+fun Translation.toEntity(
+    sizeBytes: Long = 0L,
+    isBundled: Boolean = false,
+    contentVersion: Int = 0,
+    verseCount: Int = 0
+): TranslationEntity = TranslationEntity(
     id = id,
     name = name,
     languageCode = languageCode,
@@ -58,5 +84,8 @@ fun Translation.toEntity(sizeBytes: Long = 0L): TranslationEntity = TranslationE
     hasDeuterocanon = hasDeuterocanon,
     isDownloaded = isDownloaded,
     sizeBytes = sizeBytes,
-    isDefaultForCanon = isDefaultForCanon
+    isDefaultForCanon = isDefaultForCanon,
+    isBundled = isBundled,
+    contentVersion = contentVersion,
+    verseCount = verseCount
 )

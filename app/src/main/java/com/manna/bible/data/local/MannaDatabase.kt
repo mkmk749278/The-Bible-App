@@ -6,13 +6,20 @@ import androidx.room.RoomDatabase
 /**
  * The Manna Room database.
  *
- * Holds the translation catalog, the offline pending-download queue, and the user
- * annotation tables (highlights, bookmarks, notes).
+ * Holds the translation catalog, the offline pending-download queue, the user
+ * annotation tables (highlights, bookmarks, notes), and the offline Bible content
+ * tables (books, chapters, verses) plus the `verses_fts` full-text mirror.
  *
- * Version 2 adds the annotation tables. Since no schema has shipped yet, the Hilt
- * builder (task 11.1) may use `fallbackToDestructiveMigration()` for now rather
- * than supplying a migration. The Hilt provisioning module is intentionally
- * deferred; this class only declares the schema and exposes DAOs.
+ * Version history:
+ *  - v2: adds the annotation tables.
+ *  - v3: adds offline Bible content ([BookEntity], [ChapterEntity], [VerseEntity],
+ *        [VerseFtsEntity]) and the additive content-tracking columns on
+ *        [TranslationEntity] (`isBundled`, `contentVersion`, `verseCount`).
+ *
+ * The v2 -> v3 upgrade is fully additive and preserves all existing data: see
+ * [MIGRATION_2_3]. Annotations live in Room and are left untouched; preferences
+ * live in DataStore (outside Room) and are unaffected. The Hilt builder
+ * (task 14.1) wires this migration via `.addMigrations(MIGRATION_2_3)`.
  */
 @Database(
     entities = [
@@ -20,13 +27,18 @@ import androidx.room.RoomDatabase
         PendingDownloadEntity::class,
         HighlightEntity::class,
         BookmarkEntity::class,
-        NoteEntity::class
+        NoteEntity::class,
+        BookEntity::class,
+        ChapterEntity::class,
+        VerseEntity::class,
+        VerseFtsEntity::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class MannaDatabase : RoomDatabase() {
     abstract fun translationDao(): TranslationDao
     abstract fun pendingDownloadDao(): PendingDownloadDao
     abstract fun annotationDao(): AnnotationDao
+    abstract fun bibleContentDao(): BibleContentDao
 }

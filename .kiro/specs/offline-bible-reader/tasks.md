@@ -1,13 +1,13 @@
 # Implementation Plan
 
 - [ ] 1. Content storage schema (Room)
-- [ ] 1.1 Add Book/Chapter/Verse entities and FTS
+- [x] 1.1 Add Book/Chapter/Verse entities and FTS
   - Create `BookEntity`, `ChapterEntity`, `VerseEntity`, `VerseFtsEntity` (FTS4) in `data/local` with composite keys and indices per design.
   - _Requirements: 15.1, 15.2_
-- [ ] 1.2 Extend TranslationEntity and add BibleContentDao
+- [x] 1.2 Extend TranslationEntity and add BibleContentDao
   - Add `isBundled`, `contentVersion`, `verseCount` to `TranslationEntity`. Create `BibleContentDao` (observeBooks, getChapter, getChapterMeta, getBook, transactional inserts, deleteTranslationContent, FTS search).
   - _Requirements: 2, 5, 10, 15.1, 15.3_
-- [ ] 1.3 Register entities in MannaDatabase with migration
+- [x] 1.3 Register entities in MannaDatabase with migration
   - Bump DB version; add new entities + DAO accessor; provide a migration that preserves annotations/preferences (additive).
   - _Requirements: 15.4, 15.5_
 - [ ]* 1.4 Room DAO tests (in-memory)
