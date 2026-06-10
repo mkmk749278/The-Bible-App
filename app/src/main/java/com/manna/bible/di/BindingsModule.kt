@@ -7,19 +7,24 @@ import com.manna.bible.data.TranslationLocalDataSource
 import com.manna.bible.data.TranslationRemoteDataSource
 import com.manna.bible.data.canon.AssetCanonDefinitionDataSource
 import com.manna.bible.data.canon.CanonDefinitionDataSource
+import com.manna.bible.data.download.DefaultDownloadManager
 import com.manna.bible.data.local.RoomAnnotationLocalDataSource
 import com.manna.bible.data.local.RoomTranslationLocalDataSource
 import com.manna.bible.data.preferences.DataStorePreferencesStore
 import com.manna.bible.data.preferences.PreferencesStore
-import com.manna.bible.data.remote.StubTranslationRemoteDataSource
+import com.manna.bible.data.remote.DefaultHelloAoRemoteDataSource
+import com.manna.bible.data.remote.HelloAoRemoteDataSource
 import com.manna.bible.data.repository.DefaultAnnotationRepository
+import com.manna.bible.data.repository.DefaultBibleContentRepository
 import com.manna.bible.data.repository.DefaultPendingDownloadRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.canon.DefaultCanonEngine
+import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.lectionary.LectionaryProvider
 import com.manna.bible.domain.repository.AnnotationRepository
+import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.BookNameProvider
@@ -90,15 +95,33 @@ abstract class BindingsModule {
         impl: RoomTranslationLocalDataSource
     ): TranslationLocalDataSource
 
+    // The Free Use Bible API backs both the catalog seam ([TranslationRemoteDataSource])
+    // and the content-streaming seam ([HelloAoRemoteDataSource]); a single @Singleton
+    // impl instance serves both interfaces.
     @Binds
-    @Singleton
     abstract fun bindTranslationRemoteDataSource(
-        impl: StubTranslationRemoteDataSource
+        impl: DefaultHelloAoRemoteDataSource
     ): TranslationRemoteDataSource
+
+    @Binds
+    abstract fun bindHelloAoRemoteDataSource(
+        impl: DefaultHelloAoRemoteDataSource
+    ): HelloAoRemoteDataSource
 
     @Binds
     @Singleton
     abstract fun bindConnectivityChecker(impl: AndroidConnectivityChecker): ConnectivityChecker
+
+    // --- offline Bible content ----------------------------------------------
+
+    @Binds
+    @Singleton
+    abstract fun bindBibleContentRepository(
+        impl: DefaultBibleContentRepository
+    ): BibleContentRepository
+
+    @Binds
+    abstract fun bindDownloadManager(impl: DefaultDownloadManager): DownloadManager
 
     // --- annotations ---------------------------------------------------------
 

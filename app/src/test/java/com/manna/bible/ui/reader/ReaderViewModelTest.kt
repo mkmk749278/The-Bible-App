@@ -12,6 +12,9 @@ import com.manna.bible.domain.model.Highlight
 import com.manna.bible.domain.model.Note
 import com.manna.bible.domain.model.NumberingScheme
 import com.manna.bible.domain.model.SetupState
+import com.manna.bible.domain.download.DownloadManager
+import com.manna.bible.domain.download.DownloadOutcome
+import com.manna.bible.domain.download.DownloadProgress
 import com.manna.bible.domain.model.Testament
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
@@ -83,7 +86,8 @@ class ReaderViewModelTest {
             preferencesStore = prefs,
             annotationRepository = annotations,
             bibleContentRepository = content,
-            translationRepository = FakeTranslationRepository()
+            translationRepository = FakeTranslationRepository(),
+            downloadManager = FakeDownloadManager()
         )
     }
 
@@ -133,7 +137,7 @@ class ReaderViewModelTest {
         val vm = viewModel(
             denomination = Denomination.CATHOLIC,
             content = psalmContent(),
-            prefs = FakePreferencesStore(lastRead = "PSA.23.1")
+            prefs = FakePreferencesStore(lastRead = "PSA.23.1", denomination = Denomination.CATHOLIC)
         )
         vm.uiState.test {
             advanceUntilIdle()
@@ -235,11 +239,12 @@ class ReaderViewModelTest {
     }
 
     private class FakePreferencesStore(
-        lastRead: String? = null
+        lastRead: String? = null,
+        denomination: Denomination = Denomination.PROTESTANT_OTHER
     ) : PreferencesStore {
         private val state = MutableStateFlow(
             SetupState(
-                denomination = Denomination.PROTESTANT_OTHER,
+                denomination = denomination,
                 canonType = CanonType.PROTESTANT_66,
                 uiLanguage = "en",
                 bibleLanguage = "en",
@@ -332,5 +337,13 @@ class ReaderViewModelTest {
         override suspend fun download(id: String): DownloadResult = DownloadResult.Success
         override suspend fun markPendingDownload(id: String) {}
         override suspend fun retryPendingDownloads() {}
+    }
+
+    private class FakeDownloadManager : DownloadManager {
+        override fun progress(): Flow<DownloadProgress?> = flowOf(null)
+        override suspend fun download(translationId: String): DownloadOutcome = DownloadOutcome.Success
+        override suspend fun cancel(translationId: String) {}
+        override suspend fun delete(translationId: String) {}
+        override suspend fun retryPending() {}
     }
 }

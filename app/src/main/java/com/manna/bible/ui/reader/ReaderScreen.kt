@@ -30,6 +30,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -122,6 +123,7 @@ fun ReaderScreen(
             onVerseClick = viewModel::selectVerse,
             onScrollHandled = viewModel::onScrollHandled,
             onRetry = viewModel::refresh,
+            onDownload = viewModel::downloadActiveTranslation,
             onSwitchTranslation = onSwitchTranslation
         )
     }
@@ -286,6 +288,7 @@ private fun ReaderContent(
     onVerseClick: (Int) -> Unit,
     onScrollHandled: () -> Unit,
     onRetry: () -> Unit,
+    onDownload: () -> Unit,
     onSwitchTranslation: () -> Unit
 ) {
     when {
@@ -295,12 +298,19 @@ private fun ReaderContent(
             Text(stringResource(R.string.reader_loading))
         }
 
+        state.isDownloading -> DownloadingState(
+            contentPadding = contentPadding,
+            progress = state.downloadProgress
+        )
+
         state.isEmptyContent -> CenteredMessage(
             contentPadding = contentPadding,
             title = stringResource(R.string.reader_empty_title),
-            message = stringResource(R.string.reader_empty_message),
-            primaryLabel = stringResource(R.string.reader_retry),
-            onPrimary = onRetry
+            message = state.errorMessage.toEmptyStateMessage(),
+            primaryLabel = stringResource(R.string.reader_download),
+            onPrimary = onDownload,
+            secondaryLabel = stringResource(R.string.reader_switch_translation),
+            onSecondary = onSwitchTranslation
         )
 
         state.chapterUnavailable -> CenteredMessage(
@@ -424,6 +434,51 @@ private fun CenteredState(
     ) {
         content()
     }
+}
+
+/** Determinate/indeterminate download progress shown in place of the empty state. */
+@Composable
+private fun DownloadingState(contentPadding: PaddingValues, progress: Float?) {
+    CenteredState(contentPadding) {
+        if (progress != null) {
+            LinearProgressIndicator(
+                progress = { progress.coerceIn(0f, 1f) },
+                modifier = Modifier.fillMaxWidth()
+            )
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(
+                    R.string.reader_download_percent,
+                    (progress.coerceIn(0f, 1f) * 100).toInt()
+                ),
+                color = MannaColors.gold,
+                fontWeight = FontWeight.Bold
+            )
+        } else {
+            CircularProgressIndicator()
+        }
+        Spacer(Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.reader_downloading_title),
+            style = androidx.compose.material3.MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold,
+            textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = stringResource(R.string.reader_downloading_message),
+            textAlign = TextAlign.Center,
+            color = MannaColors.soft
+        )
+    }
+}
+
+/** Maps a reader error (if any) to the message shown above the download button. */
+@Composable
+private fun String?.toEmptyStateMessage(): String = when (this) {
+    null -> stringResource(R.string.reader_empty_message)
+    "offline" -> stringResource(R.string.reader_offline_message)
+    else -> stringResource(R.string.reader_download_failed)
 }
 
 @Composable
