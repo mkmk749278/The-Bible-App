@@ -1,0 +1,105 @@
+package com.manna.bible.data.preferences
+
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.MutablePreferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
+import androidx.datastore.preferences.preferencesDataStore
+import com.manna.bible.domain.model.CanonProfile
+import com.manna.bible.domain.model.SetupState
+import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+/** Single DataStore<Preferences> instance for the app, backed by the `manna_prefs` file. */
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "manna_prefs")
+
+/**
+ * Persists the user's setup choices ([SetupState]) to local storage (Req 10), without requiring
+ * an account. Backed by DataStore Preferences.
+ */
+interface PreferencesStore {
+    /** Emits the current persisted [SetupState], updating whenever preferences change. */
+    val setupState: Flow<SetupState>
+
+    /** Persists every field of [state], removing keys for null selection fields. */
+    suspend fun saveSetup(state: SetupState)
+
+    /** Persists only the first-launch gate flag (Req 1). */
+    suspend fun setSetupCompleted(value: Boolean)
+
+    /** Persists the canon-related fields derived from [profile]; leaves language keys untouched. */
+    suspend fun updateDenomination(profile: CanonProfile)
+
+    /** Persists only the Protestant deuterocanonical visibility toggle (Req 15). */
+    suspend fun setShowDeuterocanonical(value: Boolean)
+}
+
+/**
+ * DataStore-backed [PreferencesStore]. (De)serialization is delegated to [SetupPreferencesMapper]
+ * so the mapping logic stays pure and JVM-testable.
+ */
+class DataStorePreferencesStore @Inject constructor(
+    @ApplicationContext private val context: Context
+) : PreferencesStore {
+
+    private val dataStore: DataStore<Preferences> = context.dataStore
+
+    private object Keys {
+        val DENOMINATION = stringPreferencesKey(SetupPreferencesMapper.Keys.DENOMINATION)
+        val CANON = stringPreferencesKey(SetupPreferencesMapper.Keys.CANON)
+        val UI_LANGUAGE = stringPreferencesKey(SetupPreferencesMapper.Keys.UI_LANGUAGE)
+        val BIBLE_LANGUAGE = stringPreferencesKey(SetupPreferencesMapper.Keys.BIBLE_LANGUAGE)
+        val NUMBERING_SCHEME = stringPreferencesKey(SetupPreferencesMapper.Keys.NUMBERING_SCHEME)
+        val NAMING_CONVENTION = stringPreferencesKey(SetupPreferencesMapper.Keys.NAMING_CONVENTION)
+        val BIBLE_TRANSLATION_ID = stringPreferencesKey(SetupPreferencesMapper.Keys.BIBLE_TRANSLATION_ID)
+        val LECTIONARY = stringPreferencesKey(SetupPreferencesMapper.Keys.LECTIONARY)
+        val SETUP_COMPLETED = booleanPreferencesKey(SetupPreferencesMapper.Keys.SETUP_COMPLETED)
+        val SHOW_DEUTEROCANONICAL = booleanPreferencesKey(SetupPreferencesMapper.Keys.SHOW_DEUTEROCANONICAL)
+    }
+
+    override val setupState: Flow<SetupState> =
+        dataStore.data.map { prefs -> SetupPreferencesMapper.fromMap(prefs.asMap().mapKeys { it.key.name }) }
+
+    override suspend fun saveSetup(state: SetupState) {
+        dataStore.edit { prefs ->
+            putOrRemove(prefs, Keys.DENOMINATION, state.denomination?.id)
+            putOrRemove(prefs, Keys.CANON, state.canonType?.id)
+            putOrRemove(prefs, Keys.UI_LANGUAGE, state.uiLanguage)
+            putOrRemove(prefs, Keys.BIBLE_LANGUAGE, state.bibleLanguage)
+            putOrRemove(prefs, Keys.NUMBERING_SCHEME, state.numberingScheme?.name)
+            putOrRemove(prefs, Keys.NAMING_CONVENTION, state.namingConventionId)
+            putOrRemove(prefs, Keys.BIBLE_TRANSLATION_ID, state.bibleTranslationId)
+            putOrRemove(prefs, Keys.LECTIONARY, state.lectionaryId)
+            prefs[Keys.SETUP_COMPLETED] = state.setupCompleted
+            prefs[Keys.SHOW_DEUTEROCANONICAL] = state.showDeuterocanonical
+        }
+    }
+
+    override suspend fun setSetupCompleted(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.SETUP_COMPLETED] = value }
+    }
+
+    override suspend fun updateDenomination(profile: CanonProfile) {
+        dataStore.edit { prefs ->
+            prefs[Keys.DENOMINATION] = profile.denomination.id
+            prefs[Keys.CANON] = profile.canonType.id
+            prefs[Keys.NUMBERING_SCHEME] = profile.numberingScheme.name
+            putOrRemove(prefs, Keys.NAMING_CONVENTION, profile.namingConventionId)
+            putOrRemove(prefs, Keys.BIBLE_TRANSLATION_ID, profile.suggestedTranslationId)
+            putOrRemove(prefs, Keys.LECTIONARY, profile.lectionaryId)
+        }
+    }
+
+    override suspend fun setShowDeuterocanonical(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.SHOW_DEUTEROCANONICAL] = value }
+    }
+
+    private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {
+        if (value == null) prefs.remove(key) else prefs[key] = value
+    }
+}

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Manna</string>
+
+    <!-- Setup flow -->
+    <string name="setup_welcome_title">Welcome to Manna</string>
+    <string name="setup_welcome_subtitle">Daily bread from heaven</string>
+    <string name="setup_continue">Continue</string>
+    <string name="setup_skip">Skip for now</string>
+    <string name="setup_finish">Finish</string>
+
+    <string name="setup_denomination_title">Your church tradition</string>
+    <string name="setup_denomination_subtitle">This sets the right Bible books and numbering for you.</string>
+    <string name="setup_ui_language_title">App language</string>
+    <string name="setup_bible_language_title">Bible language</string>
+    <string name="setup_translation_title">Choose a translation</string>
+    <string name="setup_lectionary_title">Liturgical calendar</string>
+    <string name="setup_summary_title">All set</string>
+
+    <string name="denomination_catholic">Catholic</string>
+    <string name="denomination_csi">Church of South India (CSI)</string>
+    <string name="denomination_protestant_other">Other Protestant</string>
+    <string name="denomination_orthodox">Orthodox</string>
+    <string name="denomination_mar_thoma">Mar Thoma</string>
+    <string name="denomination_show_everything">Not sure / Show me everything</string>
+
+    <!-- Denomination descriptions -->
+    <string name="denomination_catholic_desc">73-book canon with deuterocanonical books and Roman Catholic lectionary.</string>
+    <string name="denomination_csi_desc">Church of South India tradition with the CSI almanac.</string>
+    <string name="denomination_protestant_other_desc">66-book canon. Deuterocanonical books can be shown optionally.</string>
+    <string name="denomination_orthodox_desc">Expanded canon with Septuagint Psalm numbering.</string>
+    <string name="denomination_mar_thoma_desc">Mar Thoma Syrian tradition.</string>
+    <string name="denomination_show_everything_desc">See every available book and translation without filtering.</string>
+
+    <!-- Setup navigation -->
+    <string name="setup_back">Back</string>
+
+    <!-- Setup subtitles / helpers -->
+    <string name="setup_ui_language_subtitle">Choose the language for menus and buttons.</string>
+    <string name="setup_bible_language_subtitle">Choose the language of the scripture text.</string>
+    <string name="setup_translation_subtitle">Pick a Bible edition that matches your tradition.</string>
+    <string name="setup_translation_empty">No translations are available yet. You can choose or download one later.</string>
+    <string name="setup_lectionary_subtitle">Based on your tradition, this calendar will be used.</string>
+    <string name="setup_lectionary_none">No specific lectionary</string>
+    <string name="setup_summary_subtitle">Review your choices. You can change these later in Settings.</string>
+
+    <!-- Summary labels -->
+    <string name="setup_summary_denomination">Tradition</string>
+    <string name="setup_summary_ui_language">App language</string>
+    <string name="setup_summary_bible_language">Bible language</string>
+    <string name="setup_summary_translation">Translation</string>
+    <string name="setup_summary_lectionary">Liturgical calendar</string>
+    <string name="setup_summary_none_selected">Not selected</string>
+
+    <!-- Languages -->
+    <string name="language_en">English</string>
+    <string name="language_ta">Tamil</string>
+    <string name="language_hi">Hindi</string>
+    <string name="language_te">Telugu</string>
+    <string name="language_ml">Malayalam</string>
+
+    <!-- Settings: Denomination & Languages section -->
+    <string name="settings_denomination_section_title">Denomination &amp; Languages</string>
+    <string name="settings_denomination_heading">Church tradition</string>
+    <string name="settings_ui_language_heading">App language</string>
+    <string name="settings_bible_language_heading">Bible language</string>
+    <string name="settings_deuterocanonical_heading">Deuterocanonical books</string>
+    <string name="settings_deuterocanonical_toggle">Show deuterocanonical books</string>
+    <string name="settings_rerun_setup">Re-run setup</string>
+
+    <!-- Settings: canon-switch warning dialog -->
+    <string name="settings_canon_switch_title">Change your canon?</string>
+    <string name="settings_canon_switch_message">Some books will no longer be shown: %1$s. Your notes, highlights, and bookmarks on these books are hidden but never deleted, and will reappear if you switch back.</string>
+    <string name="settings_canon_switch_confirm">Change anyway</string>
+    <string name="settings_canon_switch_cancel">Cancel</string>
+
+    <!-- Accessibility (TalkBack content descriptions) -->
+    <string name="a11y_saving">Saving</string>
+    <string name="a11y_selected">selected</string>
+    <string name="a11y_not_selected">not selected</string>
+    <string name="a11y_on">on</string>
+    <string name="a11y_off">off</string>
+</resources>

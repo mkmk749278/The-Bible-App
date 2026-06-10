@@ -1,0 +1,23 @@
+# Local config / secrets — never commit
+local.properties
+*.jks
+*.keystore
+google-services.json
+play-service-account.json
+
+# Build outputs
+/build/
+/app/build/
+*.apk
+*.aab
+
+# Gradle / IDE
+.gradle/
+.idea/
+.kotlin/
+captures/
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db

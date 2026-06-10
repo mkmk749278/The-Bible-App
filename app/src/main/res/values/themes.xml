@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Bootstrap theme for the Activity. The real theming is done in Compose
+         (MannaTheme). Dark by default per the design system. -->
+    <style name="Theme.Manna" parent="@android:style/Theme.Material.NoActionBar">
+        <item name="android:windowBackground">@color/manna_bg</item>
+        <item name="android:statusBarColor">@color/manna_bg</item>
+        <item name="android:navigationBarColor">@color/manna_bg</item>
+        <item name="android:colorPrimary">@color/manna_gold</item>
+    </style>
+</resources>
