@@ -69,6 +69,13 @@ android {
     }
     kotlinOptions {
         jvmTarget = "17"
+        // Hilt/Dagger 2.52 cannot read Kotlin 2.1's binary metadata version
+        // (":app:hiltJavaCompileDebug > Unable to read Kotlin metadata due to
+        // unsupported metadata version"). Emitting 2.0-era (1.9) metadata keeps
+        // the annotation processor working without a toolchain upgrade. Remove
+        // once Hilt is bumped to >= 2.54 (full Kotlin 2.1 metadata support).
+        languageVersion = "1.9"
+        apiVersion = "1.9"
     }
     buildFeatures {
         compose = true
