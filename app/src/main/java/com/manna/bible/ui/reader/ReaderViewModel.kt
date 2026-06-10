@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.canon.CanonEngine
+import com.manna.bible.domain.download.DownloadManager
+import com.manna.bible.domain.download.DownloadOutcome
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.model.Bookmark
@@ -76,6 +78,10 @@ data class ReaderUiState(
     val isEmptyContent: Boolean = false,
     /** True when the active translation has no stored content for the requested chapter (Req 2.6). */
     val chapterUnavailable: Boolean = false,
+    /** True while the active translation's content is being downloaded (Req 5.2). */
+    val isDownloading: Boolean = false,
+    /** Determinate download progress in 0f..1f, or null when no download is running. */
+    val downloadProgress: Float? = null,
     /** Verse the reader currently has open in the annotation sheet, if any (Req 8.1). */
     val selectedVerse: Int? = null,
     /** A one-shot scroll target consumed by the screen, then cleared (Req 3.6, 10.4). */
@@ -107,7 +113,8 @@ class ReaderViewModel @Inject constructor(
     private val preferencesStore: PreferencesStore,
     private val annotationRepository: AnnotationRepository,
     private val bibleContentRepository: BibleContentRepository,
-    private val translationRepository: TranslationRepository
+    private val translationRepository: TranslationRepository,
+    private val downloadManager: DownloadManager
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReaderUiState())
@@ -121,6 +128,43 @@ class ReaderViewModel @Inject constructor(
     init {
         observeSetup()
         observeAnnotations()
+        observeDownloadProgress()
+    }
+
+    /** Mirrors the active download's progress into [ReaderUiState.downloadProgress]. */
+    private fun observeDownloadProgress() {
+        viewModelScope.launch {
+            downloadManager.progress().collect { progress ->
+                val fraction = progress
+                    ?.takeIf { it.totalChapters > 0 }
+                    ?.let { it.completedChapters.toFloat() / it.totalChapters }
+                _uiState.value = _uiState.value.copy(downloadProgress = fraction)
+            }
+        }
+    }
+
+    /**
+     * Downloads the active translation's content on demand (Req 5.1, 5.2). Invoked
+     * from the empty-content state so a freshly chosen translation can be fetched
+     * and opened without leaving the reader. On success the current position is
+     * (re)loaded; offline/failure surface an error and leave the empty state.
+     */
+    fun downloadActiveTranslation() {
+        val translationId = _uiState.value.activeTranslationId ?: return
+        if (_uiState.value.isDownloading) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isDownloading = true, errorMessage = null)
+            val outcome = runCatching { downloadManager.download(translationId) }
+                .getOrElse { DownloadOutcome.Failure(it.message ?: "download failed") }
+            _uiState.value = _uiState.value.copy(isDownloading = false, downloadProgress = null)
+            when (outcome) {
+                DownloadOutcome.Success -> refresh()
+                DownloadOutcome.Offline ->
+                    _uiState.value = _uiState.value.copy(errorMessage = "offline")
+                is DownloadOutcome.Failure ->
+                    _uiState.value = _uiState.value.copy(errorMessage = outcome.reason)
+            }
+        }
     }
 
     /**

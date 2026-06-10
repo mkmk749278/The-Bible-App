@@ -3,15 +3,23 @@ package com.manna.bible.di
 import android.content.Context
 import androidx.room.Room
 import com.manna.bible.data.local.AnnotationDao
+import com.manna.bible.data.local.BibleContentDao
+import com.manna.bible.data.local.MIGRATION_2_3
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
 import com.manna.bible.data.local.TranslationDao
+import com.manna.bible.data.remote.HelloAoApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 
 /**
@@ -36,13 +44,15 @@ object AppModule {
     }
 
     /**
-     * The app's [MannaDatabase]. Uses destructive migration for now since no schema
-     * has shipped yet (see the class doc on [MannaDatabase]).
+     * The app's [MannaDatabase]. Applies the additive [MIGRATION_2_3] (offline
+     * content tables) and keeps destructive fallback as a last resort so an
+     * unexpected schema mismatch never hard-crashes startup.
      */
     @Provides
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
+            .addMigrations(MIGRATION_2_3)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -57,4 +67,32 @@ object AppModule {
     @Provides
     fun provideAnnotationDao(database: MannaDatabase): AnnotationDao =
         database.annotationDao()
+
+    @Provides
+    fun provideBibleContentDao(database: MannaDatabase): BibleContentDao =
+        database.bibleContentDao()
+
+    // --- Free Use Bible API (helloao) networking -----------------------------
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(): OkHttpClient = OkHttpClient.Builder()
+        .connectTimeout(30, TimeUnit.SECONDS)
+        .readTimeout(30, TimeUnit.SECONDS)
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideRetrofit(json: Json, client: OkHttpClient): Retrofit = Retrofit.Builder()
+        .baseUrl(HELLO_AO_BASE_URL)
+        .client(client)
+        .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE.toMediaType()))
+        .build()
+
+    @Provides
+    @Singleton
+    fun provideHelloAoApi(retrofit: Retrofit): HelloAoApi = retrofit.create(HelloAoApi::class.java)
+
+    private const val HELLO_AO_BASE_URL = "https://bible.helloao.org/api/"
+    private const val JSON_MEDIA_TYPE = "application/json"
 }

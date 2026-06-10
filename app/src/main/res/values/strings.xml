@@ -95,8 +95,13 @@
     <string name="reader_audio_placeholder">Audio read-aloud is coming soon.</string>
 
     <!-- Reader: empty / unavailable states -->
-    <string name="reader_empty_title">Preparing your Bible</string>
-    <string name="reader_empty_message">Scripture is being set up for offline reading. This only happens once and needs no internet.</string>
+    <string name="reader_empty_title">Download your Bible</string>
+    <string name="reader_empty_message">Your translation hasn\'t been downloaded yet. Download it once to read offline anytime.</string>
+    <string name="reader_downloading_title">Downloading scripture…</string>
+    <string name="reader_downloading_message">Fetching your Bible for offline reading. You can keep this screen open.</string>
+    <string name="reader_download_percent">%1$d%%</string>
+    <string name="reader_download_failed">Download didn\'t finish. Check your connection and try again.</string>
+    <string name="reader_offline_message">You\'re offline. Connect to the internet to download this translation.</string>
     <string name="reader_unavailable_title">This chapter isn\'t available yet</string>
     <string name="reader_unavailable_message">This chapter isn\'t in the active translation. Download it or switch to another translation.</string>
     <string name="reader_download">Download</string>

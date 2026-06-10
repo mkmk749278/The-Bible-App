@@ -212,14 +212,26 @@ class SetupViewModel @Inject constructor(
             val snapshot = _uiState.value
             val effectiveDenomination = snapshot.denomination ?: Denomination.SHOW_EVERYTHING
             val effectiveBibleLanguage = snapshot.bibleLanguage ?: snapshot.uiLanguage ?: ""
+            // Pull the live catalog when online so editions appear even on a fresh
+            // install; offline this is a no-op and the cached catalog is used.
+            runCatching { translationRepository.refreshCatalog() }
             val catalog = translationRepository.catalog().first()
             val profile = canonEngine.profileFor(effectiveDenomination, effectiveBibleLanguage)
-            val filtered = translationFilter.filter(catalog, profile, effectiveBibleLanguage)
+            val canonMatches = translationFilter.filter(catalog, profile, effectiveBibleLanguage)
+            // Req 5.6: when no canon-compatible edition exists for this language
+            // (e.g. a Catholic tradition with only Protestant editions available),
+            // still offer the closest in-language editions rather than an empty list.
+            val available = canonMatches.ifEmpty {
+                catalog
+                    .filter { it.languageCode.equals(effectiveBibleLanguage, ignoreCase = true) }
+                    .sortedBy { it.name }
+            }
             val suggested = snapshot.bibleTranslationId
                 ?: translationFilter.suggestedDefault(catalog, profile, effectiveBibleLanguage)?.id
+                ?: available.firstOrNull()?.id
             _uiState.update {
                 it.copy(
-                    availableTranslations = filtered,
+                    availableTranslations = available,
                     bibleTranslationId = suggested
                 )
             }
