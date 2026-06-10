@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.setup.SetupHost
 
@@ -19,6 +20,7 @@ import com.manna.bible.ui.setup.SetupHost
 private object Routes {
     const val SETUP = "setup"
     const val MAIN = "main"
+    const val CATALOG = "catalog"
 }
 
 /**
@@ -65,7 +67,14 @@ fun MannaApp(
                     )
                 }
                 composable(Routes.MAIN) {
-                    ReaderScreen()
+                    ReaderScreen(
+                        onSwitchTranslation = { navController.navigate(Routes.CATALOG) }
+                    )
+                }
+                composable(Routes.CATALOG) {
+                    TranslationCatalogScreen(
+                        onBack = { navController.popBackStack() }
+                    )
                 }
             }
         }

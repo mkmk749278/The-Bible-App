@@ -94,6 +94,19 @@
     <string name="reader_chapter_number">Chapter %1$d</string>
     <string name="reader_audio_placeholder">Audio read-aloud is coming soon.</string>
 
+    <!-- Translation catalog -->
+    <string name="catalog_title">Translations</string>
+    <string name="catalog_back">Back</string>
+    <string name="catalog_active">Active</string>
+    <string name="catalog_downloaded">Downloaded</string>
+    <string name="catalog_download">Download</string>
+    <string name="catalog_cancel">Cancel</string>
+    <string name="catalog_delete">Delete</string>
+    <string name="catalog_use">Use</string>
+    <string name="catalog_offline">You\'re offline. Downloaded translations still work; connect to add more.</string>
+    <string name="catalog_error">Something went wrong. Please try again.</string>
+    <string name="catalog_empty">No translations for this language yet. Connect to the internet to download one.</string>
+
     <!-- Reader: empty / unavailable states -->
     <string name="reader_empty_title">Download your Bible</string>
     <string name="reader_empty_message">Your translation hasn\'t been downloaded yet. Download it once to read offline anytime.</string>
