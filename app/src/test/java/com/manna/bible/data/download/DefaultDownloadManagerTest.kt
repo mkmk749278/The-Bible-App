@@ -16,6 +16,8 @@ import com.manna.bible.domain.repository.PendingDownloadRepository
 import com.manna.bible.domain.translation.Translation
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
@@ -335,6 +337,68 @@ class DefaultDownloadManagerTest {
 
         assertFalse(content.hasAnyContent("en_web"), "content must be cleared on delete")
         assertFalse(translations.getById("en_web")!!.isDownloaded, "marker must be cleared")
+    }
+
+    // --- cancel mid-download (Req 5.4, 5.7) ----------------------------------
+
+    /**
+     * Remote that serves a fixed structure but blocks on a specific (book, chapter)
+     * until [gate] completes, letting a test deterministically cancel a download
+     * while a chapter fetch is in flight.
+     */
+    private class GatedRemote(
+        private val books: List<RemoteBook>,
+        private val blockOn: Pair<String, Int>,
+        private val gate: kotlinx.coroutines.CompletableDeferred<Unit>
+    ) : HelloAoRemoteDataSource {
+        override suspend fun books(id: String): List<RemoteBook> = books
+        override suspend fun chapter(id: String, osisId: String, chapter: Int): RemoteChapter {
+            if (blockOn == osisId to chapter) gate.await()
+            return RemoteChapter(
+                osisId = osisId,
+                chapter = chapter,
+                verses = listOf(RemoteVerse(verse = 1, text = "$osisId $chapter:1"))
+            )
+        }
+
+        override suspend fun fetchCatalog(): List<Translation> = emptyList()
+        override suspend fun downloadTranslation(id: String): Long = 0L
+    }
+
+    @Test
+    fun `cancel mid-download deletes content and does not mark downloaded`() = runTest {
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val content = FakeContentDao()
+        val translations = FakeTranslationDao(listOf(entity("en_web")))
+        // GEN (1 chapter) commits first; EXO's 2nd chapter blocks so we can cancel
+        // after some content is already persisted but before the download finishes.
+        val mgr = DefaultDownloadManager(
+            remote = GatedRemote(
+                books = listOf(book("GEN", 1, 0), book("EXO", 2, 1)),
+                blockOn = "EXO" to 2,
+                gate = gate
+            ),
+            bibleContentDao = content,
+            translationDao = translations,
+            pending = FakePending(),
+            connectivity = FakeConnectivity(online = true)
+        )
+
+        val job = launch { mgr.download("en_web") }
+        // Run until the download suspends awaiting the gate on EXO chapter 2.
+        runCurrent()
+        // GEN was committed before the block, proving there is content to delete.
+        assertTrue(content.hasAnyContent("en_web"), "GEN content should be committed by now")
+
+        mgr.cancel("en_web")
+        gate.complete(Unit)
+        job.join()
+
+        assertFalse(content.hasAnyContent("en_web"), "cancel must delete partial content")
+        assertFalse(
+            translations.getById("en_web")!!.isDownloaded,
+            "cancelled download must not be marked downloaded"
+        )
     }
 
     // --- retry pending (Req 5.6, 11.5) ---------------------------------------
