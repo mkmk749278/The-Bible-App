@@ -4,7 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Serialization DTO matching the bundled canon JSON schema in `assets/canon/*.json`.
+ * Serialization DTO matching the bundled canon JSON schema in the `assets/canon`
+ * directory (one JSON file per canon type).
  *
  * Internal to the data layer — the rest of the app consumes the mapped
  * [com.manna.bible.domain.model.CanonDefinition] instead.
