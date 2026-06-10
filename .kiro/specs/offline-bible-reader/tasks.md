@@ -15,10 +15,10 @@
   - _Requirements: 2, 5, 10, 15_
 
 - [ ] 2. Free Use Bible API remote
-- [ ] 2.1 Add HelloAo DTOs and Retrofit API
+- [x] 2.1 Add HelloAo DTOs and Retrofit API
   - `AvailableTranslationsDto`, `BooksDto`, `ChapterDto` (kotlinx.serialization). `HelloAoApi` with the three endpoints; base URL `https://bible.helloao.org/api/`.
   - _Requirements: 4.1, 5.1_
-- [ ] 2.2 Implement HelloAoRemoteDataSource (replace stub)
+- [x] 2.2 Implement HelloAoRemoteDataSource (replace stub)
   - Implement existing `TranslationRemoteDataSource`: `fetchCatalog()` maps DTO → domain `Translation` (derive canonType/hasDeuterocanon from book set); `downloadTranslation(id)` streams books+chapters. Map verse content segments → plain text; preserve canonical numbering.
   - _Requirements: 4.1, 4.2, 5.1_
 - [ ]* 2.3 Mapping unit tests with fixture JSON
