@@ -12,7 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.manna.bible.ui.main.MainScreen
+import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.setup.SetupHost
 
 /** Navigation routes for the app-level first-launch gate. */
@@ -65,7 +65,7 @@ fun MannaApp(
                     )
                 }
                 composable(Routes.MAIN) {
-                    MainScreen()
+                    ReaderScreen()
                 }
             }
         }

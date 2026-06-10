@@ -48,6 +48,40 @@ class DefaultAnnotationRepository @Inject constructor(
             notes.filter { isVisible(it.verseRef ?: it.chapterRef, visibleBookIds) }
         }
 
+    override suspend fun addHighlight(verseRef: String, colorArgb: Int): Long {
+        val now = System.currentTimeMillis()
+        return dataSource.insertHighlight(
+            Highlight(id = 0, verseRef = verseRef, colorArgb = colorArgb, createdAt = now)
+        )
+    }
+
+    override suspend fun addBookmark(verseRef: String, label: String?): Long {
+        val now = System.currentTimeMillis()
+        return dataSource.insertBookmark(
+            Bookmark(id = 0, verseRef = verseRef, label = label, createdAt = now)
+        )
+    }
+
+    override suspend fun addNote(verseRef: String, content: String): Long {
+        val now = System.currentTimeMillis()
+        return dataSource.insertNote(
+            Note(
+                id = 0,
+                verseRef = verseRef,
+                chapterRef = null,
+                content = content,
+                createdAt = now,
+                updatedAt = now
+            )
+        )
+    }
+
+    override suspend fun deleteHighlight(id: Long) = dataSource.deleteHighlight(id)
+
+    override suspend fun deleteBookmark(id: Long) = dataSource.deleteBookmark(id)
+
+    override suspend fun deleteNote(id: Long) = dataSource.deleteNote(id)
+
     /**
      * A reference is visible when its book is in [visibleBookIds]. A reference with
      * no parseable book id has no book association and is treated as visible.

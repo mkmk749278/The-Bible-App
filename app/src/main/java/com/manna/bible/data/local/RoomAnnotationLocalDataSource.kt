@@ -37,6 +37,12 @@ class RoomAnnotationLocalDataSource @Inject constructor(
     override suspend fun insertNote(note: Note): Long =
         dao.insertNote(note.toEntity())
 
+    override suspend fun deleteHighlight(id: Long) = dao.deleteHighlight(id)
+
+    override suspend fun deleteBookmark(id: Long) = dao.deleteBookmark(id)
+
+    override suspend fun deleteNote(id: Long) = dao.deleteNote(id)
+
     override suspend fun allVerseRefs(): List<String> =
         dao.highlightVerseRefs() +
             dao.bookmarkVerseRefs() +

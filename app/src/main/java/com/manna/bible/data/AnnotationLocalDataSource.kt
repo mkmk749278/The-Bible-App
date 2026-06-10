@@ -37,6 +37,15 @@ interface AnnotationLocalDataSource {
     /** Inserts a note, returning its generated row id. */
     suspend fun insertNote(note: Note): Long
 
+    /** Deletes the highlight with [id], if present. */
+    suspend fun deleteHighlight(id: Long)
+
+    /** Deletes the bookmark with [id], if present. */
+    suspend fun deleteBookmark(id: Long)
+
+    /** Deletes the note with [id], if present. */
+    suspend fun deleteNote(id: Long)
+
     /**
      * Returns every reference (verse or chapter) across highlights, bookmarks, and
      * notes as a one-shot snapshot. Used to compute which books carry annotations

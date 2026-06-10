@@ -57,6 +57,18 @@ class DefaultAnnotationRepositoryTest {
             return note.id
         }
 
+        override suspend fun deleteHighlight(id: Long) {
+            highlights.value = highlights.value.filterNot { it.id == id }
+        }
+
+        override suspend fun deleteBookmark(id: Long) {
+            bookmarks.value = bookmarks.value.filterNot { it.id == id }
+        }
+
+        override suspend fun deleteNote(id: Long) {
+            notes.value = notes.value.filterNot { it.id == id }
+        }
+
         override suspend fun allVerseRefs(): List<String> =
             highlights.value.map { it.verseRef } +
                 bookmarks.value.map { it.verseRef } +

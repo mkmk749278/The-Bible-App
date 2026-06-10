@@ -44,6 +44,20 @@ interface AnnotationDao {
     @Insert
     suspend fun insertNote(entity: NoteEntity): Long
 
+    // --- deletes (reader edit/remove, Req 8.4) -------------------------------
+
+    /** Deletes the highlight with [id], if present. */
+    @Query("DELETE FROM highlights WHERE id = :id")
+    suspend fun deleteHighlight(id: Long)
+
+    /** Deletes the bookmark with [id], if present. */
+    @Query("DELETE FROM bookmarks WHERE id = :id")
+    suspend fun deleteBookmark(id: Long)
+
+    /** Deletes the note with [id], if present. */
+    @Query("DELETE FROM notes WHERE id = :id")
+    suspend fun deleteNote(id: Long)
+
     // --- reference getters (for canon-switch impact, Req 12) -----------------
 
     /** Returns the verse references of every highlight. */

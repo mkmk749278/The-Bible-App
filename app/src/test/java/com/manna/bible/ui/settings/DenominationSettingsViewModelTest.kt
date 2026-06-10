@@ -276,5 +276,12 @@ class DenominationSettingsViewModelTest {
             flowOf(emptyList())
         override fun visibleNotes(visibleBookIds: Set<String>): Flow<List<Note>> =
             flowOf(emptyList())
+
+        override suspend fun addHighlight(verseRef: String, colorArgb: Int): Long = 0
+        override suspend fun addBookmark(verseRef: String, label: String?): Long = 0
+        override suspend fun addNote(verseRef: String, content: String): Long = 0
+        override suspend fun deleteHighlight(id: Long) {}
+        override suspend fun deleteBookmark(id: Long) {}
+        override suspend fun deleteNote(id: Long) {}
     }
 }

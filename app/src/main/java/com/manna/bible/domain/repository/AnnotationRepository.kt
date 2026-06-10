@@ -47,4 +47,33 @@ interface AnnotationRepository {
      * reference has no book association and stays visible.
      */
     fun visibleNotes(visibleBookIds: Set<String>): Flow<List<Note>>
+
+    // --- create / delete from the reader (Req 8.1, 8.2, 8.4) -----------------
+
+    /**
+     * Creates a highlight on [verseRef] (canonical `OSIS.CHAPTER.VERSE`) with the
+     * given ARGB [colorArgb], returning its generated id.
+     */
+    suspend fun addHighlight(verseRef: String, colorArgb: Int): Long
+
+    /**
+     * Creates a bookmark on [verseRef] (canonical `OSIS.CHAPTER.VERSE`) with an
+     * optional [label], returning its generated id.
+     */
+    suspend fun addBookmark(verseRef: String, label: String?): Long
+
+    /**
+     * Creates a note on [verseRef] (canonical `OSIS.CHAPTER.VERSE`) with the given
+     * [content], returning its generated id.
+     */
+    suspend fun addNote(verseRef: String, content: String): Long
+
+    /** Deletes the highlight with [id] (Req 8.4). */
+    suspend fun deleteHighlight(id: Long)
+
+    /** Deletes the bookmark with [id] (Req 8.4). */
+    suspend fun deleteBookmark(id: Long)
+
+    /** Deletes the note with [id] (Req 8.4). */
+    suspend fun deleteNote(id: Long)
 }

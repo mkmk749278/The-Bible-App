@@ -80,4 +80,43 @@
     <string name="a11y_not_selected">not selected</string>
     <string name="a11y_on">on</string>
     <string name="a11y_off">off</string>
+
+    <!-- Reader -->
+    <string name="reader_loading">Loading scripture…</string>
+    <string name="reader_previous_chapter">Previous chapter</string>
+    <string name="reader_next_chapter">Next chapter</string>
+    <string name="reader_open_picker">Choose book and chapter</string>
+    <string name="reader_more_options">More options</string>
+    <string name="reader_switch_translation">Switch translation</string>
+    <string name="reader_attribution">Attribution &amp; about</string>
+    <string name="reader_book_picker_title">Choose a book</string>
+    <string name="reader_chapter_picker_title">%1$s — choose a chapter</string>
+    <string name="reader_chapter_number">Chapter %1$d</string>
+    <string name="reader_audio_placeholder">Audio read-aloud is coming soon.</string>
+
+    <!-- Reader: empty / unavailable states -->
+    <string name="reader_empty_title">Preparing your Bible</string>
+    <string name="reader_empty_message">Scripture is being set up for offline reading. This only happens once and needs no internet.</string>
+    <string name="reader_unavailable_title">This chapter isn\'t available yet</string>
+    <string name="reader_unavailable_message">This chapter isn\'t in the active translation. Download it or switch to another translation.</string>
+    <string name="reader_download">Download</string>
+    <string name="reader_retry">Retry</string>
+
+    <!-- Reader: verse annotations -->
+    <string name="reader_annotate_title">Verse %1$s</string>
+    <string name="annotation_highlight">Highlight</string>
+    <string name="annotation_remove_highlight">Remove highlight</string>
+    <string name="annotation_bookmark">Bookmark</string>
+    <string name="annotation_remove_bookmark">Remove bookmark</string>
+    <string name="annotation_add_note">Add note</string>
+    <string name="annotation_remove_note">Remove note</string>
+    <string name="annotation_note_hint">Write a note for this verse</string>
+    <string name="annotation_save_note">Save note</string>
+    <string name="annotation_close">Close</string>
+
+    <!-- Reader: verse annotation indicators (accessibility) -->
+    <string name="a11y_verse">Verse %1$d</string>
+    <string name="a11y_has_highlight">highlighted</string>
+    <string name="a11y_has_bookmark">bookmarked</string>
+    <string name="a11y_has_note">has a note</string>
 </resources>
