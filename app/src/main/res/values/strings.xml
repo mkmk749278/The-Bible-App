@@ -89,6 +89,7 @@
     <string name="reader_more_options">More options</string>
     <string name="reader_switch_translation">Switch translation</string>
     <string name="reader_attribution">Attribution &amp; about</string>
+    <string name="reader_daily_verse">Verse of the day</string>
     <string name="reader_book_picker_title">Choose a book</string>
     <string name="reader_chapter_picker_title">%1$s — choose a chapter</string>
     <string name="reader_chapter_number">Chapter %1$d</string>
@@ -150,6 +151,13 @@
     <string name="annotation_note_hint">Write a note for this verse</string>
     <string name="annotation_save_note">Save note</string>
     <string name="annotation_close">Close</string>
+
+    <!-- Verse of the day -->
+    <string name="daily_title">Verse of the day</string>
+    <string name="daily_back">Back</string>
+    <string name="daily_loading">Loading today\'s verse…</string>
+    <string name="daily_read_in_context">Read in context</string>
+    <string name="daily_unavailable">Download a translation to see today\'s verse.</string>
 
     <!-- Attribution & about -->
     <string name="attribution_title">Attribution &amp; about</string>
