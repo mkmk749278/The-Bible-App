@@ -614,18 +614,20 @@ export KEY_PASSWORD=yourkeypassword
 
 ### Phase 1 — Foundation (Months 1–3) ← **WE ARE HERE**
 - [x] Project setup, CI/CD, signing
-- [ ] Core offline Bible reader + Room database
-- [ ] Dual language setup (UI lang ≠ Bible lang)
-- [ ] Bible text rendering (Compose, Noto Serif)
-- [ ] Highlights, bookmarks, notes
-- [ ] Audio player (ExoPlayer + Bible Brain)
-- [ ] Daily alarm + verse of the day
-- [ ] Jesus Events Calendar
-- [ ] Pastor Mode (5-step flow)
-- [ ] Home screen widget (Glance)
-- [ ] Onboarding flow (4 screens)
-- [ ] Search (text + topical)
-- [ ] Offline download manager
+- [x] Core offline Bible reader + Room database
+- [x] Dual language setup (UI lang ≠ Bible lang)
+- [x] Bible text rendering (Compose, serif scripture — system serif ≈ Noto Serif)
+- [x] Highlights, bookmarks, notes
+- [x] Audio read-aloud (on-device TTS) — *ExoPlayer + Bible Brain narrated audio still TODO*
+- [x] Daily verse of the day + daily reminder notification
+- [x] Jesus Events Calendar
+- [x] Pastor Mode (5-step flow)
+- [ ] Home screen widget (Glance) — *needs device/build verification*
+- [x] Onboarding flow (denomination + dual-language setup)
+- [x] Search (text + topical)
+- [x] Offline download manager
+- [x] Home experience + bottom navigation (Home · Listen · Search · Library)
+- [x] Light-first theme per UX Master Design Directive
 
 ### Phase 2 — Soul Depth (Months 4–6)
 - [ ] 3AM Crisis Mode
