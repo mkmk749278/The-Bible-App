@@ -33,15 +33,6 @@ class AndroidSpeechEngine @Inject constructor(
     @Volatile
     private var pending: (() -> Unit)? = null
 
-    private val tts: TextToSpeech = TextToSpeech(context) { status ->
-        ready = status == TextToSpeech.SUCCESS
-        if (ready) {
-            tts.setOnUtteranceProgressListener(progressListener)
-            pending?.invoke()
-        }
-        pending = null
-    }
-
     private val progressListener = object : UtteranceProgressListener() {
         override fun onStart(utteranceId: String?) = Unit
 
@@ -56,6 +47,21 @@ class AndroidSpeechEngine @Inject constructor(
 
         override fun onError(utteranceId: String?, errorCode: Int) {
             utteranceId?.let { listener?.onError(it) }
+        }
+    }
+
+    // Assigned in init so the OnInitListener can reference `tts` once it is set;
+    // onInit fires asynchronously, after construction completes.
+    private lateinit var tts: TextToSpeech
+
+    init {
+        tts = TextToSpeech(context) { status ->
+            ready = status == TextToSpeech.SUCCESS
+            if (ready) {
+                tts.setOnUtteranceProgressListener(progressListener)
+                pending?.invoke()
+            }
+            pending = null
         }
     }
 
