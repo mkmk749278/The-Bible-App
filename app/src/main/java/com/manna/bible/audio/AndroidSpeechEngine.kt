@@ -33,7 +33,7 @@ class AndroidSpeechEngine @Inject constructor(
     @Volatile
     private var pending: (() -> Unit)? = null
 
-    private val tts = TextToSpeech(context) { status ->
+    private val tts: TextToSpeech = TextToSpeech(context) { status ->
         ready = status == TextToSpeech.SUCCESS
         if (ready) {
             tts.setOnUtteranceProgressListener(progressListener)
