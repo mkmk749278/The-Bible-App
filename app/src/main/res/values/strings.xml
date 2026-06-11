@@ -111,6 +111,7 @@
     <string name="search_back">Back</string>
     <string name="search_hint">Search the Bible</string>
     <string name="search_prompt">Type a word or phrase to search the active translation.</string>
+    <string name="search_browse_topics">Or browse by topic</string>
     <string name="search_no_results">No verses found for \"%1$s\".</string>
     <string name="search_no_content">Download a translation first to search its text.</string>
 

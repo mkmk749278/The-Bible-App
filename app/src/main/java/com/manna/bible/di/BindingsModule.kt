@@ -24,10 +24,14 @@ import com.manna.bible.domain.attribution.DefaultAttributionProvider
 import com.manna.bible.domain.audio.DefaultTtsReader
 import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
+import com.manna.bible.domain.calendar.DefaultJesusEventsProvider
+import com.manna.bible.domain.calendar.JesusEventsProvider
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.daily.DefaultDailyVerseProvider
 import com.manna.bible.domain.canon.DefaultCanonEngine
+import com.manna.bible.domain.topical.DefaultTopicalIndex
+import com.manna.bible.domain.topical.TopicalIndex
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.lectionary.LectionaryProvider
@@ -169,4 +173,14 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindDailyVerseProvider(impl: DefaultDailyVerseProvider): DailyVerseProvider
+
+    // --- topical search ------------------------------------------------------
+
+    @Binds
+    abstract fun bindTopicalIndex(impl: DefaultTopicalIndex): TopicalIndex
+
+    // --- Jesus events calendar -----------------------------------------------
+
+    @Binds
+    abstract fun bindJesusEventsProvider(impl: DefaultJesusEventsProvider): JesusEventsProvider
 }

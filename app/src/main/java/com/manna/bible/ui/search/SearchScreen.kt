@@ -3,6 +3,8 @@ package com.manna.bible.ui.search
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,8 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -122,9 +127,43 @@ fun SearchScreen(
                     }
                 }
 
+                state.topics.isNotEmpty() -> TopicsBrowse(
+                    topics = state.topics,
+                    onTopicClick = viewModel::searchTopic
+                )
+
                 else -> Centered {
                     Message(stringResource(R.string.search_prompt))
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun TopicsBrowse(
+    topics: List<com.manna.bible.domain.topical.Topic>,
+    onTopicClick: (com.manna.bible.domain.topical.Topic) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(horizontal = 20.dp, vertical = 12.dp)
+    ) {
+        Text(
+            text = stringResource(R.string.search_browse_topics),
+            color = MannaTheme.colors.soft,
+            fontSize = 14.sp,
+            modifier = Modifier.padding(bottom = 12.dp)
+        )
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            topics.forEach { topic ->
+                AssistChip(
+                    onClick = { onTopicClick(topic) },
+                    label = { Text(topic.label) }
+                )
             }
         }
     }

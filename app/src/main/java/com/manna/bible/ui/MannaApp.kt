@@ -33,11 +33,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.manna.bible.R
+import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
+import com.manna.bible.ui.calendar.JesusCalendarScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
+import com.manna.bible.ui.pastor.PastorModeScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.setup.SetupHost
@@ -53,6 +56,8 @@ private object Routes {
     const val CATALOG = "catalog"
     const val ATTRIBUTION = "attribution"
     const val DAILY = "daily"
+    const val CALENDAR = "calendar"
+    const val PASTOR = "pastor"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -181,6 +186,12 @@ fun MannaApp(
                     composable(Routes.LIBRARY) {
                         TranslationCatalogScreen(
                             onBack = null,
+                            onOpenCalendar = if (FeatureFlags.JESUS_CALENDAR) {
+                                { navController.navigate(Routes.CALENDAR) }
+                            } else null,
+                            onOpenPastorMode = if (FeatureFlags.PASTOR_MODE) {
+                                { navController.navigate(Routes.PASTOR) }
+                            } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
                     }
@@ -234,6 +245,21 @@ fun MannaApp(
                                     popUpTo(Routes.HOME)
                                 }
                             }
+                        )
+                    }
+                    composable(Routes.CALENDAR) {
+                        JesusCalendarScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref ->
+                                navController.navigate(readerRoute(ref)) {
+                                    popUpTo(Routes.HOME)
+                                }
+                            }
+                        )
+                    }
+                    composable(Routes.PASTOR) {
+                        PastorModeScreen(
+                            onBack = { navController.popBackStack() }
                         )
                     }
                 }
