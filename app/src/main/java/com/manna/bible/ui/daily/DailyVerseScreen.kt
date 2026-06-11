@@ -30,6 +30,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
 
@@ -132,6 +133,7 @@ private fun DailyVerseCard(
             Text(
                 text = verseText,
                 style = MaterialTheme.typography.headlineSmall,
+                fontFamily = ScriptureFontFamily,
                 color = MannaTheme.colors.ink,
                 textAlign = TextAlign.Center,
                 lineHeight = 34.sp
