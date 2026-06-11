@@ -12,6 +12,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.manna.bible.ui.attribution.AttributionScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.search.SearchScreen
@@ -23,6 +24,7 @@ private object Routes {
     const val MAIN = "main"
     const val CATALOG = "catalog"
     const val SEARCH = "search"
+    const val ATTRIBUTION = "attribution"
 }
 
 /** SavedStateHandle key for handing a search-selected reference back to the reader. */
@@ -78,6 +80,7 @@ fun MannaApp(
                         .collectAsStateWithLifecycle()
                     ReaderScreen(
                         onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
+                        onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
                         onOpenSearch = { navController.navigate(Routes.SEARCH) },
                         pendingScrollRef = scrollRef,
                         onScrollRefConsumed = { handle[SCROLL_REF_KEY] = null }
@@ -85,6 +88,11 @@ fun MannaApp(
                 }
                 composable(Routes.CATALOG) {
                     TranslationCatalogScreen(
+                        onBack = { navController.popBackStack() }
+                    )
+                }
+                composable(Routes.ATTRIBUTION) {
+                    AttributionScreen(
                         onBack = { navController.popBackStack() }
                     )
                 }

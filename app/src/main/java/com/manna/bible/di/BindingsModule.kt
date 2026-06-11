@@ -19,6 +19,8 @@ import com.manna.bible.data.repository.DefaultBibleContentRepository
 import com.manna.bible.data.repository.DefaultPendingDownloadRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
 import com.manna.bible.audio.AndroidSpeechEngine
+import com.manna.bible.domain.attribution.AttributionProvider
+import com.manna.bible.domain.attribution.DefaultAttributionProvider
 import com.manna.bible.domain.audio.DefaultTtsReader
 import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
@@ -155,4 +157,9 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindSpeechEngine(impl: AndroidSpeechEngine): SpeechEngine
+
+    // --- attribution ---------------------------------------------------------
+
+    @Binds
+    abstract fun bindAttributionProvider(impl: DefaultAttributionProvider): AttributionProvider
 }
