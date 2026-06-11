@@ -50,14 +50,18 @@ private val MinTouchTarget = 48.dp
  * translation. An offline notice appears when remote editions can't be fetched;
  * stored editions remain fully usable.
  *
- * @param onBack returns to the reader.
+ * @param onBack returns to the reader. Pass null when the catalog is hosted as
+ *   the Library tab and there is nothing to go back to.
+ * @param onOpenAttribution when non-null, shows an "Attribution & about" entry
+ *   below the catalog list (Library tab).
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TranslationCatalogScreen(
     modifier: Modifier = Modifier,
     viewModel: TranslationCatalogViewModel = hiltViewModel(),
-    onBack: () -> Unit = {}
+    onBack: (() -> Unit)? = {},
+    onOpenAttribution: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.catalog_back)
@@ -68,13 +72,15 @@ fun TranslationCatalogScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.catalog_title), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .size(MinTouchTarget)
-                            .semantics { contentDescription = backDescription }
-                    ) {
-                        Text(text = "‹", fontSize = 26.sp)
+                    if (onBack != null) {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier
+                                .size(MinTouchTarget)
+                                .semantics { contentDescription = backDescription }
+                        ) {
+                            Text(text = "‹", fontSize = 26.sp)
+                        }
                     }
                 }
             )
@@ -110,7 +116,7 @@ fun TranslationCatalogScreen(
                     )
                 }
                 else -> LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     contentPadding = androidx.compose.foundation.layout.PaddingValues(
                         horizontal = 16.dp,
                         vertical = 12.dp
@@ -129,6 +135,15 @@ fun TranslationCatalogScreen(
                         )
                     }
                 }
+            }
+            if (onOpenAttribution != null) {
+                TextButton(
+                    onClick = onOpenAttribution,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .defaultMinSize(minHeight = MinTouchTarget)
+                ) { Text(stringResource(R.string.reader_attribution)) }
             }
         }
     }
