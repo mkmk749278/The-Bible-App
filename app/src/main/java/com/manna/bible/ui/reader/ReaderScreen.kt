@@ -63,6 +63,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.reader.CanonBookOrdering
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
 
@@ -581,6 +582,8 @@ private fun VerseRow(
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = verse.text,
+                fontFamily = ScriptureFontFamily,
+                color = MannaTheme.colors.ink,
                 fontSize = if (enlarged) 24.sp else 18.sp,
                 lineHeight = if (enlarged) 36.sp else 28.sp
             )
