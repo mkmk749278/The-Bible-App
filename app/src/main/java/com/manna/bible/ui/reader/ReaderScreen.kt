@@ -121,10 +121,13 @@ fun ReaderScreen(
         },
         bottomBar = {
             ReaderBottomBar(
-                canPrev = state.canPrev,
-                canNext = state.canNext,
+                state = state,
                 onPrev = viewModel::previousChapter,
-                onNext = viewModel::nextChapter
+                onNext = viewModel::nextChapter,
+                onAudioPlayPause = viewModel::onAudioPlayPause,
+                onAudioStop = viewModel::stopAudio,
+                onCycleSpeed = { viewModel.setAudioSpeed(nextSpeed(state.ttsSpeed)) },
+                onToggleContinuous = { viewModel.setContinuousPlay(!state.continuousPlay) }
             )
         }
     ) { padding ->
@@ -253,22 +256,36 @@ private fun ReaderTopBar(
 
 @Composable
 private fun ReaderBottomBar(
-    canPrev: Boolean,
-    canNext: Boolean,
+    state: ReaderUiState,
     onPrev: () -> Unit,
-    onNext: () -> Unit
+    onNext: () -> Unit,
+    onAudioPlayPause: () -> Unit,
+    onAudioStop: () -> Unit,
+    onCycleSpeed: () -> Unit,
+    onToggleContinuous: () -> Unit
 ) {
     Surface(tonalElevation = 3.dp) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            // Audio read-aloud slot — TTS controls land in Task 9.
-            Text(
-                text = stringResource(R.string.reader_audio_placeholder),
-                style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
-                color = MannaColors.soft,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            if (state.audioVoiceUnavailable) {
+                Text(
+                    text = stringResource(R.string.reader_audio_voice_unavailable),
+                    style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
+                    color = MannaColors.orange,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                )
+            }
+            AudioBar(
+                isPlaying = state.isAudioPlaying,
+                isActive = state.isAudioActive,
+                speed = state.ttsSpeed,
+                continuousPlay = state.continuousPlay,
+                onPlayPause = onAudioPlayPause,
+                onStop = onAudioStop,
+                onCycleSpeed = onCycleSpeed,
+                onToggleContinuous = onToggleContinuous
             )
             Row(
                 modifier = Modifier
@@ -281,7 +298,7 @@ private fun ReaderBottomBar(
                 val nextDescription = stringResource(R.string.reader_next_chapter)
                 IconButton(
                     onClick = onPrev,
-                    enabled = canPrev,
+                    enabled = state.canPrev,
                     modifier = Modifier
                         .size(MinTouchTarget)
                         .semantics { contentDescription = prevDescription }
@@ -290,7 +307,7 @@ private fun ReaderBottomBar(
                 }
                 IconButton(
                     onClick = onNext,
-                    enabled = canNext,
+                    enabled = state.canNext,
                     modifier = Modifier
                         .size(MinTouchTarget)
                         .semantics { contentDescription = nextDescription }
@@ -298,6 +315,101 @@ private fun ReaderBottomBar(
                     Text(text = "\u203A", fontSize = 26.sp)
                 }
             }
+        }
+    }
+}
+
+/** Speed steps cycled by the audio bar's speed control (Req 9.4). */
+private val SpeedSteps = listOf(0.5f, 0.75f, 1.0f, 1.25f, 1.5f, 2.0f)
+
+/** Returns the next speed in [SpeedSteps], wrapping back to the slowest after the fastest. */
+private fun nextSpeed(current: Float): Float {
+    val index = SpeedSteps.indexOfFirst { kotlin.math.abs(it - current) < 0.01f }
+    return SpeedSteps[(index + 1).mod(SpeedSteps.size)]
+}
+
+/** Formats a speed multiplier without a trailing `.0` (e.g. `1`, `0.75`, `1.5`). */
+private fun formatSpeed(speed: Float): String =
+    if (speed % 1f == 0f) speed.toInt().toString() else speed.toString()
+
+/**
+ * Offline read-aloud controls (Requirement 9.3, 9.4, 9.7): play/pause, stop (only
+ * while active), a tappable speed multiplier that cycles 0.5x-2.0x, and a
+ * continuous-play toggle. Each control meets the 48dp touch target and carries a
+ * TalkBack description.
+ */
+@Composable
+private fun AudioBar(
+    isPlaying: Boolean,
+    isActive: Boolean,
+    speed: Float,
+    continuousPlay: Boolean,
+    onPlayPause: () -> Unit,
+    onStop: () -> Unit,
+    onCycleSpeed: () -> Unit,
+    onToggleContinuous: () -> Unit
+) {
+    val playPauseLabel = if (isPlaying) {
+        stringResource(R.string.reader_audio_pause)
+    } else if (isActive) {
+        stringResource(R.string.reader_audio_resume)
+    } else {
+        stringResource(R.string.reader_audio_play)
+    }
+    val stopLabel = stringResource(R.string.reader_audio_stop)
+    val speedLabel = stringResource(R.string.reader_audio_speed_label, formatSpeed(speed))
+    val continuousState =
+        stringResource(if (continuousPlay) R.string.a11y_on else R.string.a11y_off)
+    val continuousLabel = stringResource(R.string.reader_audio_continuous_toggle, continuousState)
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onPlayPause,
+            modifier = Modifier
+                .size(MinTouchTarget)
+                .semantics { contentDescription = playPauseLabel }
+        ) {
+            Text(text = if (isPlaying) "⏸" else "▶", fontSize = 20.sp)
+        }
+        IconButton(
+            onClick = onStop,
+            enabled = isActive,
+            modifier = Modifier
+                .size(MinTouchTarget)
+                .semantics { contentDescription = stopLabel }
+        ) {
+            Text(text = "■", fontSize = 18.sp)
+        }
+        TextButton(
+            onClick = onCycleSpeed,
+            modifier = Modifier
+                .defaultMinSize(minHeight = MinTouchTarget)
+                .semantics { contentDescription = speedLabel }
+        ) {
+            Text(
+                text = stringResource(R.string.reader_audio_speed, formatSpeed(speed)),
+                color = MannaColors.gold,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        Spacer(Modifier.weight(1f))
+        TextButton(
+            onClick = onToggleContinuous,
+            modifier = Modifier
+                .defaultMinSize(minHeight = MinTouchTarget)
+                .semantics { contentDescription = continuousLabel }
+        ) {
+            Text(
+                text = stringResource(R.string.reader_audio_continuous),
+                color = if (continuousPlay) MannaColors.gold else MannaColors.soft,
+                fontWeight = if (continuousPlay) FontWeight.Bold else FontWeight.Normal
+            )
         }
     }
 }
@@ -371,6 +483,15 @@ private fun VerseList(
         onScrollHandled()
     }
 
+    // Keep the verse being read aloud on screen as playback advances (Req 9.2).
+    androidx.compose.runtime.LaunchedEffect(state.audioVerse) {
+        val target = state.audioVerse ?: return@LaunchedEffect
+        val index = state.verses.indexOfFirst { it.verse == target }
+        if (index >= 0) {
+            listState.animateScrollToItem(index)
+        }
+    }
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -383,13 +504,17 @@ private fun VerseList(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         items(items = state.verses, key = { it.verse }) { verse ->
-            VerseRow(verse = verse, onClick = { onVerseClick(verse.verse) })
+            VerseRow(
+                verse = verse,
+                isSpoken = verse.verse == state.audioVerse,
+                onClick = { onVerseClick(verse.verse) }
+            )
         }
     }
 }
 
 @Composable
-private fun VerseRow(verse: ReaderVerse, onClick: () -> Unit) {
+private fun VerseRow(verse: ReaderVerse, isSpoken: Boolean, onClick: () -> Unit) {
     val verseDescription = buildString {
         append(stringResource(R.string.a11y_verse, verse.displayNumber ?: verse.verse))
         append(". ")
@@ -403,6 +528,7 @@ private fun VerseRow(verse: ReaderVerse, onClick: () -> Unit) {
             .fillMaxWidth()
             .defaultMinSize(minHeight = MinTouchTarget)
             .clickable(onClick = onClick)
+            .then(if (isSpoken) Modifier.background(MannaColors.card) else Modifier)
             .clearAndSetSemantics { contentDescription = verseDescription }
             .padding(vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)

@@ -18,6 +18,10 @@ import com.manna.bible.data.repository.DefaultAnnotationRepository
 import com.manna.bible.data.repository.DefaultBibleContentRepository
 import com.manna.bible.data.repository.DefaultPendingDownloadRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
+import com.manna.bible.audio.AndroidSpeechEngine
+import com.manna.bible.domain.audio.DefaultTtsReader
+import com.manna.bible.domain.audio.SpeechEngine
+import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.canon.DefaultCanonEngine
 import com.manna.bible.domain.download.DownloadManager
@@ -141,4 +145,14 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindBookNameProvider(impl: DefaultBookNameProvider): BookNameProvider
+
+    // --- audio (offline TTS) -------------------------------------------------
+
+    @Binds
+    @Singleton
+    abstract fun bindTtsReader(impl: DefaultTtsReader): TtsReader
+
+    @Binds
+    @Singleton
+    abstract fun bindSpeechEngine(impl: AndroidSpeechEngine): SpeechEngine
 }
