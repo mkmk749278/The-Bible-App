@@ -94,6 +94,15 @@
     <string name="reader_chapter_number">Chapter %1$d</string>
     <string name="reader_audio_placeholder">Audio read-aloud is coming soon.</string>
 
+    <!-- Search -->
+    <string name="reader_search">Search</string>
+    <string name="search_title">Search</string>
+    <string name="search_back">Back</string>
+    <string name="search_hint">Search the Bible</string>
+    <string name="search_prompt">Type a word or phrase to search the active translation.</string>
+    <string name="search_no_results">No verses found for \"%1$s\".</string>
+    <string name="search_no_content">Download a translation first to search its text.</string>
+
     <!-- Translation catalog -->
     <string name="catalog_title">Translations</string>
     <string name="catalog_back">Back</string>

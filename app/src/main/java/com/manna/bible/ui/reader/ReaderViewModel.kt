@@ -252,6 +252,11 @@ class ReaderViewModel @Inject constructor(
         viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = 1) }
     }
 
+    /** Opens [osisId]/[chapter] and scrolls to [verse] (e.g. from search, Req 10.4). */
+    fun openAt(osisId: String, chapter: Int, verse: Int) {
+        viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = verse) }
+    }
+
     /** Advances to the next chapter in canon order, if one exists (Req 3.1). */
     fun nextChapter() {
         val state = _uiState.value

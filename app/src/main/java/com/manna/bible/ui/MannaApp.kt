@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.reader.ReaderScreen
+import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.setup.SetupHost
 
 /** Navigation routes for the app-level first-launch gate. */
@@ -21,7 +22,11 @@ private object Routes {
     const val SETUP = "setup"
     const val MAIN = "main"
     const val CATALOG = "catalog"
+    const val SEARCH = "search"
 }
+
+/** SavedStateHandle key for handing a search-selected reference back to the reader. */
+private const val SCROLL_REF_KEY = "scrollToRef"
 
 /**
  * Application navigation root and first-launch gate (Requirement 1).
@@ -66,14 +71,31 @@ fun MannaApp(
                         },
                     )
                 }
-                composable(Routes.MAIN) {
+                composable(Routes.MAIN) { backStackEntry ->
+                    val handle = backStackEntry.savedStateHandle
+                    val scrollRef by handle
+                        .getStateFlow<String?>(SCROLL_REF_KEY, null)
+                        .collectAsStateWithLifecycle()
                     ReaderScreen(
-                        onSwitchTranslation = { navController.navigate(Routes.CATALOG) }
+                        onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
+                        onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                        pendingScrollRef = scrollRef,
+                        onScrollRefConsumed = { handle[SCROLL_REF_KEY] = null }
                     )
                 }
                 composable(Routes.CATALOG) {
                     TranslationCatalogScreen(
                         onBack = { navController.popBackStack() }
+                    )
+                }
+                composable(Routes.SEARCH) {
+                    SearchScreen(
+                        onBack = { navController.popBackStack() },
+                        onResultSelected = { ref ->
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle?.set(SCROLL_REF_KEY, ref)
+                            navController.popBackStack()
+                        }
                     )
                 }
             }
