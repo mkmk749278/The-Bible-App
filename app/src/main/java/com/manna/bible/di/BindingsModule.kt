@@ -25,6 +25,8 @@ import com.manna.bible.domain.audio.DefaultTtsReader
 import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.canon.CanonEngine
+import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.daily.DefaultDailyVerseProvider
 import com.manna.bible.domain.canon.DefaultCanonEngine
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
@@ -162,4 +164,9 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindAttributionProvider(impl: DefaultAttributionProvider): AttributionProvider
+
+    // --- daily verse ---------------------------------------------------------
+
+    @Binds
+    abstract fun bindDailyVerseProvider(impl: DefaultDailyVerseProvider): DailyVerseProvider
 }

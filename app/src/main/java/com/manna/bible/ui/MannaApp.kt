@@ -14,6 +14,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.manna.bible.ui.attribution.AttributionScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
+import com.manna.bible.ui.daily.DailyVerseScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.setup.SetupHost
@@ -25,6 +26,7 @@ private object Routes {
     const val CATALOG = "catalog"
     const val SEARCH = "search"
     const val ATTRIBUTION = "attribution"
+    const val DAILY = "daily"
 }
 
 /** SavedStateHandle key for handing a search-selected reference back to the reader. */
@@ -82,6 +84,7 @@ fun MannaApp(
                         onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
                         onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
                         onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                        onOpenDaily = { navController.navigate(Routes.DAILY) },
                         pendingScrollRef = scrollRef,
                         onScrollRefConsumed = { handle[SCROLL_REF_KEY] = null }
                     )
@@ -94,6 +97,16 @@ fun MannaApp(
                 composable(Routes.ATTRIBUTION) {
                     AttributionScreen(
                         onBack = { navController.popBackStack() }
+                    )
+                }
+                composable(Routes.DAILY) {
+                    DailyVerseScreen(
+                        onBack = { navController.popBackStack() },
+                        onOpenVerse = { ref ->
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle?.set(SCROLL_REF_KEY, ref)
+                            navController.popBackStack()
+                        }
                     )
                 }
                 composable(Routes.SEARCH) {
