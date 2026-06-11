@@ -42,6 +42,7 @@ import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
 import com.manna.bible.ui.pastor.PastorModeScreen
 import com.manna.bible.ui.reader.ReaderScreen
+import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.setup.SetupHost
 
@@ -58,6 +59,7 @@ private object Routes {
     const val DAILY = "daily"
     const val CALENDAR = "calendar"
     const val PASTOR = "pastor"
+    const val REMINDER = "reminder"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -186,6 +188,9 @@ fun MannaApp(
                     composable(Routes.LIBRARY) {
                         TranslationCatalogScreen(
                             onBack = null,
+                            onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
+                                { navController.navigate(Routes.REMINDER) }
+                            } else null,
                             onOpenCalendar = if (FeatureFlags.JESUS_CALENDAR) {
                                 { navController.navigate(Routes.CALENDAR) }
                             } else null,
@@ -259,6 +264,11 @@ fun MannaApp(
                     }
                     composable(Routes.PASTOR) {
                         PastorModeScreen(
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(Routes.REMINDER) {
+                        ReminderSettingsScreen(
                             onBack = { navController.popBackStack() }
                         )
                     }

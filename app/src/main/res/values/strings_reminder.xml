@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Daily verse reminder -->
+    <string name="reminder_title">Daily reminder</string>
+    <string name="reminder_back">Back</string>
+    <string name="reminder_tool_entry">Daily reminder</string>
+    <string name="reminder_enable_label">Daily verse reminder</string>
+    <string name="reminder_time_label">Reminder time</string>
+    <string name="reminder_change_time">Change</string>
+    <string name="reminder_hint">We\'ll send a gentle daily notification. Tap it to open today\'s verse. No internet needed.</string>
+
+    <!-- Notification -->
+    <string name="reminder_channel_name">Daily verse</string>
+    <string name="reminder_channel_description">A gentle daily reminder to read your verse of the day.</string>
+    <string name="reminder_notification_title">Manna · Daily bread</string>
+    <string name="reminder_notification_text">Your verse of the day is ready.</string>
+</resources>
