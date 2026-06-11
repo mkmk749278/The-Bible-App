@@ -106,9 +106,9 @@
   - Immediately show bundled+downloaded; load remote when online via HelloAoRemoteDataSource; filter via TranslationFilter; download/cancel/delete with progress; switch active; offline + failure states with retry.
   - _Requirements: 4.3, 4.4, 4.5, 4.6, 5, 6, 11.2_
 
-- [ ] 12. Attribution / about
-- [ ] 12.1 Attribution surface
-  - Per-translation `Attribution_Notice` (WEB public-domain) accessible from reader; always-present Free Use Bible API (MIT) acknowledgement.
+- [x] 12. Attribution / about
+- [x] 12.1 Attribution surface
+  - Per-translation `Attribution_Notice` (WEB public-domain) accessible from the reader's overflow menu; always-present Free Use Bible API (MIT) acknowledgement. Pure-domain `AttributionProvider` derives the notice; `AttributionScreen`/`AttributionViewModel` render it.
   - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
 - [ ] 13. Accessibility pass

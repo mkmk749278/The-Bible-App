@@ -21,6 +21,8 @@ import com.manna.bible.domain.model.CanonType
  * @property isDownloaded Whether the edition is available offline.
  * @property isDefaultForCanon True if this is a recommended/default edition for its
  *   canon and language.
+ * @property isBundled True if this edition ships inside the app (the bundled,
+ *   public-domain World English Bible). Used for attribution (Req 12.2).
  *
  * Pure Kotlin — no Android dependencies.
  */
@@ -31,5 +33,6 @@ data class Translation(
     val canonType: CanonType,
     val hasDeuterocanon: Boolean,
     val isDownloaded: Boolean = false,
-    val isDefaultForCanon: Boolean = false
+    val isDefaultForCanon: Boolean = false,
+    val isBundled: Boolean = false
 )

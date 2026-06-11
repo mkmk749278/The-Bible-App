@@ -58,7 +58,8 @@ fun TranslationEntity.toDomain(): Translation = Translation(
     canonType = CanonType.fromId(canonType) ?: CanonType.PROTESTANT_66,
     hasDeuterocanon = hasDeuterocanon,
     isDownloaded = isDownloaded,
-    isDefaultForCanon = isDefaultForCanon
+    isDefaultForCanon = isDefaultForCanon,
+    isBundled = isBundled
 )
 
 /**
@@ -67,13 +68,13 @@ fun TranslationEntity.toDomain(): Translation = Translation(
  * @param sizeBytes download size metadata to retain on the entity; defaults to 0
  *   since the domain model does not track it.
  * @param isBundled whether the translation's content ships in the app; defaults
- *   to `false` since the domain model does not track it.
+ *   to the domain model's own [Translation.isBundled].
  * @param contentVersion stored content version; defaults to `0`.
  * @param verseCount number of stored verses; defaults to `0`.
  */
 fun Translation.toEntity(
     sizeBytes: Long = 0L,
-    isBundled: Boolean = false,
+    isBundled: Boolean = this.isBundled,
     contentVersion: Int = 0,
     verseCount: Int = 0
 ): TranslationEntity = TranslationEntity(

@@ -151,6 +151,18 @@
     <string name="annotation_save_note">Save note</string>
     <string name="annotation_close">Close</string>
 
+    <!-- Attribution & about -->
+    <string name="attribution_title">Attribution &amp; about</string>
+    <string name="attribution_back">Back</string>
+    <string name="attribution_active_translation">Active translation</string>
+    <string name="attribution_no_translation">No translation is selected yet.</string>
+    <string name="attribution_public_domain">%1$s is in the public domain. You are free to read, copy, and share it.</string>
+    <string name="attribution_source_provided">%1$s is provided through the Free Use Bible API under its source license.</string>
+    <string name="attribution_api_title">Scripture source</string>
+    <string name="attribution_api_body">Bible text is delivered by the Free Use Bible API (bible.helloao.org), which is MIT-licensed, key-less, and cleared for commercial use. Manna gratefully acknowledges this service.</string>
+    <string name="attribution_app_title">About Manna</string>
+    <string name="attribution_app_body">Manna — daily bread from heaven. Offline-first scripture for everyone, everywhere.</string>
+
     <!-- Reader: verse annotation indicators (accessibility) -->
     <string name="a11y_verse">Verse %1$d</string>
     <string name="a11y_has_highlight">highlighted</string>
