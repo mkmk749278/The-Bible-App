@@ -89,7 +89,8 @@ fun ReaderScreen(
     onOpenSearch: () -> Unit = {},
     onOpenDaily: () -> Unit = {},
     pendingScrollRef: String? = null,
-    onScrollRefConsumed: () -> Unit = {}
+    onScrollRefConsumed: () -> Unit = {},
+    autoPlayAudio: Boolean = false
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -101,6 +102,18 @@ fun ReaderScreen(
         val ref = com.manna.bible.domain.usecase.ReadingRef.parse(pendingScrollRef) ?: return@LaunchedEffect
         viewModel.openAt(ref.osisId, ref.chapter, ref.verse)
         onScrollRefConsumed()
+    }
+
+    // Continue Listening: start read-aloud once the chapter is on screen, exactly
+    // once per navigation (the flag survives configuration changes).
+    var autoPlayPending by androidx.compose.runtime.saveable.rememberSaveable {
+        mutableStateOf(autoPlayAudio)
+    }
+    androidx.compose.runtime.LaunchedEffect(autoPlayPending, state.isLoading, state.verses) {
+        if (autoPlayPending && !state.isLoading && state.verses.isNotEmpty()) {
+            autoPlayPending = false
+            if (!state.isAudioActive) viewModel.onAudioPlayPause()
+        }
     }
 
     // Render the reader right-to-left for RTL Bible languages (Req 14.4).

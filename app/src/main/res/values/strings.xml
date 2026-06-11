@@ -152,6 +152,21 @@
     <string name="annotation_save_note">Save note</string>
     <string name="annotation_close">Close</string>
 
+    <!-- Bottom navigation (UX directive: Home · Listen · Search · Library) -->
+    <string name="nav_home">Home</string>
+    <string name="nav_listen">Listen</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_library">Library</string>
+
+    <!-- Home experience -->
+    <string name="home_continue_reading">Continue reading</string>
+    <string name="home_start_reading">Start reading</string>
+    <string name="home_todays_verse">Today\'s verse</string>
+    <string name="home_continue_listening">Continue listening</string>
+    <string name="home_listen_from">Listen from %1$s</string>
+    <string name="home_listen_start">Listen to scripture read aloud</string>
+    <string name="listen_hint">Playback opens the reader, where each verse is highlighted as it is read aloud. Adjust speed and continuous play from the controls there.</string>
+
     <!-- Verse of the day -->
     <string name="daily_title">Verse of the day</string>
     <string name="daily_back">Back</string>
