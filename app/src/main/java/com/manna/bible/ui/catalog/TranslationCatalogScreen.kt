@@ -52,6 +52,8 @@ private val MinTouchTarget = 48.dp
  *
  * @param onBack returns to the reader. Pass null when the catalog is hosted as
  *   the Library tab and there is nothing to go back to.
+ * @param onOpenCalendar when non-null, shows a "Jesus Events Calendar" tool entry.
+ * @param onOpenPastorMode when non-null, shows a "Pastor Mode" tool entry.
  * @param onOpenAttribution when non-null, shows an "Attribution & about" entry
  *   below the catalog list (Library tab).
  */
@@ -61,6 +63,8 @@ fun TranslationCatalogScreen(
     modifier: Modifier = Modifier,
     viewModel: TranslationCatalogViewModel = hiltViewModel(),
     onBack: (() -> Unit)? = {},
+    onOpenCalendar: (() -> Unit)? = null,
+    onOpenPastorMode: (() -> Unit)? = null,
     onOpenAttribution: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -136,17 +140,28 @@ fun TranslationCatalogScreen(
                     }
                 }
             }
+            if (onOpenCalendar != null) {
+                ToolEntry(label = stringResource(R.string.calendar_tool_entry), onClick = onOpenCalendar)
+            }
+            if (onOpenPastorMode != null) {
+                ToolEntry(label = stringResource(R.string.pastor_title), onClick = onOpenPastorMode)
+            }
             if (onOpenAttribution != null) {
-                TextButton(
-                    onClick = onOpenAttribution,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .defaultMinSize(minHeight = MinTouchTarget)
-                ) { Text(stringResource(R.string.reader_attribution)) }
+                ToolEntry(label = stringResource(R.string.reader_attribution), onClick = onOpenAttribution)
             }
         }
     }
+}
+
+@Composable
+private fun ToolEntry(label: String, onClick: () -> Unit) {
+    TextButton(
+        onClick = onClick,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .defaultMinSize(minHeight = MinTouchTarget)
+    ) { Text(label) }
 }
 
 @Composable
