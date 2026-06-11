@@ -111,9 +111,9 @@
   - Per-translation `Attribution_Notice` (WEB public-domain) accessible from the reader's overflow menu; always-present Free Use Bible API (MIT) acknowledgement. Pure-domain `AttributionProvider` derives the notice; `AttributionScreen`/`AttributionViewModel` render it.
   - _Requirements: 12.1, 12.2, 12.3, 12.4_
 
-- [ ] 13. Accessibility pass
-- [ ] 13.1 Reader/search/catalog accessibility
-  - Scalable text to 200%, content descriptions, 48dp targets, RTL by script direction, Simplified audio-first hook.
+- [x] 13. Accessibility pass
+- [x] 13.1 Reader/search/catalog accessibility
+  - Scalable `sp` text (responds to system font scale), content descriptions, and 48dp targets are in place across reader/search/catalog/attribution. Added RTL layout by script direction (`ScriptDirection` + `LocalLayoutDirection` in the reader, Req 14.4) and a Simplified Mode hook (preference + enlarged reader text, Req 14.5).
   - _Requirements: 14.1–14.5_
 
 - [ ] 14. Wiring, migration, and CI

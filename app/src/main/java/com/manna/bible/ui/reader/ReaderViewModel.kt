@@ -15,6 +15,7 @@ import com.manna.bible.domain.model.Bookmark
 import com.manna.bible.domain.model.Highlight
 import com.manna.bible.domain.model.Note
 import com.manna.bible.domain.reader.PsalmDisplay
+import com.manna.bible.domain.reader.ScriptDirection
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.BookSummary
@@ -101,7 +102,12 @@ data class ReaderUiState(
     /** When true, read-aloud continues into the next chapter at chapter end (Req 9.7). */
     val continuousPlay: Boolean = false,
     /** True when no on-device voice matched the Bible language; default voice is used (Req 9.6). */
-    val audioVoiceUnavailable: Boolean = false
+    val audioVoiceUnavailable: Boolean = false,
+    // --- accessibility (Req 14) ---------------------------------------------
+    /** True when the active Bible language uses a right-to-left script (Req 14.4). */
+    val isRtl: Boolean = false,
+    /** True when Simplified Mode (audio-first, enlarged controls) is enabled (Req 14.5). */
+    val simplifiedMode: Boolean = false
 ) {
     /** True when audio is playing or paused — the audio bar shows stop/resume controls. */
     val isAudioActive: Boolean get() = isAudioPlaying || isAudioPaused
@@ -193,6 +199,11 @@ class ReaderViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
+            preferencesStore.simplifiedMode.collect { enabled ->
+                _uiState.value = _uiState.value.copy(simplifiedMode = enabled)
+            }
+        }
+        viewModelScope.launch {
             ttsReader.completionEvents.collect {
                 if (_uiState.value.continuousPlay && loadNextChapter()) {
                     startAudio()
@@ -245,7 +256,8 @@ class ReaderViewModel @Inject constructor(
                     val resolvedTranslation = resolveActiveTranslation(translationId)
                     _uiState.value = _uiState.value.copy(
                         profile = profile,
-                        activeTranslationId = resolvedTranslation
+                        activeTranslationId = resolvedTranslation,
+                        isRtl = ScriptDirection.isRightToLeft(language)
                     )
                     loadInitial(profile, resolvedTranslation)
                 }
