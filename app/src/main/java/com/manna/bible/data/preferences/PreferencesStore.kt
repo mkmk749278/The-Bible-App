@@ -60,6 +60,16 @@ interface PreferencesStore {
 
     /** Persists the audio continuous-play preference (Req 9.7). */
     suspend fun setContinuousPlay(value: Boolean) {}
+
+    /**
+     * Emits the Simplified Mode (Elder / Oral Bible) preference: an audio-first
+     * presentation with enlarged controls (Req 14.5). Defaults to false.
+     */
+    val simplifiedMode: Flow<Boolean>
+        get() = flowOf(false)
+
+    /** Persists the Simplified Mode preference (Req 14.5). */
+    suspend fun setSimplifiedMode(value: Boolean) {}
 }
 
 /**
@@ -85,6 +95,7 @@ class DataStorePreferencesStore @Inject constructor(
         val SHOW_DEUTEROCANONICAL = booleanPreferencesKey(SetupPreferencesMapper.Keys.SHOW_DEUTEROCANONICAL)
         val LAST_READ_POSITION = stringPreferencesKey(SetupPreferencesMapper.Keys.LAST_READ_POSITION)
         val CONTINUOUS_PLAY = booleanPreferencesKey("continuous_play")
+        val SIMPLIFIED_MODE = booleanPreferencesKey("simplified_mode")
     }
 
     override val setupState: Flow<SetupState> =
@@ -95,6 +106,9 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val continuousPlay: Flow<Boolean> =
         dataStore.data.map { prefs -> prefs[Keys.CONTINUOUS_PLAY] ?: false }
+
+    override val simplifiedMode: Flow<Boolean> =
+        dataStore.data.map { prefs -> prefs[Keys.SIMPLIFIED_MODE] ?: false }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -140,6 +154,10 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setContinuousPlay(value: Boolean) {
         dataStore.edit { prefs -> prefs[Keys.CONTINUOUS_PLAY] = value }
+    }
+
+    override suspend fun setSimplifiedMode(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.SIMPLIFIED_MODE] = value }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {

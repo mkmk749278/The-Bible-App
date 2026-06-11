@@ -225,6 +225,28 @@ class ReaderViewModelTest {
         }
     }
 
+    @Test
+    @DisplayName("an RTL Bible language renders the reader right-to-left (Req 14.4)")
+    fun rtlLanguageSetsRtlState() = runTest {
+        val vm = viewModel(prefs = FakePreferencesStore(bibleLanguage = "ur"))
+        vm.uiState.test {
+            advanceUntilIdle()
+            assertTrue(expectMostRecentItem().isRtl)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("an LTR Bible language keeps the reader left-to-right (Req 14.4)")
+    fun ltrLanguageKeepsLtrState() = runTest {
+        val vm = viewModel(prefs = FakePreferencesStore(bibleLanguage = "en"))
+        vm.uiState.test {
+            advanceUntilIdle()
+            assertFalse(expectMostRecentItem().isRtl)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     // --- fakes ---------------------------------------------------------------
 
     private fun protestantContent() = FakeBibleContentRepository(
@@ -296,7 +318,8 @@ class ReaderViewModelTest {
     private class FakePreferencesStore(
         lastRead: String? = null,
         denomination: Denomination = Denomination.PROTESTANT_OTHER,
-        continuousPlay: Boolean = false
+        continuousPlay: Boolean = false,
+        bibleLanguage: String = "en"
     ) : PreferencesStore {
         private val continuousPlayFlow = MutableStateFlow(continuousPlay)
         private val state = MutableStateFlow(
@@ -304,7 +327,7 @@ class ReaderViewModelTest {
                 denomination = denomination,
                 canonType = CanonType.PROTESTANT_66,
                 uiLanguage = "en",
-                bibleLanguage = "en",
+                bibleLanguage = bibleLanguage,
                 numberingScheme = NumberingScheme.MASORETIC,
                 namingConventionId = null,
                 bibleTranslationId = "web",

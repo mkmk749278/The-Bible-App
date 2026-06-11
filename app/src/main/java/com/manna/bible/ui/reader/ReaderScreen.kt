@@ -41,12 +41,15 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -99,6 +102,9 @@ fun ReaderScreen(
         onScrollRefConsumed()
     }
 
+    // Render the reader right-to-left for RTL Bible languages (Req 14.4).
+    val layoutDirection = if (state.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
+    CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -179,6 +185,7 @@ fun ReaderScreen(
             onRemoveNote = { viewModel.removeNotes(selected) },
             onDismiss = { viewModel.selectVerse(null) }
         )
+    }
     }
 }
 
@@ -507,6 +514,7 @@ private fun VerseList(
             VerseRow(
                 verse = verse,
                 isSpoken = verse.verse == state.audioVerse,
+                enlarged = state.simplifiedMode,
                 onClick = { onVerseClick(verse.verse) }
             )
         }
@@ -514,7 +522,12 @@ private fun VerseList(
 }
 
 @Composable
-private fun VerseRow(verse: ReaderVerse, isSpoken: Boolean, onClick: () -> Unit) {
+private fun VerseRow(
+    verse: ReaderVerse,
+    isSpoken: Boolean,
+    enlarged: Boolean,
+    onClick: () -> Unit
+) {
     val verseDescription = buildString {
         append(stringResource(R.string.a11y_verse, verse.displayNumber ?: verse.verse))
         append(". ")
@@ -537,16 +550,16 @@ private fun VerseRow(verse: ReaderVerse, isSpoken: Boolean, onClick: () -> Unit)
             text = (verse.displayNumber ?: verse.verse).toString(),
             color = MannaColors.gold,
             fontWeight = FontWeight.Bold,
-            fontSize = 13.sp,
+            fontSize = if (enlarged) 16.sp else 13.sp,
             modifier = Modifier
-                .width(28.dp)
+                .width(if (enlarged) 36.dp else 28.dp)
                 .padding(top = 3.dp)
         )
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = verse.text,
-                fontSize = 18.sp,
-                lineHeight = 28.sp
+                fontSize = if (enlarged) 24.sp else 18.sp,
+                lineHeight = if (enlarged) 36.sp else 28.sp
             )
             if (verse.hasHighlight || verse.hasBookmark || verse.hasNote) {
                 Spacer(Modifier.height(4.dp))
