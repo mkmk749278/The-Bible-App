@@ -12,6 +12,7 @@ import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.SetupState
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -49,6 +50,16 @@ interface PreferencesStore {
 
     /** Persists the last-read `Reading_Position` as a canonical `OSIS.CHAPTER.VERSE` string (Req 7.1). */
     suspend fun setLastReadPosition(ref: String)
+
+    /**
+     * Emits the audio continuous-play preference: when true, read-aloud advances to
+     * the next chapter at a chapter's natural end (Req 9.7). Defaults to false.
+     */
+    val continuousPlay: Flow<Boolean>
+        get() = flowOf(false)
+
+    /** Persists the audio continuous-play preference (Req 9.7). */
+    suspend fun setContinuousPlay(value: Boolean) {}
 }
 
 /**
@@ -73,6 +84,7 @@ class DataStorePreferencesStore @Inject constructor(
         val SETUP_COMPLETED = booleanPreferencesKey(SetupPreferencesMapper.Keys.SETUP_COMPLETED)
         val SHOW_DEUTEROCANONICAL = booleanPreferencesKey(SetupPreferencesMapper.Keys.SHOW_DEUTEROCANONICAL)
         val LAST_READ_POSITION = stringPreferencesKey(SetupPreferencesMapper.Keys.LAST_READ_POSITION)
+        val CONTINUOUS_PLAY = booleanPreferencesKey("continuous_play")
     }
 
     override val setupState: Flow<SetupState> =
@@ -80,6 +92,9 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val lastReadPosition: Flow<String?> =
         dataStore.data.map { prefs -> prefs[Keys.LAST_READ_POSITION] }
+
+    override val continuousPlay: Flow<Boolean> =
+        dataStore.data.map { prefs -> prefs[Keys.CONTINUOUS_PLAY] ?: false }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -121,6 +136,10 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setLastReadPosition(ref: String) {
         dataStore.edit { prefs -> prefs[Keys.LAST_READ_POSITION] = ref }
+    }
+
+    override suspend fun setContinuousPlay(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.CONTINUOUS_PLAY] = value }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {

@@ -82,15 +82,15 @@
   - Route the post-setup destination to ReaderScreen, opening at restored position.
   - _Requirements: 2, 7_
 
-- [ ] 9. Audio (offline TTS)
-- [ ] 9.1 Define TtsReader + NarratedAudioProvider; implement AndroidTtsReader
-  - Android TextToSpeech wrapper; per-verse utterance ids → current verse index; play/pause/stop/speed(0.5–2.0); language voice resolution + graceful fallback; continuous-play at natural chapter end only.
+- [x] 9. Audio (offline TTS)
+- [x] 9.1 Define TtsReader + NarratedAudioProvider; implement AndroidTtsReader
+  - Android TextToSpeech wrapper (`AndroidSpeechEngine`) behind a `SpeechEngine` seam; per-verse utterance ids → current verse index; play/pause/stop/speed(0.5–2.0); language voice resolution + graceful fallback; continuous-play at natural chapter end only. Verse-advance logic lives in pure-Kotlin `DefaultTtsReader`.
   - _Requirements: 9.1–9.8_
-- [ ] 9.2 Audio bar in ReaderScreen
-  - Controls + current-verse highlight wired to TtsReader state.
+- [x] 9.2 Audio bar in ReaderScreen
+  - Controls (play/pause/stop, speed, continuous-play) + current-verse highlight and auto-scroll wired to TtsReader state.
   - _Requirements: 9.2, 9.3, 9.4_
-- [ ]* 9.3 TTS verse-advance tests
-  - Advance logic behind a faked TextToSpeech wrapper; fallback path.
+- [x]* 9.3 TTS verse-advance tests
+  - Advance logic behind a faked TextToSpeech wrapper; fallback path (`DefaultTtsReaderTest`).
   - _Requirements: 9.2, 9.6_
 
 - [ ] 10. Search

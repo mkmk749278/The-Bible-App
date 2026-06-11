@@ -12,6 +12,10 @@ import com.manna.bible.domain.model.Highlight
 import com.manna.bible.domain.model.Note
 import com.manna.bible.domain.model.NumberingScheme
 import com.manna.bible.domain.model.SetupState
+import com.manna.bible.domain.audio.TtsReader
+import com.manna.bible.domain.audio.TtsState
+import com.manna.bible.domain.audio.TtsStatus
+import com.manna.bible.domain.audio.TtsVerse
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.download.DownloadOutcome
 import com.manna.bible.domain.download.DownloadProgress
@@ -32,7 +36,10 @@ import com.manna.bible.domain.usecase.SaveReadingPositionUseCase
 import com.manna.bible.domain.usecase.SetActiveTranslationUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -73,7 +80,8 @@ class ReaderViewModelTest {
         denomination: Denomination = Denomination.PROTESTANT_OTHER,
         content: FakeBibleContentRepository = protestantContent(),
         prefs: FakePreferencesStore = FakePreferencesStore(),
-        annotations: FakeAnnotationRepository = FakeAnnotationRepository()
+        annotations: FakeAnnotationRepository = FakeAnnotationRepository(),
+        ttsReader: FakeTtsReader = FakeTtsReader()
     ): ReaderViewModel {
         val getChapter = GetChapterUseCase(content)
         return ReaderViewModel(
@@ -87,7 +95,8 @@ class ReaderViewModelTest {
             annotationRepository = annotations,
             bibleContentRepository = content,
             translationRepository = FakeTranslationRepository(),
-            downloadManager = FakeDownloadManager()
+            downloadManager = FakeDownloadManager(),
+            ttsReader = ttsReader
         )
     }
 
@@ -170,6 +179,52 @@ class ReaderViewModelTest {
         }
     }
 
+    @Test
+    @DisplayName("onAudioPlayPause starts read-aloud for the open chapter and reflects engine state (Req 9.1, 9.2)")
+    fun audioPlayStartsAndReflectsState() = runTest {
+        val tts = FakeTtsReader()
+        val vm = viewModel(ttsReader = tts)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            assertFalse(expectMostRecentItem().isAudioPlaying)
+
+            vm.onAudioPlayPause()
+            advanceUntilIdle()
+
+            // The whole chapter is queued, starting at the first verse.
+            assertEquals(listOf("In the beginning", "And the earth"), tts.lastVerses.map { it.text })
+            val state = expectMostRecentItem()
+            assertTrue(state.isAudioPlaying)
+            assertEquals(1, state.audioVerse)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("continuous play advances to the next chapter at chapter end (Req 9.7)")
+    fun continuousPlayAdvancesChapter() = runTest {
+        val tts = FakeTtsReader()
+        val prefs = FakePreferencesStore(continuousPlay = true)
+        val vm = viewModel(prefs = prefs, ttsReader = tts)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            vm.onAudioPlayPause()
+            advanceUntilIdle()
+            assertEquals(1, expectMostRecentItem().chapter)
+
+            tts.completeChapter()
+            advanceUntilIdle()
+
+            // Reader moved to GEN 2 and restarted audio there.
+            val state = expectMostRecentItem()
+            assertEquals(2, state.chapter)
+            assertEquals(listOf("Thus the heavens"), tts.lastVerses.map { it.text })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
     // --- fakes ---------------------------------------------------------------
 
     private fun protestantContent() = FakeBibleContentRepository(
@@ -240,8 +295,10 @@ class ReaderViewModelTest {
 
     private class FakePreferencesStore(
         lastRead: String? = null,
-        denomination: Denomination = Denomination.PROTESTANT_OTHER
+        denomination: Denomination = Denomination.PROTESTANT_OTHER,
+        continuousPlay: Boolean = false
     ) : PreferencesStore {
+        private val continuousPlayFlow = MutableStateFlow(continuousPlay)
         private val state = MutableStateFlow(
             SetupState(
                 denomination = denomination,
@@ -262,6 +319,7 @@ class ReaderViewModelTest {
 
         override val setupState: Flow<SetupState> = state
         override val lastReadPosition: Flow<String?> = lastReadFlow
+        override val continuousPlay: Flow<Boolean> = continuousPlayFlow
 
         override suspend fun saveSetup(state: SetupState) { this.state.value = state }
         override suspend fun setSetupCompleted(value: Boolean) {}
@@ -273,6 +331,9 @@ class ReaderViewModelTest {
         override suspend fun setLastReadPosition(ref: String) {
             lastSaved = ref
             lastReadFlow.value = ref
+        }
+        override suspend fun setContinuousPlay(value: Boolean) {
+            continuousPlayFlow.value = value
         }
     }
 
@@ -345,5 +406,48 @@ class ReaderViewModelTest {
         override suspend fun cancel(translationId: String) {}
         override suspend fun delete(translationId: String) {}
         override suspend fun retryPending() {}
+    }
+
+    /** In-memory [TtsReader] that records the queued verses and drives state directly. */
+    private class FakeTtsReader : TtsReader {
+        private val _state = MutableStateFlow(TtsState())
+        override val state: StateFlow<TtsState> get() = _state
+        private val _completions = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        override val completionEvents: Flow<Unit> = _completions.asSharedFlow()
+
+        var lastVerses: List<TtsVerse> = emptyList()
+            private set
+
+        override fun play(verses: List<TtsVerse>, languageTag: String?) {
+            lastVerses = verses
+            _state.value = TtsState(
+                status = TtsStatus.PLAYING,
+                currentVerse = verses.firstOrNull()?.verse
+            )
+        }
+
+        override fun pause() {
+            _state.value = _state.value.copy(status = TtsStatus.PAUSED)
+        }
+
+        override fun resume() {
+            _state.value = _state.value.copy(status = TtsStatus.PLAYING)
+        }
+
+        override fun stop() {
+            _state.value = TtsState(status = TtsStatus.IDLE, currentVerse = null)
+        }
+
+        override fun setSpeed(speed: Float) {
+            _state.value = _state.value.copy(speed = speed)
+        }
+
+        override fun shutdown() {}
+
+        /** Simulates reaching the natural end of the queued chapter. */
+        fun completeChapter() {
+            _state.value = TtsState(status = TtsStatus.IDLE, currentVerse = null)
+            _completions.tryEmit(Unit)
+        }
     }
 }

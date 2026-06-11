@@ -92,7 +92,17 @@
     <string name="reader_book_picker_title">Choose a book</string>
     <string name="reader_chapter_picker_title">%1$s — choose a chapter</string>
     <string name="reader_chapter_number">Chapter %1$d</string>
-    <string name="reader_audio_placeholder">Audio read-aloud is coming soon.</string>
+
+    <!-- Reader: audio read-aloud (offline TTS) -->
+    <string name="reader_audio_play">Read aloud</string>
+    <string name="reader_audio_pause">Pause</string>
+    <string name="reader_audio_resume">Resume</string>
+    <string name="reader_audio_stop">Stop</string>
+    <string name="reader_audio_speed">%1$s×</string>
+    <string name="reader_audio_speed_label">Playback speed, %1$s times</string>
+    <string name="reader_audio_continuous">Continuous play</string>
+    <string name="reader_audio_continuous_toggle">Continuous play, %1$s</string>
+    <string name="reader_audio_voice_unavailable">No offline voice for this language yet — using the device default. Install a voice in your system settings for the best results.</string>
 
     <!-- Search -->
     <string name="reader_search">Search</string>

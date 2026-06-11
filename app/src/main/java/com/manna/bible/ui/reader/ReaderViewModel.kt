@@ -3,6 +3,9 @@ package com.manna.bible.ui.reader
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
+import com.manna.bible.domain.audio.TtsReader
+import com.manna.bible.domain.audio.TtsStatus
+import com.manna.bible.domain.audio.TtsVerse
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.download.DownloadOutcome
@@ -85,8 +88,24 @@ data class ReaderUiState(
     /** Verse the reader currently has open in the annotation sheet, if any (Req 8.1). */
     val selectedVerse: Int? = null,
     /** A one-shot scroll target consumed by the screen, then cleared (Req 3.6, 10.4). */
-    val scrollToVerse: Int? = null
-)
+    val scrollToVerse: Int? = null,
+    // --- audio read-aloud (Req 9) -------------------------------------------
+    /** True while a chapter is being read aloud (Req 9.1, 9.3). */
+    val isAudioPlaying: Boolean = false,
+    /** True while read-aloud is paused on the current verse (Req 9.3). */
+    val isAudioPaused: Boolean = false,
+    /** Canonical verse number currently being read aloud, or null (Req 9.2). */
+    val audioVerse: Int? = null,
+    /** Active read-aloud speed in 0.5x..2.0x (Req 9.4). */
+    val ttsSpeed: Float = TtsReader.DEFAULT_SPEED,
+    /** When true, read-aloud continues into the next chapter at chapter end (Req 9.7). */
+    val continuousPlay: Boolean = false,
+    /** True when no on-device voice matched the Bible language; default voice is used (Req 9.6). */
+    val audioVoiceUnavailable: Boolean = false
+) {
+    /** True when audio is playing or paused — the audio bar shows stop/resume controls. */
+    val isAudioActive: Boolean get() = isAudioPlaying || isAudioPaused
+}
 
 /**
  * Drives the offline `Reader_Screen` (Requirements 2, 3, 7, 8, 13.3).
@@ -114,7 +133,8 @@ class ReaderViewModel @Inject constructor(
     private val annotationRepository: AnnotationRepository,
     private val bibleContentRepository: BibleContentRepository,
     private val translationRepository: TranslationRepository,
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val ttsReader: TtsReader
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReaderUiState())
@@ -125,10 +145,14 @@ class ReaderViewModel @Inject constructor(
     private var bookmarks: List<Bookmark> = emptyList()
     private var notes: List<Note> = emptyList()
 
+    // BCP-47 language tag of the active Bible text, used to pick a TTS voice (Req 9.5).
+    private var bibleLanguageTag: String? = null
+
     init {
         observeSetup()
         observeAnnotations()
         observeDownloadProgress()
+        observeAudio()
     }
 
     /** Mirrors the active download's progress into [ReaderUiState.downloadProgress]. */
@@ -139,6 +163,40 @@ class ReaderViewModel @Inject constructor(
                     ?.takeIf { it.totalChapters > 0 }
                     ?.let { it.completedChapters.toFloat() / it.totalChapters }
                 _uiState.value = _uiState.value.copy(downloadProgress = fraction)
+            }
+        }
+    }
+
+    /**
+     * Mirrors the read-aloud engine into the UI state and drives continuous play.
+     *
+     * Three streams feed the audio bar: the engine's [TtsReader.state] (playing
+     * verse, speed, voice availability), the persisted continuous-play preference,
+     * and [TtsReader.completionEvents] which, at a chapter's natural end, advances to
+     * the next chapter and keeps reading when continuous play is enabled (Req 9.7).
+     */
+    private fun observeAudio() {
+        viewModelScope.launch {
+            ttsReader.state.collect { tts ->
+                _uiState.value = _uiState.value.copy(
+                    isAudioPlaying = tts.status == TtsStatus.PLAYING,
+                    isAudioPaused = tts.status == TtsStatus.PAUSED,
+                    audioVerse = tts.currentVerse,
+                    ttsSpeed = tts.speed,
+                    audioVoiceUnavailable = tts.voiceUnavailable
+                )
+            }
+        }
+        viewModelScope.launch {
+            preferencesStore.continuousPlay.collect { enabled ->
+                _uiState.value = _uiState.value.copy(continuousPlay = enabled)
+            }
+        }
+        viewModelScope.launch {
+            ttsReader.completionEvents.collect {
+                if (_uiState.value.continuousPlay && loadNextChapter()) {
+                    startAudio()
+                }
             }
         }
     }
@@ -182,6 +240,7 @@ class ReaderViewModel @Inject constructor(
                 }
                 .distinctUntilChanged()
                 .collect { (denomination, language, translationId) ->
+                    bibleLanguageTag = language
                     val profile = canonEngine.profileFor(denomination, language)
                     val resolvedTranslation = resolveActiveTranslation(translationId)
                     _uiState.value = _uiState.value.copy(
@@ -249,29 +308,42 @@ class ReaderViewModel @Inject constructor(
 
     /** Opens an explicit book+chapter (e.g. from the picker, Req 3.6). */
     fun openChapter(osisId: String, chapter: Int) {
+        stopAudio()
         viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = 1) }
     }
 
     /** Opens [osisId]/[chapter] and scrolls to [verse] (e.g. from search, Req 10.4). */
     fun openAt(osisId: String, chapter: Int, verse: Int) {
+        stopAudio()
         viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = verse) }
     }
 
     /** Advances to the next chapter in canon order, if one exists (Req 3.1). */
     fun nextChapter() {
+        stopAudio()
+        viewModelScope.launch { loadNextChapter() }
+    }
+
+    /**
+     * Loads the next canon-ordered chapter in place, returning false at the canon's
+     * end. Used both by manual navigation and continuous-play advance (Req 3.1, 9.7).
+     */
+    private suspend fun loadNextChapter(): Boolean {
         val state = _uiState.value
-        val profile = state.profile ?: return
-        val osisId = state.osisId ?: return
+        val profile = state.profile ?: return false
+        val osisId = state.osisId ?: return false
         val next = navigateChapterUseCase.next(
             profile,
             ReadingRef(osisId, state.chapter),
             state.books
-        ) ?: return
-        viewModelScope.launch { loadChapter(next.osisId, next.chapter, targetVerse = 1) }
+        ) ?: return false
+        loadChapter(next.osisId, next.chapter, targetVerse = 1)
+        return true
     }
 
     /** Moves to the previous chapter in canon order, if one exists (Req 3.2). */
     fun previousChapter() {
+        stopAudio()
         val state = _uiState.value
         val profile = state.profile ?: return
         val osisId = state.osisId ?: return
@@ -311,7 +383,49 @@ class ReaderViewModel @Inject constructor(
 
     /** Sets and persists the active translation; the setup observer re-renders (Req 6.1, 6.2). */
     fun setActiveTranslation(translationId: String) {
+        stopAudio()
         viewModelScope.launch { setActiveTranslationUseCase(translationId) }
+    }
+
+    // --- audio read-aloud (Req 9) -------------------------------------------
+
+    /**
+     * Play/pause/resume toggle for the audio bar (Req 9.1, 9.3): starts read-aloud
+     * from the top of the current chapter when idle, pauses when playing, and
+     * resumes the current verse when paused.
+     */
+    fun onAudioPlayPause() {
+        val state = _uiState.value
+        when {
+            state.isAudioPlaying -> ttsReader.pause()
+            state.isAudioPaused -> ttsReader.resume()
+            else -> startAudio()
+        }
+    }
+
+    /** Stops read-aloud and clears the spoken-verse indicator (Req 9.3). */
+    fun stopAudio() {
+        ttsReader.stop()
+    }
+
+    /** Sets the read-aloud speed; the engine clamps to 0.5x..2.0x (Req 9.4). */
+    fun setAudioSpeed(speed: Float) {
+        ttsReader.setSpeed(speed)
+    }
+
+    /** Persists the continuous-play preference used at chapter end (Req 9.7). */
+    fun setContinuousPlay(enabled: Boolean) {
+        viewModelScope.launch { preferencesStore.setContinuousPlay(enabled) }
+    }
+
+    /** Begins reading the current chapter's verses aloud in the Bible language (Req 9.1, 9.5). */
+    private fun startAudio() {
+        val verses = _uiState.value.verses
+        if (verses.isEmpty()) return
+        ttsReader.play(
+            verses.map { TtsVerse(it.verse, it.text) },
+            bibleLanguageTag
+        )
     }
 
     // --- annotation interactions (Req 8.1, 8.2, 8.4) -------------------------
