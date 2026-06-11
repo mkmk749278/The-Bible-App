@@ -28,7 +28,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.attribution.TranslationLicense
-import com.manna.bible.ui.theme.MannaColors
+import com.manna.bible.ui.theme.MannaTheme
 
 private val MinTouchTarget = 48.dp
 
@@ -115,7 +115,7 @@ private fun activeTranslationNotice(name: String?, license: TranslationLicense?)
 @Composable
 private fun AttributionSection(title: String, body: String) {
     Surface(
-        color = MannaColors.card,
+        color = MannaTheme.colors.card,
         modifier = Modifier.fillMaxWidth()
     ) {
         Column(
@@ -127,13 +127,13 @@ private fun AttributionSection(title: String, body: String) {
             Text(
                 text = title,
                 style = MaterialTheme.typography.titleMedium,
-                color = MannaColors.gold,
+                color = MannaTheme.colors.gold,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = body,
                 style = MaterialTheme.typography.bodyMedium,
-                color = MannaColors.cream
+                color = MannaTheme.colors.ink
             )
         }
     }

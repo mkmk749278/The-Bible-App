@@ -62,7 +62,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.reader.CanonBookOrdering
-import com.manna.bible.ui.theme.MannaColors
+import com.manna.bible.ui.theme.MannaTheme
 
 private val MinTouchTarget = 48.dp
 
@@ -287,7 +287,7 @@ private fun ReaderBottomBar(
                 Text(
                     text = stringResource(R.string.reader_audio_voice_unavailable),
                     style = androidx.compose.material3.MaterialTheme.typography.labelSmall,
-                    color = MannaColors.orange,
+                    color = MannaTheme.colors.orange,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -411,7 +411,7 @@ private fun AudioBar(
         ) {
             Text(
                 text = stringResource(R.string.reader_audio_speed, formatSpeed(speed)),
-                color = MannaColors.gold,
+                color = MannaTheme.colors.gold,
                 fontWeight = FontWeight.Bold
             )
         }
@@ -424,7 +424,7 @@ private fun AudioBar(
         ) {
             Text(
                 text = stringResource(R.string.reader_audio_continuous),
-                color = if (continuousPlay) MannaColors.gold else MannaColors.soft,
+                color = if (continuousPlay) MannaTheme.colors.gold else MannaTheme.colors.soft,
                 fontWeight = if (continuousPlay) FontWeight.Bold else FontWeight.Normal
             )
         }
@@ -551,14 +551,14 @@ private fun VerseRow(
             .fillMaxWidth()
             .defaultMinSize(minHeight = MinTouchTarget)
             .clickable(onClick = onClick)
-            .then(if (isSpoken) Modifier.background(MannaColors.card) else Modifier)
+            .then(if (isSpoken) Modifier.background(MannaTheme.colors.card) else Modifier)
             .clearAndSetSemantics { contentDescription = verseDescription }
             .padding(vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
             text = (verse.displayNumber ?: verse.verse).toString(),
-            color = MannaColors.gold,
+            color = MannaTheme.colors.gold,
             fontWeight = FontWeight.Bold,
             fontSize = if (enlarged) 16.sp else 13.sp,
             modifier = Modifier
@@ -575,13 +575,13 @@ private fun VerseRow(
                 Spacer(Modifier.height(4.dp))
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     if (verse.hasHighlight) {
-                        IndicatorDot(MannaColors.gold)
+                        IndicatorDot(MannaTheme.colors.gold)
                     }
                     if (verse.hasBookmark) {
-                        IndicatorDot(MannaColors.lavender)
+                        IndicatorDot(MannaTheme.colors.lavender)
                     }
                     if (verse.hasNote) {
-                        IndicatorDot(MannaColors.sage)
+                        IndicatorDot(MannaTheme.colors.sage)
                     }
                 }
             }
@@ -621,7 +621,7 @@ private fun DownloadingState(contentPadding: PaddingValues, progress: Float?) {
                     R.string.reader_download_percent,
                     (progress.coerceIn(0f, 1f) * 100).toInt()
                 ),
-                color = MannaColors.gold,
+                color = MannaTheme.colors.gold,
                 fontWeight = FontWeight.Bold
             )
         } else {
@@ -638,7 +638,7 @@ private fun DownloadingState(contentPadding: PaddingValues, progress: Float?) {
         Text(
             text = stringResource(R.string.reader_downloading_message),
             textAlign = TextAlign.Center,
-            color = MannaColors.soft
+            color = MannaTheme.colors.soft
         )
     }
 }
@@ -669,7 +669,7 @@ private fun CenteredMessage(
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(8.dp))
-        Text(text = message, textAlign = TextAlign.Center, color = MannaColors.soft)
+        Text(text = message, textAlign = TextAlign.Center, color = MannaTheme.colors.soft)
         Spacer(Modifier.height(24.dp))
         Button(
             onClick = onPrimary,

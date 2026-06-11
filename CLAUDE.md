@@ -345,27 +345,25 @@ a11y: increase touch target size for Elder Mode buttons
 
 ### Color Tokens
 
-All colors are defined as a central token object. Do not use hardcoded hex values in screens.
+All colors are defined as a role-based palette with light and dark instances. Do not use hardcoded hex values in screens — read the active palette via `MannaTheme.colors.<token>` (see `ui/theme/Color.kt` and `ui/theme/Theme.kt`).
 
 ```kotlin
-// ui/theme/MannaColors.kt
-object MannaColors {
-    val bg = Color(0xFF080C14)
-    val surface = Color(0xFF0D1420)
-    val card = Color(0xFF111C2C)
-    val border = Color(0xFF1A2A40)
-    val gold = Color(0xFFC9952A)
-    val goldDim = Color(0xFF7A5810)
-    val cream = Color(0xFFEDE3C8)
-    val muted = Color(0xFF4A6A80)
-    val soft = Color(0xFF7A9AB0)
-    val lavender = Color(0xFF8B7EC8)
-    val sage = Color(0xFF4A8A6A)
-    val red = Color(0xFFC0453A)
-    val cyan = Color(0xFF2A9AB0)
-    val orange = Color(0xFFC07030)
-}
+// ui/theme/Color.kt — role-based tokens, two palettes
+data class MannaPalette(
+    bg, surface, card, border,        // structure
+    gold, goldDim,                    // sacred accent
+    ink, muted, soft,                 // text (primary / tertiary / secondary)
+    lavender, sage, red, cyan, orange // semantic accents
+)
+
+// Default: LightMannaPalette — "morning sunlight entering a church"
+//   warm white bg (#FAF7EF), soft cream surfaces, deep navy ink (#1F2D3D),
+//   muted gold (#8A671C), sage (#3F7A5C)
+// Dark-mode variant: DarkMannaPalette — near-black navy bg (#080C14),
+//   gold (#C9952A), cream ink (#EDE3C8)
 ```
+
+Text-role tokens (`gold`, `soft`, `ink`) must meet a 4.5:1 contrast ratio against `bg` and `card` in both palettes.
 
 ### Typography
 
@@ -375,11 +373,22 @@ object MannaColors {
 
 ### Design Principles
 
-1. **Dark by default** — the app opens in dark mode. Light mode is available but not the focus.
-2. **Gold as the sacred accent** — gold (#C9952A) is the primary accent. It conveys reverence without being ostentatious.
-3. **Generous whitespace** — Bible text needs room to breathe. Never crowd the reading view.
+Per the **UX Master Design Directive**, Manna is a spiritual companion, not a productivity tool. When choosing between more features and more peace, choose more peace.
+
+1. **Light by default** — the app should feel like *morning sunlight entering a church*: warm white, soft cream, deep navy, muted gold, sage. The dark palette is the dark-mode variant (follows system setting). Avoid pure black, neon colors, and aggressive gradients.
+2. **Gold as the sacred accent** — muted gold is the primary accent. It conveys reverence without being ostentatious.
+3. **Generous whitespace** — Bible text needs room to breathe. Never crowd the reading view. Silence is part of the experience.
 4. **Large touch targets** — minimum 48dp for all interactive elements. 56dp+ in Simplified Mode.
-5. **No clutter** — the reading screen shows the text and nothing else. All tools are behind gestures or bottom sheets.
+5. **No clutter** — the reading screen shows the text and nothing else. All tools are behind gestures or bottom sheets. The interface must disappear.
+6. **Calm motion** — 250–400ms fade / soft slide / scale only. No bounce, elastic, or flashy transitions.
+7. **Never feel** busy, corporate, commercial, social-media-like, gamified, or noisy. No feeds, no ads, no promotional content.
+
+### App Structure (UX directive)
+
+- **Primary destinations**: Home (Continue Reading · Today's Verse · Continue Listening), Listen, Search, Library — via a calm bottom navigation bar.
+- **Reading screen** is the most important surface (~60% of design effort); it opens full-screen above the navigation bar so the text dominates.
+- **Audio** feels integrated: a minimal mini player, available wherever relevant.
+- **Settings contain complexity** — the main interface stays simple; advanced options stay hidden until needed.
 
 ---
 

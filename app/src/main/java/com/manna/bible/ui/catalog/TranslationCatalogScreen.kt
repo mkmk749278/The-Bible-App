@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
-import com.manna.bible.ui.theme.MannaColors
+import com.manna.bible.ui.theme.MannaTheme
 
 private val MinTouchTarget = 48.dp
 
@@ -92,7 +92,7 @@ fun TranslationCatalogScreen(
             if (error != null && error != "offline") {
                 Text(
                     text = stringResource(R.string.catalog_error),
-                    color = MannaColors.red,
+                    color = MannaTheme.colors.red,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 20.dp, vertical = 8.dp)
@@ -105,7 +105,7 @@ fun TranslationCatalogScreen(
                     Text(
                         text = stringResource(R.string.catalog_empty),
                         textAlign = TextAlign.Center,
-                        color = MannaColors.soft,
+                        color = MannaTheme.colors.soft,
                         modifier = Modifier.padding(32.dp)
                     )
                 }
@@ -136,10 +136,10 @@ fun TranslationCatalogScreen(
 
 @Composable
 private fun OfflineBanner() {
-    Surface(color = MannaColors.card, modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MannaTheme.colors.card, modifier = Modifier.fillMaxWidth()) {
         Text(
             text = stringResource(R.string.catalog_offline),
-            color = MannaColors.soft,
+            color = MannaTheme.colors.soft,
             fontSize = 13.sp,
             modifier = Modifier.padding(horizontal = 20.dp, vertical = 10.dp)
         )
@@ -164,14 +164,14 @@ private fun CatalogRow(
                     if (item.isActive) {
                         Text(
                             text = stringResource(R.string.catalog_active),
-                            color = MannaColors.gold,
+                            color = MannaTheme.colors.gold,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold
                         )
                     } else if (item.isDownloaded) {
                         Text(
                             text = stringResource(R.string.catalog_downloaded),
-                            color = MannaColors.sage,
+                            color = MannaTheme.colors.sage,
                             fontSize = 12.sp
                         )
                     }

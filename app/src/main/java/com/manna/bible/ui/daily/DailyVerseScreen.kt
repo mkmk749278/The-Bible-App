@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
-import com.manna.bible.ui.theme.MannaColors
+import com.manna.bible.ui.theme.MannaTheme
 
 private val MinTouchTarget = 48.dp
 
@@ -86,7 +86,7 @@ fun DailyVerseScreen(
                     Text(
                         text = stringResource(R.string.daily_loading),
                         modifier = Modifier.padding(top = 16.dp),
-                        color = MannaColors.soft
+                        color = MannaTheme.colors.soft
                     )
                 }
 
@@ -94,7 +94,7 @@ fun DailyVerseScreen(
                     Text(
                         text = stringResource(R.string.daily_unavailable),
                         textAlign = TextAlign.Center,
-                        color = MannaColors.soft,
+                        color = MannaTheme.colors.soft,
                         style = MaterialTheme.typography.bodyLarge
                     )
                 }
@@ -115,7 +115,7 @@ private fun DailyVerseCard(
     verseText: String,
     onReadInContext: () -> Unit
 ) {
-    Surface(color = MannaColors.card, modifier = Modifier.fillMaxWidth()) {
+    Surface(color = MannaTheme.colors.card, modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -126,13 +126,13 @@ private fun DailyVerseCard(
             Text(
                 text = reference,
                 style = MaterialTheme.typography.titleMedium,
-                color = MannaColors.gold,
+                color = MannaTheme.colors.gold,
                 fontWeight = FontWeight.Bold
             )
             Text(
                 text = verseText,
                 style = MaterialTheme.typography.headlineSmall,
-                color = MannaColors.cream,
+                color = MannaTheme.colors.ink,
                 textAlign = TextAlign.Center,
                 lineHeight = 34.sp
             )
