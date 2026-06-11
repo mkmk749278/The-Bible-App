@@ -39,7 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.usecase.ReadingRef
 import com.manna.bible.domain.usecase.SearchResult
-import com.manna.bible.ui.theme.MannaColors
+import com.manna.bible.ui.theme.MannaTheme
 
 private val MinTouchTarget = 48.dp
 
@@ -118,7 +118,7 @@ fun SearchScreen(
                                 )
                             }
                         )
-                        HorizontalDivider(color = MannaColors.border)
+                        HorizontalDivider(color = MannaTheme.colors.border)
                     }
                 }
 
@@ -141,7 +141,7 @@ private fun ResultRow(result: SearchResult, onClick: () -> Unit) {
     ) {
         Text(
             text = result.reference,
-            color = MannaColors.gold,
+            color = MannaTheme.colors.gold,
             fontWeight = FontWeight.Bold,
             fontSize = 14.sp
         )
@@ -166,5 +166,5 @@ private fun Centered(content: @Composable () -> Unit) {
 
 @Composable
 private fun Message(text: String) {
-    Text(text = text, textAlign = TextAlign.Center, color = MannaColors.soft)
+    Text(text = text, textAlign = TextAlign.Center, color = MannaTheme.colors.soft)
 }
