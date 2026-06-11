@@ -82,12 +82,22 @@ fun ReaderScreen(
     modifier: Modifier = Modifier,
     viewModel: ReaderViewModel = hiltViewModel(),
     onSwitchTranslation: () -> Unit = {},
-    onOpenAttribution: () -> Unit = {}
+    onOpenAttribution: () -> Unit = {},
+    onOpenSearch: () -> Unit = {},
+    pendingScrollRef: String? = null,
+    onScrollRefConsumed: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     var showPicker by remember { mutableStateOf(false) }
     var showMenu by remember { mutableStateOf(false) }
+
+    // A search result (or other caller) handed us a canonical reference to open.
+    androidx.compose.runtime.LaunchedEffect(pendingScrollRef) {
+        val ref = com.manna.bible.domain.usecase.ReadingRef.parse(pendingScrollRef) ?: return@LaunchedEffect
+        viewModel.openAt(ref.osisId, ref.chapter, ref.verse)
+        onScrollRefConsumed()
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -96,6 +106,7 @@ fun ReaderScreen(
                 bookName = state.bookName,
                 displayedChapterNumber = state.displayedChapterNumber,
                 onOpenPicker = { showPicker = true },
+                onOpenSearch = onOpenSearch,
                 showMenu = showMenu,
                 onMenuToggle = { showMenu = it },
                 onSwitchTranslation = {
@@ -174,6 +185,7 @@ private fun ReaderTopBar(
     bookName: String,
     displayedChapterNumber: Int,
     onOpenPicker: () -> Unit,
+    onOpenSearch: () -> Unit,
     showMenu: Boolean,
     onMenuToggle: (Boolean) -> Unit,
     onSwitchTranslation: () -> Unit,
@@ -185,6 +197,7 @@ private fun ReaderTopBar(
         "$bookName $displayedChapterNumber"
     }
     val pickerDescription = stringResource(R.string.reader_open_picker)
+    val searchDescription = stringResource(R.string.reader_search)
     val moreDescription = stringResource(R.string.reader_more_options)
     TopAppBar(
         title = {
@@ -208,6 +221,14 @@ private fun ReaderTopBar(
             }
         },
         actions = {
+            IconButton(
+                onClick = onOpenSearch,
+                modifier = Modifier
+                    .size(MinTouchTarget)
+                    .semantics { contentDescription = searchDescription }
+            ) {
+                Text(text = "\uD83D\uDD0D", fontSize = 18.sp)
+            }
             IconButton(
                 onClick = { onMenuToggle(true) },
                 modifier = Modifier
