@@ -70,6 +70,23 @@ interface PreferencesStore {
 
     /** Persists the Simplified Mode preference (Req 14.5). */
     suspend fun setSimplifiedMode(value: Boolean) {}
+
+    /**
+     * Emits whether the daily verse reminder notification is enabled. Defaults to
+     * false (no reminder until the user opts in during onboarding or settings).
+     */
+    val dailyReminderEnabled: Flow<Boolean>
+        get() = flowOf(false)
+
+    /** Persists the daily-reminder enabled flag. */
+    suspend fun setDailyReminderEnabled(value: Boolean) {}
+
+    /** Emits the daily-reminder time as an `HH:mm` string. Defaults to "07:00". */
+    val dailyReminderTime: Flow<String>
+        get() = flowOf("07:00")
+
+    /** Persists the daily-reminder time as an `HH:mm` string. */
+    suspend fun setDailyReminderTime(value: String) {}
 }
 
 /**
@@ -96,6 +113,8 @@ class DataStorePreferencesStore @Inject constructor(
         val LAST_READ_POSITION = stringPreferencesKey(SetupPreferencesMapper.Keys.LAST_READ_POSITION)
         val CONTINUOUS_PLAY = booleanPreferencesKey("continuous_play")
         val SIMPLIFIED_MODE = booleanPreferencesKey("simplified_mode")
+        val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
+        val DAILY_REMINDER_TIME = stringPreferencesKey("daily_reminder_time")
     }
 
     override val setupState: Flow<SetupState> =
@@ -109,6 +128,12 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val simplifiedMode: Flow<Boolean> =
         dataStore.data.map { prefs -> prefs[Keys.SIMPLIFIED_MODE] ?: false }
+
+    override val dailyReminderEnabled: Flow<Boolean> =
+        dataStore.data.map { prefs -> prefs[Keys.DAILY_REMINDER_ENABLED] ?: false }
+
+    override val dailyReminderTime: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.DAILY_REMINDER_TIME] ?: "07:00" }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -158,6 +183,14 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setSimplifiedMode(value: Boolean) {
         dataStore.edit { prefs -> prefs[Keys.SIMPLIFIED_MODE] = value }
+    }
+
+    override suspend fun setDailyReminderEnabled(value: Boolean) {
+        dataStore.edit { prefs -> prefs[Keys.DAILY_REMINDER_ENABLED] = value }
+    }
+
+    override suspend fun setDailyReminderTime(value: String) {
+        dataStore.edit { prefs -> prefs[Keys.DAILY_REMINDER_TIME] = value }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {

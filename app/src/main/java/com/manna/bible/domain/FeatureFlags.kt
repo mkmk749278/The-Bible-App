@@ -17,6 +17,9 @@ object FeatureFlags {
     /** Topical search — curated topic → verses index (Phase 1). */
     const val TOPICAL_SEARCH: Boolean = true
 
+    /** Daily verse reminder notification (Phase 1). */
+    const val DAILY_REMINDER: Boolean = true
+
     /** On-device Gemini Nano AI; requires Android 16+ (Phase 3). */
     const val GEMINI_NANO_AI: Boolean = false
 

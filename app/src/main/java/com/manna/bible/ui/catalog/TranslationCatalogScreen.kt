@@ -52,6 +52,7 @@ private val MinTouchTarget = 48.dp
  *
  * @param onBack returns to the reader. Pass null when the catalog is hosted as
  *   the Library tab and there is nothing to go back to.
+ * @param onOpenReminder when non-null, shows a "Daily reminder" tool entry.
  * @param onOpenCalendar when non-null, shows a "Jesus Events Calendar" tool entry.
  * @param onOpenPastorMode when non-null, shows a "Pastor Mode" tool entry.
  * @param onOpenAttribution when non-null, shows an "Attribution & about" entry
@@ -63,6 +64,7 @@ fun TranslationCatalogScreen(
     modifier: Modifier = Modifier,
     viewModel: TranslationCatalogViewModel = hiltViewModel(),
     onBack: (() -> Unit)? = {},
+    onOpenReminder: (() -> Unit)? = null,
     onOpenCalendar: (() -> Unit)? = null,
     onOpenPastorMode: (() -> Unit)? = null,
     onOpenAttribution: (() -> Unit)? = null
@@ -139,6 +141,9 @@ fun TranslationCatalogScreen(
                         )
                     }
                 }
+            }
+            if (onOpenReminder != null) {
+                ToolEntry(label = stringResource(R.string.reminder_tool_entry), onClick = onOpenReminder)
             }
             if (onOpenCalendar != null) {
                 ToolEntry(label = stringResource(R.string.calendar_tool_entry), onClick = onOpenCalendar)

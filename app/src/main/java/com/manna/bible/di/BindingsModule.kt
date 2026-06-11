@@ -38,6 +38,8 @@ import com.manna.bible.domain.lectionary.LectionaryProvider
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
+import com.manna.bible.data.reminder.AlarmReminderScheduler
+import com.manna.bible.domain.reminder.ReminderScheduler
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.BookNameProvider
 import com.manna.bible.domain.share.DefaultBookNameProvider
@@ -183,4 +185,10 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindJesusEventsProvider(impl: DefaultJesusEventsProvider): JesusEventsProvider
+
+    // --- daily reminder ------------------------------------------------------
+
+    @Binds
+    @Singleton
+    abstract fun bindReminderScheduler(impl: AlarmReminderScheduler): ReminderScheduler
 }
