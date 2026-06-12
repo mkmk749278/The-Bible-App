@@ -98,6 +98,17 @@ interface PreferencesStore {
 
     /** Persists the grief journey's start epoch day (begins the journey). */
     suspend fun setGriefStartEpochDay(value: Long) {}
+
+    /** Emits the active fast's start epoch millis, or -1 when no fast is active. */
+    val fastStartMillis: Flow<Long>
+        get() = flowOf(-1L)
+
+    /** Emits the active fast's plan id, or "" when no fast is active. */
+    val fastPlanId: Flow<String>
+        get() = flowOf("")
+
+    /** Starts/clears the active fast (start millis < 0 and blank id clear it). */
+    suspend fun setActiveFast(startMillis: Long, planId: String) {}
 }
 
 /**
@@ -127,6 +138,8 @@ class DataStorePreferencesStore @Inject constructor(
         val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
         val DAILY_REMINDER_TIME = stringPreferencesKey("daily_reminder_time")
         val GRIEF_START_EPOCH_DAY = longPreferencesKey("grief_start_epoch_day")
+        val FAST_START_MILLIS = longPreferencesKey("fast_start_millis")
+        val FAST_PLAN_ID = stringPreferencesKey("fast_plan_id")
     }
 
     override val setupState: Flow<SetupState> =
@@ -149,6 +162,12 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val griefStartEpochDay: Flow<Long> =
         dataStore.data.map { prefs -> prefs[Keys.GRIEF_START_EPOCH_DAY] ?: -1L }
+
+    override val fastStartMillis: Flow<Long> =
+        dataStore.data.map { prefs -> prefs[Keys.FAST_START_MILLIS] ?: -1L }
+
+    override val fastPlanId: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.FAST_PLAN_ID] ?: "" }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -210,6 +229,13 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setGriefStartEpochDay(value: Long) {
         dataStore.edit { prefs -> prefs[Keys.GRIEF_START_EPOCH_DAY] = value }
+    }
+
+    override suspend fun setActiveFast(startMillis: Long, planId: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.FAST_START_MILLIS] = startMillis
+            prefs[Keys.FAST_PLAN_ID] = planId
+        }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Fasting Companion -->
+    <string name="fasting_title">Fasting Companion</string>
+    <string name="fasting_back">Back</string>
+    <string name="fasting_tool_entry">Fasting Companion</string>
+    <string name="fasting_intro">Choose a fast. We\'ll keep the time and give you Scripture to dwell on — turning hunger into hunger for God.</string>
+    <string name="fasting_hours">%1$d hours</string>
+    <string name="fasting_plan_partial">Partial fast</string>
+    <string name="fasting_plan_sunrise_sunset">Sunrise to sunset</string>
+    <string name="fasting_plan_full_day">A full day</string>
+    <string name="fasting_plan_three_day">Three-day fast</string>
+    <string name="fasting_active_title">You are fasting</string>
+    <string name="fasting_complete">Fast complete — well done</string>
+    <string name="fasting_remaining">%1$s remaining</string>
+    <string name="fasting_focus_title">Fix your heart on Him</string>
+    <string name="fasting_end">End fast</string>
+</resources>
