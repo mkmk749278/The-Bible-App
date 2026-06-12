@@ -37,6 +37,7 @@ import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
 import com.manna.bible.ui.calendar.JesusCalendarScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
+import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
@@ -60,6 +61,7 @@ private object Routes {
     const val CALENDAR = "calendar"
     const val PASTOR = "pastor"
     const val REMINDER = "reminder"
+    const val CRISIS = "crisis"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -188,6 +190,9 @@ fun MannaApp(
                     composable(Routes.LIBRARY) {
                         TranslationCatalogScreen(
                             onBack = null,
+                            onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
+                                { navController.navigate(Routes.CRISIS) }
+                            } else null,
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -227,6 +232,9 @@ fun MannaApp(
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
                             onOpenSearch = { navController.navigateToTab(Routes.SEARCH) },
                             onOpenDaily = { navController.navigate(Routes.DAILY) },
+                            onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
+                                { navController.navigate(Routes.CRISIS) }
+                            } else null,
                             pendingScrollRef = scrollRef,
                             onScrollRefConsumed = { handle[SCROLL_REF_KEY] = null },
                             autoPlayAudio = autoplay
@@ -270,6 +278,21 @@ fun MannaApp(
                     composable(Routes.REMINDER) {
                         ReminderSettingsScreen(
                             onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(Routes.CRISIS) {
+                        CrisisModeScreen(
+                            onBack = { navController.popBackStack() },
+                            onListen = { ref ->
+                                navController.navigate(readerRoute(ref, autoplay = true)) {
+                                    popUpTo(Routes.HOME)
+                                }
+                            },
+                            onOpenVerse = { ref ->
+                                navController.navigate(readerRoute(ref)) {
+                                    popUpTo(Routes.HOME)
+                                }
+                            }
                         )
                     }
                 }
