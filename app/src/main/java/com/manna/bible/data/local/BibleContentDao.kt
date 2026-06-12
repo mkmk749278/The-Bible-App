@@ -53,6 +53,10 @@ interface BibleContentDao {
     @Query("SELECT COUNT(*) FROM verses WHERE translationId = :translationId")
     suspend fun countVerses(translationId: String): Int
 
+    /** Sum of stored verse text lengths for a translation (used as the size on disk). */
+    @Query("SELECT IFNULL(SUM(LENGTH(text)), 0) FROM verses WHERE translationId = :translationId")
+    suspend fun sumTextLength(translationId: String): Long
+
     // --- search --------------------------------------------------------------
 
     /**
