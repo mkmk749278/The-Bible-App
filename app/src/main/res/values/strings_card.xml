@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Scripture Card Generator -->
+    <string name="card_title">Share a verse</string>
+    <string name="card_back">Back</string>
+    <string name="card_tool_entry">Share today\'s verse as a card</string>
+    <string name="card_share">Share</string>
+    <string name="card_unavailable">Download a translation to create a card.</string>
+    <string name="card_preview_description">Preview of the verse card</string>
+</resources>

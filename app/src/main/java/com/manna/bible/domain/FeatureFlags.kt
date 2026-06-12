@@ -42,6 +42,9 @@ object FeatureFlags {
     /** Fasting Companion — time-boxed fasts with focus Scripture (Phase 2). */
     const val FASTING_COMPANION: Boolean = true
 
+    /** Scripture Card Generator — share a verse as an image (Phase 2). */
+    const val SCRIPTURE_CARD: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 }

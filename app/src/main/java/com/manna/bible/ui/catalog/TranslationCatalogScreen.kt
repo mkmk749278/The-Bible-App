@@ -68,6 +68,7 @@ fun TranslationCatalogScreen(
     onOpenGrief: (() -> Unit)? = null,
     onOpenPrayer: (() -> Unit)? = null,
     onOpenFasting: (() -> Unit)? = null,
+    onOpenCard: (() -> Unit)? = null,
     onOpenReminder: (() -> Unit)? = null,
     onOpenCalendar: (() -> Unit)? = null,
     onOpenPastorMode: (() -> Unit)? = null,
@@ -157,6 +158,9 @@ fun TranslationCatalogScreen(
             }
             if (onOpenFasting != null) {
                 ToolEntry(label = stringResource(R.string.fasting_tool_entry), onClick = onOpenFasting)
+            }
+            if (onOpenCard != null) {
+                ToolEntry(label = stringResource(R.string.card_tool_entry), onClick = onOpenCard)
             }
             if (onOpenReminder != null) {
                 ToolEntry(label = stringResource(R.string.reminder_tool_entry), onClick = onOpenReminder)

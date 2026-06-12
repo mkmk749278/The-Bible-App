@@ -36,6 +36,7 @@ import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
 import com.manna.bible.ui.calendar.JesusCalendarScreen
+import com.manna.bible.ui.card.ScriptureCardScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
@@ -68,6 +69,7 @@ private object Routes {
     const val GRIEF = "grief"
     const val PRAYER = "prayer"
     const val FASTING = "fasting"
+    const val CARD = "card"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -208,6 +210,9 @@ fun MannaApp(
                             onOpenFasting = if (FeatureFlags.FASTING_COMPANION) {
                                 { navController.navigate(Routes.FASTING) }
                             } else null,
+                            onOpenCard = if (FeatureFlags.SCRIPTURE_CARD) {
+                                { navController.navigate(Routes.CARD) }
+                            } else null,
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -333,6 +338,11 @@ fun MannaApp(
                                     popUpTo(Routes.HOME)
                                 }
                             }
+                        )
+                    }
+                    composable(Routes.CARD) {
+                        ScriptureCardScreen(
+                            onBack = { navController.popBackStack() }
                         )
                     }
                 }
