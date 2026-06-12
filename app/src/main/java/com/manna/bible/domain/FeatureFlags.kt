@@ -33,6 +33,9 @@ object FeatureFlags {
     /** 3AM / Crisis Mode — compassionate companion for hard moments (Phase 2, P2-1). */
     const val CRISIS_MODE: Boolean = true
 
+    /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
+    const val GRIEF_COMPANION: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 }

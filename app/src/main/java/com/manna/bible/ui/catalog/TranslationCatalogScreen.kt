@@ -65,6 +65,7 @@ fun TranslationCatalogScreen(
     viewModel: TranslationCatalogViewModel = hiltViewModel(),
     onBack: (() -> Unit)? = {},
     onOpenCrisis: (() -> Unit)? = null,
+    onOpenGrief: (() -> Unit)? = null,
     onOpenReminder: (() -> Unit)? = null,
     onOpenCalendar: (() -> Unit)? = null,
     onOpenPastorMode: (() -> Unit)? = null,
@@ -145,6 +146,9 @@ fun TranslationCatalogScreen(
             }
             if (onOpenCrisis != null) {
                 ToolEntry(label = stringResource(R.string.crisis_tool_entry), onClick = onOpenCrisis)
+            }
+            if (onOpenGrief != null) {
+                ToolEntry(label = stringResource(R.string.grief_tool_entry), onClick = onOpenGrief)
             }
             if (onOpenReminder != null) {
                 ToolEntry(label = stringResource(R.string.reminder_tool_entry), onClick = onOpenReminder)

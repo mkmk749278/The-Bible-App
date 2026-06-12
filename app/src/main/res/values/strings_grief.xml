@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Grief Companion -->
+    <string name="grief_title">Grief Companion</string>
+    <string name="grief_back">Back</string>
+    <string name="grief_tool_entry">Walking through grief</string>
+    <string name="grief_day_indicator">Day %1$d of %2$d</string>
+    <string name="grief_previous">Previous</string>
+    <string name="grief_next">Next day</string>
+    <string name="grief_begin">Begin the journey</string>
+    <string name="grief_intro_title">Walking through grief, together</string>
+    <string name="grief_intro_body">This is a gentle 30-day journey through loss — one short passage and reflection each day. There\'s no rush and no wrong way to grieve. Begin whenever you\'re ready.</string>
+
+    <string-array name="grief_themes">
+        <item>The first wave</item>
+        <item>It\'s okay to mourn</item>
+        <item>Through the valley</item>
+        <item>New mercies</item>
+        <item>He heals the broken</item>
+        <item>You are held</item>
+        <item>Your tears are seen</item>
+        <item>The God of all comfort</item>
+        <item>Morning will come</item>
+        <item>The hope of resurrection</item>
+        <item>Even this</item>
+        <item>When you are empty</item>
+        <item>Through the waters</item>
+        <item>Pour out your heart</item>
+        <item>Come and rest</item>
+        <item>Speak to your soul</item>
+        <item>A weight of glory</item>
+        <item>No more tears</item>
+        <item>Take heart</item>
+        <item>Nothing can separate</item>
+        <item>Your Redeemer lives</item>
+        <item>Precious in his sight</item>
+        <item>Grief, but with hope</item>
+        <item>Where help comes from</item>
+        <item>New strength</item>
+        <item>A peace beyond</item>
+        <item>Number our days</item>
+        <item>Cast it on him</item>
+        <item>Untroubled hearts</item>
+        <item>Fullness of joy</item>
+    </string-array>
+
+    <string-array name="grief_reflections">
+        <item>Grief comes in waves, and the first ones can knock you down. You don\'t have to be strong right now — God is near to the broken-hearted, and He is near to you.</item>
+        <item>Jesus called mourners blessed, not because grief is good, but because He meets us in it. Let yourself mourn; it is love with nowhere to go, and He sees every tear.</item>
+        <item>The valley is real, and you are walking through it — but you are not walking alone. His rod and staff are with you, even in the dark.</item>
+        <item>When the grief feels endless, His mercy is the thing that does not end. It is new every morning — enough for just today.</item>
+        <item>He does not stand far off from your pain. He draws close to bind up what is broken, gently, in His own time.</item>
+        <item>Fear can crowd in when we lose what we love. Hear Him say: do not be afraid, I am with you, I am holding you.</item>
+        <item>Nothing you feel is wasted on God. He keeps your tears in His bottle; not one of them falls unnoticed.</item>
+        <item>He is the Father of compassion and the God of all comfort — and the comfort He gives you will one day overflow to someone else.</item>
+        <item>Weeping may stay for the night, and the night may feel long. But joy is coming; He has not forgotten the morning.</item>
+        <item>Death is not the end of the story. Jesus is the resurrection and the life, and those who are His are more alive than we can imagine.</item>
+        <item>You may not see how any good could come from this. Trust that God can hold even this loss and work within it, though it is a mystery now.</item>
+        <item>When your heart and your strength fail, God is still the strength of your heart. Lean your whole weight on Him today.</item>
+        <item>The waters are deep, but they will not overwhelm you. He has promised to be with you as you pass through — not around.</item>
+        <item>You don\'t have to tidy your feelings before you come to Him. Pour out your heart — all of it — for He is a refuge.</item>
+        <item>If you are weary and heavy-laden, He is not asking you to carry more. Come to Him, and find rest for your soul.</item>
+        <item>Some days you must speak to your own soul: why are you downcast? Put your hope in God; you will praise Him again.</item>
+        <item>Your sorrow is real, and it is also not the final word. He is working an eternal weight of glory that outlasts every grief.</item>
+        <item>There is a day coming when He will wipe every tear from your eyes — no more death, no more mourning, no more pain.</item>
+        <item>Be strong, and take heart. Not because you feel strong, but because your hope is in the One who is.</item>
+        <item>Nothing — not death, not life, not this loss — can separate you from the love of God in Christ Jesus. Nothing.</item>
+        <item>With Job you can say, even through tears: I know that my Redeemer lives. Your hope is not in vain.</item>
+        <item>Your loved one is precious in the Lord\'s sight — more precious even than to you. They are safe with Him.</item>
+        <item>We do grieve — deeply — but not as those who have no hope. For those in Christ, goodbye is not forever.</item>
+        <item>When you lift your eyes and wonder where help will come from, remember: your help comes from the Maker of heaven and earth.</item>
+        <item>Those who wait on the Lord will renew their strength. You will not always feel this weak; He is renewing you.</item>
+        <item>There is a peace that doesn\'t make sense, that guards your heart when nothing else can. Ask Him for it today.</item>
+        <item>Loss teaches us to number our days and hold them gently. Let it make you tender, not bitter.</item>
+        <item>He cares for you — really cares. So cast all your anxiety on Him; you were never meant to carry it alone.</item>
+        <item>Let not your heart be troubled. The same Jesus who wept at a grave is preparing a place where there are no more graves.</item>
+        <item>The journey doesn\'t erase the loss, but it points you home — to His presence, where there is fullness of joy. Keep walking; He is with you.</item>
+    </string-array>
+</resources>

@@ -32,6 +32,8 @@ import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.grief.DefaultGriefJourney
+import com.manna.bible.domain.grief.GriefJourney
 import com.manna.bible.domain.daily.DefaultDailyVerseProvider
 import com.manna.bible.domain.canon.DefaultCanonEngine
 import com.manna.bible.domain.topical.DefaultTopicalIndex
@@ -199,6 +201,11 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindCrisisCompanion(impl: DefaultCrisisCompanion): CrisisCompanion
+
+    // --- grief companion -----------------------------------------------------
+
+    @Binds
+    abstract fun bindGriefJourney(impl: DefaultGriefJourney): GriefJourney
 
     // --- daily reminder ------------------------------------------------------
 
