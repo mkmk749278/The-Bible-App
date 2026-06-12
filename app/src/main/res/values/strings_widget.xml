@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Home-screen widget -->
+    <string name="widget_title">Verse of the day</string>
+    <string name="widget_tap_hint">Tap to open today\'s verse</string>
+    <string name="widget_description">Today\'s verse of the day from Manna.</string>
+</resources>

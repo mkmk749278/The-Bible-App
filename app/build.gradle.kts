@@ -109,6 +109,9 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.hilt.navigation.compose)
 
+    // Home-screen widget (Jetpack Glance — Compose for app widgets)
+    implementation(libs.androidx.glance.appwidget)
+
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
