@@ -20,4 +20,11 @@ interface HelloAoRemoteDataSource : TranslationRemoteDataSource {
 
     /** Returns the verses of one book+chapter of the translation with the given id. */
     suspend fun chapter(id: String, osisId: String, chapter: Int): RemoteChapter
+
+    /**
+     * Returns a narrated-audio URL for one book+chapter, or null when the translation
+     * has no audio (or it can't be resolved). Default is null so fakes that don't model
+     * audio need no override.
+     */
+    suspend fun chapterAudioUrl(id: String, osisId: String, chapter: Int): String? = null
 }

@@ -2,6 +2,7 @@ package com.manna.bible.data.remote
 
 import com.manna.bible.domain.model.CanonType
 import com.manna.bible.domain.translation.Translation
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -54,6 +55,9 @@ class DefaultHelloAoRemoteDataSource @Inject constructor(
             .map { RemoteVerse(verse = it.number!!, text = flattenVerseText(it.content)) }
         return RemoteChapter(osisId = osisId, chapter = chapter, verses = verses)
     }
+
+    override suspend fun chapterAudioUrl(id: String, osisId: String, chapter: Int): String? =
+        firstAudioUrl(api.chapter(id, osisId, chapter).audioLinks)
 
     private fun TranslationDto.toDomain(): Translation = Translation(
         id = id,
@@ -126,4 +130,26 @@ class DefaultHelloAoRemoteDataSource @Inject constructor(
 
         private val WHITESPACE = Regex("\\s+")
     }
+}
+
+/**
+ * Extracts the first usable narrated-audio URL from a `thisChapterAudioLinks` value.
+ *
+ * Tolerant of the provider's shape variations: an object of `reader -> url`, an array
+ * of urls, or an array of `{ … url … }` objects. Returns null for anything else or an
+ * empty result, so a missing/odd payload simply means "no audio".
+ */
+internal fun firstAudioUrl(audioLinks: JsonElement?): String? {
+    fun stringOf(element: JsonElement?): String? =
+        (element as? JsonPrimitive)?.takeIf { it.isString }?.content?.takeIf { it.isNotBlank() }
+
+    val url = when (audioLinks) {
+        is JsonObject -> audioLinks.values.firstNotNullOfOrNull { stringOf(it) }
+        is JsonArray -> audioLinks.firstNotNullOfOrNull { element ->
+            stringOf(element)
+                ?: (element as? JsonObject)?.values?.firstNotNullOfOrNull { stringOf(it) }
+        }
+        else -> null
+    }
+    return url
 }

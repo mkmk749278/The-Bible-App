@@ -20,6 +20,13 @@ object FeatureFlags {
     /** Daily verse reminder notification (Phase 1). */
     const val DAILY_REMINDER: Boolean = true
 
+    /**
+     * Human-narrated chapter audio (streamed) instead of on-device TTS (Phase 1,
+     * Req 9.8). Off until the ExoPlayer playback path is wired and device-verified;
+     * the [com.manna.bible.domain.audio.ChapterAudioSource] data seam is in place.
+     */
+    const val NARRATED_AUDIO: Boolean = false
+
     /** On-device Gemini Nano AI; requires Android 16+ (Phase 3). */
     const val GEMINI_NANO_AI: Boolean = false
 
