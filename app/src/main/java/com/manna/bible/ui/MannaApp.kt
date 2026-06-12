@@ -42,6 +42,7 @@ import com.manna.bible.ui.daily.DailyVerseScreen
 import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
+import com.manna.bible.ui.prayer.PrayerJournalScreen
 import com.manna.bible.ui.pastor.PastorModeScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
@@ -64,6 +65,7 @@ private object Routes {
     const val REMINDER = "reminder"
     const val CRISIS = "crisis"
     const val GRIEF = "grief"
+    const val PRAYER = "prayer"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -198,6 +200,9 @@ fun MannaApp(
                             onOpenGrief = if (FeatureFlags.GRIEF_COMPANION) {
                                 { navController.navigate(Routes.GRIEF) }
                             } else null,
+                            onOpenPrayer = if (FeatureFlags.PRAYER_JOURNAL) {
+                                { navController.navigate(Routes.PRAYER) }
+                            } else null,
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -308,6 +313,11 @@ fun MannaApp(
                                     popUpTo(Routes.HOME)
                                 }
                             }
+                        )
+                    }
+                    composable(Routes.PRAYER) {
+                        PrayerJournalScreen(
+                            onBack = { navController.popBackStack() }
                         )
                     }
                 }

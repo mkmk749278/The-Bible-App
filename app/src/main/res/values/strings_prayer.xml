@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Prayer Journal + Faith Timeline -->
+    <string name="prayer_title">Prayer Journal</string>
+    <string name="prayer_back">Back</string>
+    <string name="prayer_tool_entry">Prayer Journal</string>
+    <string name="prayer_hint">What are you praying about?</string>
+    <string name="prayer_add">Add prayer</string>
+    <string name="prayer_active_section">Praying</string>
+    <string name="prayer_answered_section">Answered · your faith timeline</string>
+    <string name="prayer_mark_answered">Answered</string>
+    <string name="prayer_reopen">Still praying</string>
+    <string name="prayer_delete">Delete</string>
+    <string name="prayer_answered_on">Answered on %1$s</string>
+    <string name="prayer_empty">Your prayers will appear here. Nothing leaves your device.</string>
+</resources>
