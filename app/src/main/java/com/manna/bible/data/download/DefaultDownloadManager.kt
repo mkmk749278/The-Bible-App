@@ -14,15 +14,20 @@ import com.manna.bible.domain.download.DownloadProgress
 import com.manna.bible.di.DownloadScope
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.withPermit
 
 /**
  * Default [DownloadManager] backed by the Free Use Bible API and Room.
@@ -65,6 +70,9 @@ class DefaultDownloadManager @Inject constructor(
     /** In-flight downloads, keyed by translation id, so callers join rather than restart. */
     private val inFlight = ConcurrentHashMap<String, Deferred<DownloadOutcome>>()
 
+    /** Bounds concurrent chapter fetches so we speed up without flooding the network. */
+    private val chapterPermits = Semaphore(MAX_CONCURRENT_CHAPTERS)
+
     override fun progress(): StateFlow<DownloadProgress?> = progressState.asStateFlow()
 
     override suspend fun download(translationId: String): DownloadOutcome {
@@ -99,7 +107,7 @@ class DefaultDownloadManager @Inject constructor(
             val totalChapters = books.sumOf { it.chapterCount }
             progressState.value = DownloadProgress(translationId, 0, totalChapters)
 
-            var completedChapters = 0
+            val completedChapters = AtomicInteger(0)
 
             for (book in books) {
                 if (isCancelled(translationId)) return onCancelled(translationId)
@@ -109,26 +117,40 @@ class DefaultDownloadManager @Inject constructor(
                 // lets a download interrupted by process death continue from where it
                 // stopped instead of starting over.
                 if (bibleContentDao.getBook(translationId, book.osisId) != null) {
-                    completedChapters += book.chapterCount
-                    progressState.value =
-                        DownloadProgress(translationId, completedChapters, totalChapters)
+                    progressState.value = DownloadProgress(
+                        translationId,
+                        completedChapters.addAndGet(book.chapterCount),
+                        totalChapters
+                    )
                     continue
                 }
 
+                // Fetch this book's chapters concurrently (bounded by [chapterPermits])
+                // rather than one network round-trip at a time — the main download
+                // speed-up — while still storing each book atomically below.
+                val remoteChapters = coroutineScope {
+                    (1..book.chapterCount).map { chapterNumber ->
+                        async {
+                            chapterPermits.withPermit {
+                                val remoteChapter =
+                                    remote.chapter(translationId, book.osisId, chapterNumber)
+                                progressState.value = DownloadProgress(
+                                    translationId,
+                                    completedChapters.incrementAndGet(),
+                                    totalChapters
+                                )
+                                chapterNumber to remoteChapter
+                            }
+                        }
+                    }.awaitAll()
+                }
+
+                // A cooperative cancel may have landed while this book was in flight.
+                if (isCancelled(translationId)) return onCancelled(translationId)
+
                 val chapterEntities = ArrayList<ChapterEntity>(book.chapterCount)
                 val verseEntities = ArrayList<VerseEntity>()
-
-                for (chapterNumber in 1..book.chapterCount) {
-                    // Cancellation is cooperative: cancel() (running on another
-                    // coroutine) raises the per-id flag; we observe it both before
-                    // and after each chapter fetch so a cancel that arrives WHILE a
-                    // chapter is in flight is still honored before more is written.
-                    if (isCancelled(translationId)) return onCancelled(translationId)
-
-                    val remoteChapter = remote.chapter(translationId, book.osisId, chapterNumber)
-
-                    if (isCancelled(translationId)) return onCancelled(translationId)
-
+                remoteChapters.sortedBy { it.first }.forEach { (chapterNumber, remoteChapter) ->
                     chapterEntities += ChapterEntity(
                         translationId = translationId,
                         osisId = book.osisId,
@@ -144,14 +166,7 @@ class DefaultDownloadManager @Inject constructor(
                             text = v.text
                         )
                     }
-
-                    completedChapters++
-                    progressState.value =
-                        DownloadProgress(translationId, completedChapters, totalChapters)
                 }
-
-                // Don't persist a book's content if a cancel landed during it.
-                if (isCancelled(translationId)) return onCancelled(translationId)
 
                 // Persist per book so progress is durable and memory stays bounded.
                 bibleContentDao.insertContent(
@@ -234,6 +249,15 @@ class DefaultDownloadManager @Inject constructor(
     override suspend fun retryPending() {
         if (!connectivity.isOnline()) return
         pending.all().forEach { id -> download(id) }
+    }
+
+    private companion object {
+        /**
+         * Max concurrent chapter fetches. OkHttp caps requests per host (default 5),
+         * so a small bound here saturates the connection without over-committing the
+         * network on the low-end devices Manna targets.
+         */
+        const val MAX_CONCURRENT_CHAPTERS = 8
     }
 }
 
