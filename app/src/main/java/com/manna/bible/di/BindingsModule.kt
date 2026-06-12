@@ -33,6 +33,8 @@ import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.fasting.DefaultFastingPlans
+import com.manna.bible.domain.fasting.FastingPlans
 import com.manna.bible.domain.grief.DefaultGriefJourney
 import com.manna.bible.domain.grief.GriefJourney
 import com.manna.bible.domain.daily.DefaultDailyVerseProvider
@@ -214,6 +216,11 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindPrayerRepository(impl: DefaultPrayerRepository): PrayerRepository
+
+    // --- fasting companion ---------------------------------------------------
+
+    @Binds
+    abstract fun bindFastingPlans(impl: DefaultFastingPlans): FastingPlans
 
     // --- daily reminder ------------------------------------------------------
 

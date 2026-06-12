@@ -39,6 +39,9 @@ object FeatureFlags {
     /** Prayer Journal + Faith Timeline (Phase 2). */
     const val PRAYER_JOURNAL: Boolean = true
 
+    /** Fasting Companion — time-boxed fasts with focus Scripture (Phase 2). */
+    const val FASTING_COMPANION: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 }

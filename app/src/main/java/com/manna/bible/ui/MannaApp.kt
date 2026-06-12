@@ -39,6 +39,7 @@ import com.manna.bible.ui.calendar.JesusCalendarScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
+import com.manna.bible.ui.fasting.FastingScreen
 import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
@@ -66,6 +67,7 @@ private object Routes {
     const val CRISIS = "crisis"
     const val GRIEF = "grief"
     const val PRAYER = "prayer"
+    const val FASTING = "fasting"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -203,6 +205,9 @@ fun MannaApp(
                             onOpenPrayer = if (FeatureFlags.PRAYER_JOURNAL) {
                                 { navController.navigate(Routes.PRAYER) }
                             } else null,
+                            onOpenFasting = if (FeatureFlags.FASTING_COMPANION) {
+                                { navController.navigate(Routes.FASTING) }
+                            } else null,
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -318,6 +323,16 @@ fun MannaApp(
                     composable(Routes.PRAYER) {
                         PrayerJournalScreen(
                             onBack = { navController.popBackStack() }
+                        )
+                    }
+                    composable(Routes.FASTING) {
+                        FastingScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref ->
+                                navController.navigate(readerRoute(ref)) {
+                                    popUpTo(Routes.HOME)
+                                }
+                            }
                         )
                     }
                 }
