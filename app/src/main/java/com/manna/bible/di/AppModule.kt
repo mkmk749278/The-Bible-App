@@ -14,6 +14,9 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -42,6 +45,17 @@ object AppModule {
         ignoreUnknownKeys = true
         isLenient = true
     }
+
+    /**
+     * Application-lifetime scope for background work that must survive screen
+     * changes (e.g. Bible downloads). A [SupervisorJob] keeps one failing job from
+     * cancelling the others; it is never cancelled (lives as long as the process).
+     */
+    @Provides
+    @Singleton
+    @DownloadScope
+    fun provideDownloadScope(): CoroutineScope =
+        CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
      * The app's [MannaDatabase]. Applies the additive [MIGRATION_2_3] (offline

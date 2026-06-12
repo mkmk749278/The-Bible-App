@@ -11,16 +11,18 @@ import com.manna.bible.data.remote.RemoteBook
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.download.DownloadOutcome
 import com.manna.bible.domain.download.DownloadProgress
+import com.manna.bible.di.DownloadScope
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.coroutines.cancellation.CancellationException
-import kotlinx.coroutines.NonCancellable
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.withContext
 
 /**
  * Default [DownloadManager] backed by the Free Use Bible API and Room.
@@ -51,13 +53,17 @@ class DefaultDownloadManager @Inject constructor(
     private val bibleContentDao: BibleContentDao,
     private val translationDao: TranslationDao,
     private val pending: PendingDownloadRepository,
-    private val connectivity: ConnectivityChecker
+    private val connectivity: ConnectivityChecker,
+    @DownloadScope private val scope: CoroutineScope
 ) : DownloadManager {
 
     private val progressState = MutableStateFlow<DownloadProgress?>(null)
 
     /** Translation ids whose in-flight download has been asked to cancel. */
     private val cancelled: MutableSet<String> = ConcurrentHashMap.newKeySet()
+
+    /** In-flight downloads, keyed by translation id, so callers join rather than restart. */
+    private val inFlight = ConcurrentHashMap<String, Deferred<DownloadOutcome>>()
 
     override fun progress(): StateFlow<DownloadProgress?> = progressState.asStateFlow()
 
@@ -70,16 +76,45 @@ class DefaultDownloadManager @Inject constructor(
         // Clear any stale cancel request from a previous attempt before starting.
         cancelled.remove(translationId)
 
+        // Run on the app-lifetime [scope] so leaving the screen or backgrounding the
+        // app does NOT cancel and discard the in-flight download. A second call for
+        // the same id joins the existing download instead of restarting it — so
+        // returning to the catalog mid-download resumes progress rather than starting
+        // over.
+        val deferred = inFlight.computeIfAbsent(translationId) {
+            scope.async {
+                try {
+                    runDownload(translationId)
+                } finally {
+                    inFlight.remove(translationId)
+                }
+            }
+        }
+        return deferred.await()
+    }
+
+    private suspend fun runDownload(translationId: String): DownloadOutcome {
         return try {
             val books = remote.books(translationId)
             val totalChapters = books.sumOf { it.chapterCount }
             progressState.value = DownloadProgress(translationId, 0, totalChapters)
 
             var completedChapters = 0
-            var verseCount = 0
-            var charCount = 0L
 
             for (book in books) {
+                if (isCancelled(translationId)) return onCancelled(translationId)
+
+                // Resume: each book is stored atomically, so its presence means it is
+                // fully downloaded — count it toward progress and skip refetching. This
+                // lets a download interrupted by process death continue from where it
+                // stopped instead of starting over.
+                if (bibleContentDao.getBook(translationId, book.osisId) != null) {
+                    completedChapters += book.chapterCount
+                    progressState.value =
+                        DownloadProgress(translationId, completedChapters, totalChapters)
+                    continue
+                }
+
                 val chapterEntities = ArrayList<ChapterEntity>(book.chapterCount)
                 val verseEntities = ArrayList<VerseEntity>()
 
@@ -108,8 +143,6 @@ class DefaultDownloadManager @Inject constructor(
                             verse = v.verse,
                             text = v.text
                         )
-                        verseCount++
-                        charCount += v.text.length
                     }
 
                     completedChapters++
@@ -132,10 +165,13 @@ class DefaultDownloadManager @Inject constructor(
             if (isCancelled(translationId)) return onCancelled(translationId)
 
             // Commit: mark downloaded only after everything is stored (Req 5.3, 15.4).
+            // Totals are read back from storage so resumed (skipped) books are counted.
+            val verseCount = bibleContentDao.countVerses(translationId)
+            val sizeBytes = bibleContentDao.sumTextLength(translationId)
             val nextVersion = (translationDao.getById(translationId)?.contentVersion ?: 0) + 1
             translationDao.setDownloadedContent(
                 id = translationId,
-                sizeBytes = charCount,
+                sizeBytes = sizeBytes,
                 contentVersion = nextVersion,
                 verseCount = verseCount
             )
@@ -145,13 +181,10 @@ class DefaultDownloadManager @Inject constructor(
                 DownloadProgress(translationId, totalChapters, totalChapters, done = true)
             DownloadOutcome.Success
         } catch (e: CancellationException) {
-            // The whole download coroutine was cancelled (e.g. its scope was torn
-            // down). Remove any partial content off the cancellation path so the
-            // delete actually runs, then propagate as structured concurrency requires.
-            withContext(NonCancellable) {
-                bibleContentDao.deleteTranslationContent(translationId)
-            }
-            cancelled.remove(translationId)
+            // The download coroutine was cancelled (its scope torn down, or an
+            // explicit cancel cancelled it). Do NOT delete partial content here —
+            // completed books are kept so the download resumes next time. Explicit
+            // cancel() deletes content separately (Req 5.4).
             if (progressState.value?.translationId == translationId) {
                 progressState.value = null
             }
@@ -165,10 +198,10 @@ class DefaultDownloadManager @Inject constructor(
     }
 
     override suspend fun cancel(translationId: String) {
-        // Signal any in-flight download to stop at its next cooperative checkpoint
-        // and remove whatever content has been committed so far. The download loop
-        // also cleans up when it observes the flag; both deletes are idempotent.
+        // Signal any in-flight download to stop at its next cooperative checkpoint,
+        // cancel its coroutine, and remove whatever content has been committed so far.
         cancelled.add(translationId)
+        inFlight[translationId]?.cancel()
         bibleContentDao.deleteTranslationContent(translationId)
         if (progressState.value?.translationId == translationId) {
             progressState.value = null

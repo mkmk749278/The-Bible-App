@@ -14,6 +14,7 @@ import com.manna.bible.data.remote.RemoteVerse
 import com.manna.bible.domain.download.DownloadOutcome
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import com.manna.bible.domain.translation.Translation
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
@@ -46,9 +47,13 @@ class DefaultDownloadManagerTest {
         private val failOn: Pair<String, Int>? = null
     ) : HelloAoRemoteDataSource {
 
+        /** Records every (osisId, chapter) fetched, to assert resume skips stored books. */
+        val chapterCalls = mutableListOf<Pair<String, Int>>()
+
         override suspend fun books(id: String): List<RemoteBook> = books
 
         override suspend fun chapter(id: String, osisId: String, chapter: Int): RemoteChapter {
+            chapterCalls += osisId to chapter
             if (failOn == osisId to chapter) throw RuntimeException("boom")
             val verses = (1..versesPerChapter).map { v ->
                 RemoteVerse(verse = v, text = "$osisId $chapter:$v")
@@ -89,6 +94,9 @@ class DefaultDownloadManagerTest {
 
         override suspend fun countVerses(translationId: String): Int =
             verses.count { it.translationId == translationId }
+
+        override suspend fun sumTextLength(translationId: String): Long =
+            verses.filter { it.translationId == translationId }.sumOf { it.text.length.toLong() }
 
         override suspend fun search(t: String, query: String, limit: Int): List<VerseEntity> =
             emptyList()
@@ -219,12 +227,13 @@ class DefaultDownloadManagerTest {
     )
 
     private fun manager(
+        scope: CoroutineScope,
         remote: FakeRemote,
         content: FakeContentDao = FakeContentDao(),
         translations: FakeTranslationDao = FakeTranslationDao(),
         pending: FakePending = FakePending(),
         connectivity: FakeConnectivity = FakeConnectivity(online = true)
-    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity)
+    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity, scope)
 
     // --- offline (Req 5.6) ---------------------------------------------------
 
@@ -234,6 +243,7 @@ class DefaultDownloadManagerTest {
         val translations = FakeTranslationDao(listOf(entity("en_web")))
         val pending = FakePending()
         val mgr = manager(
+            scope = backgroundScope,
             remote = FakeRemote(listOf(book("GEN", 1, 0))),
             content = content,
             translations = translations,
@@ -258,6 +268,7 @@ class DefaultDownloadManagerTest {
             val translations = FakeTranslationDao(listOf(entity("en_web")))
             val pending = FakePending().apply { add("en_web") }
             val mgr = manager(
+            scope = backgroundScope,
                 remote = FakeRemote(
                     books = listOf(book("GEN", 2, 0), book("EXO", 1, 1)),
                     versesPerChapter = 2
@@ -288,6 +299,36 @@ class DefaultDownloadManagerTest {
             assertEquals(3, progress.completedChapters)
         }
 
+    // --- resume (Req 5: resumable downloads) ---------------------------------
+
+    @Test
+    fun `resume skips already-stored books and completes from where it stopped`() = runTest {
+        val content = FakeContentDao()
+        val translations = FakeTranslationDao(listOf(entity("en_web")))
+        // Simulate GEN already stored by a prior, interrupted download attempt.
+        content.books += BookEntity("en_web", "GEN", "Genesis", "OT", 0, 1)
+        content.chapters += ChapterEntity("en_web", "GEN", 1, 1)
+        content.verses += VerseEntity("en_web", "GEN", 1, 1, "in the beginning")
+
+        val remote = FakeRemote(books = listOf(book("GEN", 1, 0), book("EXO", 1, 1)))
+        val mgr = manager(
+            scope = backgroundScope,
+            remote = remote,
+            content = content,
+            translations = translations
+        )
+
+        val outcome = mgr.download("en_web")
+
+        assertEquals(DownloadOutcome.Success, outcome)
+        assertFalse(
+            remote.chapterCalls.contains("GEN" to 1),
+            "already-stored GEN must not be refetched on resume"
+        )
+        assertTrue(remote.chapterCalls.contains("EXO" to 1), "missing EXO must be fetched")
+        assertTrue(translations.getById("en_web")!!.isDownloaded, "resumed download completes")
+    }
+
     // --- online failure (Req 5.7) --------------------------------------------
 
     @Test
@@ -297,6 +338,7 @@ class DefaultDownloadManagerTest {
         val pending = FakePending()
         // Two books; fail on the second book's first chapter after the first book commits.
         val mgr = manager(
+            scope = backgroundScope,
             remote = FakeRemote(
                 books = listOf(book("GEN", 1, 0), book("EXO", 1, 1)),
                 failOn = "EXO" to 1
@@ -323,6 +365,7 @@ class DefaultDownloadManagerTest {
         val content = FakeContentDao()
         val translations = FakeTranslationDao(listOf(entity("en_web")))
         val mgr = manager(
+            scope = backgroundScope,
             remote = FakeRemote(listOf(book("GEN", 1, 0))),
             content = content,
             translations = translations
@@ -381,7 +424,8 @@ class DefaultDownloadManagerTest {
             bibleContentDao = content,
             translationDao = translations,
             pending = FakePending(),
-            connectivity = FakeConnectivity(online = true)
+            connectivity = FakeConnectivity(online = true),
+            scope = backgroundScope
         )
 
         val job = launch { mgr.download("en_web") }
@@ -412,6 +456,7 @@ class DefaultDownloadManagerTest {
             add("b")
         }
         val mgr = manager(
+            scope = backgroundScope,
             remote = FakeRemote(listOf(book("GEN", 1, 0))),
             content = content,
             translations = translations,
