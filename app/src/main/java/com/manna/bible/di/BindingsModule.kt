@@ -19,7 +19,9 @@ import com.manna.bible.data.repository.DefaultBibleContentRepository
 import com.manna.bible.data.repository.DefaultPendingDownloadRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
 import com.manna.bible.audio.AndroidSpeechEngine
+import com.manna.bible.data.audio.HelloAoChapterAudioSource
 import com.manna.bible.domain.attribution.AttributionProvider
+import com.manna.bible.domain.audio.ChapterAudioSource
 import com.manna.bible.domain.attribution.DefaultAttributionProvider
 import com.manna.bible.domain.audio.DefaultTtsReader
 import com.manna.bible.domain.audio.SpeechEngine
@@ -165,6 +167,11 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindSpeechEngine(impl: AndroidSpeechEngine): SpeechEngine
+
+    // --- audio (narrated chapter source, Req 9.8) ----------------------------
+
+    @Binds
+    abstract fun bindChapterAudioSource(impl: HelloAoChapterAudioSource): ChapterAudioSource
 
     // --- attribution ---------------------------------------------------------
 

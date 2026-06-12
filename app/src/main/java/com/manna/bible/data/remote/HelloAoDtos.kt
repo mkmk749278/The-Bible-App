@@ -69,10 +69,20 @@ data class BookDto(
     val order: Int? = null
 )
 
-/** Response for `GET {id}/{book}/{chapter}.json`. */
+/**
+ * Response for `GET {id}/{book}/{chapter}.json`.
+ *
+ * @property chapter the chapter text payload.
+ * @property audioLinks the chapter's narrated-audio links (`thisChapterAudioLinks`),
+ *   present when the translation has audio — typically an object of
+ *   `reader -> mp3 url`. Modeled as a raw [JsonElement] so its (provider-defined,
+ *   occasionally varying) shape can never break parsing of the chapter text that
+ *   downloads depend on.
+ */
 @Serializable
 data class ChapterResponseDto(
-    val chapter: ChapterDto? = null
+    val chapter: ChapterDto? = null,
+    @SerialName("thisChapterAudioLinks") val audioLinks: JsonElement? = null
 )
 
 /**
