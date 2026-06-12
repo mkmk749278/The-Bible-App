@@ -17,6 +17,7 @@ import com.manna.bible.data.remote.HelloAoRemoteDataSource
 import com.manna.bible.data.repository.DefaultAnnotationRepository
 import com.manna.bible.data.repository.DefaultBibleContentRepository
 import com.manna.bible.data.repository.DefaultPendingDownloadRepository
+import com.manna.bible.data.repository.DefaultPrayerRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
 import com.manna.bible.audio.AndroidSpeechEngine
 import com.manna.bible.data.audio.HelloAoChapterAudioSource
@@ -44,6 +45,7 @@ import com.manna.bible.domain.lectionary.LectionaryProvider
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
+import com.manna.bible.domain.repository.PrayerRepository
 import com.manna.bible.data.reminder.AlarmReminderScheduler
 import com.manna.bible.domain.reminder.ReminderScheduler
 import com.manna.bible.domain.repository.TranslationRepository
@@ -206,6 +208,12 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindGriefJourney(impl: DefaultGriefJourney): GriefJourney
+
+    // --- prayer journal ------------------------------------------------------
+
+    @Binds
+    @Singleton
+    abstract fun bindPrayerRepository(impl: DefaultPrayerRepository): PrayerRepository
 
     // --- daily reminder ------------------------------------------------------
 

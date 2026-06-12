@@ -36,6 +36,9 @@ object FeatureFlags {
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 
+    /** Prayer Journal + Faith Timeline (Phase 2). */
+    const val PRAYER_JOURNAL: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 }

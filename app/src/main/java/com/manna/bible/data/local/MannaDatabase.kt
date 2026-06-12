@@ -15,6 +15,7 @@ import androidx.room.RoomDatabase
  *  - v3: adds offline Bible content ([BookEntity], [ChapterEntity], [VerseEntity],
  *        [VerseFtsEntity]) and the additive content-tracking columns on
  *        [TranslationEntity] (`isBundled`, `contentVersion`, `verseCount`).
+ *  - v4: adds the [PrayerEntryEntity] `prayers` table (prayer journal, Phase 2).
  *
  * The v2 -> v3 upgrade is fully additive and preserves all existing data: see
  * [MIGRATION_2_3]. Annotations live in Room and are left untouched; preferences
@@ -31,9 +32,10 @@ import androidx.room.RoomDatabase
         BookEntity::class,
         ChapterEntity::class,
         VerseEntity::class,
-        VerseFtsEntity::class
+        VerseFtsEntity::class,
+        PrayerEntryEntity::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 abstract class MannaDatabase : RoomDatabase() {
@@ -41,4 +43,5 @@ abstract class MannaDatabase : RoomDatabase() {
     abstract fun pendingDownloadDao(): PendingDownloadDao
     abstract fun annotationDao(): AnnotationDao
     abstract fun bibleContentDao(): BibleContentDao
+    abstract fun prayerDao(): PrayerDao
 }

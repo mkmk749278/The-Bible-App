@@ -5,8 +5,10 @@ import androidx.room.Room
 import com.manna.bible.data.local.AnnotationDao
 import com.manna.bible.data.local.BibleContentDao
 import com.manna.bible.data.local.MIGRATION_2_3
+import com.manna.bible.data.local.MIGRATION_3_4
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
+import com.manna.bible.data.local.PrayerDao
 import com.manna.bible.data.local.TranslationDao
 import com.manna.bible.data.remote.HelloAoApi
 import dagger.Module
@@ -66,7 +68,7 @@ object AppModule {
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
-            .addMigrations(MIGRATION_2_3)
+            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -85,6 +87,10 @@ object AppModule {
     @Provides
     fun provideBibleContentDao(database: MannaDatabase): BibleContentDao =
         database.bibleContentDao()
+
+    @Provides
+    fun providePrayerDao(database: MannaDatabase): PrayerDao =
+        database.prayerDao()
 
     // --- Free Use Bible API (helloao) networking -----------------------------
 

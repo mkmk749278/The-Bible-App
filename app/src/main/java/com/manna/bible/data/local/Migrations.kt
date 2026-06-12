@@ -73,3 +73,25 @@ val MIGRATION_2_3: Migration = object : Migration(2, 3) {
         )
     }
 }
+
+/**
+ * Additive migration from schema v3 to v4: adds the `prayers` table (prayer journal
+ * / Faith Timeline, Phase 2).
+ *
+ * Strictly additive — it only `CREATE`s the new table, so all existing content and
+ * user annotations are preserved verbatim. The DDL mirrors exactly what Room
+ * generates for [PrayerEntryEntity] (an autoGenerate `Long` primary key, nullable
+ * `answeredAt`) so Room's runtime schema validation succeeds.
+ */
+val MIGRATION_3_4: Migration = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `prayers` (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "`content` TEXT NOT NULL, " +
+                "`status` TEXT NOT NULL, " +
+                "`createdAt` INTEGER NOT NULL, " +
+                "`answeredAt` INTEGER)"
+        )
+    }
+}
