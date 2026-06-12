@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 3AM / Crisis Mode -->
+    <string name="crisis_title">You are not alone</string>
+    <string name="crisis_back">Back</string>
+    <string name="crisis_tool_entry">I\'m not okay right now</string>
+    <string name="crisis_menu_entry">I\'m not okay</string>
+    <string name="crisis_heading">God sees you right now.</string>
+    <string name="crisis_reassurance">Whatever you are carrying tonight, you don\'t have to carry it alone. Breathe. Rest here for a moment.</string>
+    <string name="crisis_listen">Just listen</string>
+    <string name="crisis_prayer_title">A prayer when you have no words</string>
+    <string name="crisis_prayer_body">Lord, I am weary and afraid. Be near to me now. Quiet my heart, hold me through this night, and remind me that I am Yours. Amen.</string>
+</resources>

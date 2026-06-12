@@ -89,6 +89,7 @@ fun ReaderScreen(
     onOpenAttribution: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
     onOpenDaily: () -> Unit = {},
+    onOpenCrisis: (() -> Unit)? = null,
     pendingScrollRef: String? = null,
     onScrollRefConsumed: () -> Unit = {},
     autoPlayAudio: Boolean = false
@@ -141,6 +142,12 @@ fun ReaderScreen(
                 onOpenDaily = {
                     showMenu = false
                     onOpenDaily()
+                },
+                onOpenCrisis = onOpenCrisis?.let {
+                    {
+                        showMenu = false
+                        it()
+                    }
                 }
             )
         },
@@ -219,7 +226,8 @@ private fun ReaderTopBar(
     onMenuToggle: (Boolean) -> Unit,
     onSwitchTranslation: () -> Unit,
     onOpenAttribution: () -> Unit,
-    onOpenDaily: () -> Unit
+    onOpenDaily: () -> Unit,
+    onOpenCrisis: (() -> Unit)? = null
 ) {
     val heading = if (bookName.isBlank()) {
         stringResource(R.string.app_name)
@@ -268,6 +276,12 @@ private fun ReaderTopBar(
                 Text(text = "\u22EE", fontSize = 22.sp)
             }
             DropdownMenu(expanded = showMenu, onDismissRequest = { onMenuToggle(false) }) {
+                if (onOpenCrisis != null) {
+                    DropdownMenuItem(
+                        text = { Text(stringResource(R.string.crisis_menu_entry)) },
+                        onClick = onOpenCrisis
+                    )
+                }
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.reader_daily_verse)) },
                     onClick = onOpenDaily

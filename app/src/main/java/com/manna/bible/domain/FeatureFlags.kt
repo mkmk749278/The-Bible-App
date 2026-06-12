@@ -30,6 +30,9 @@ object FeatureFlags {
     /** On-device Gemini Nano AI; requires Android 16+ (Phase 3). */
     const val GEMINI_NANO_AI: Boolean = false
 
+    /** 3AM / Crisis Mode — compassionate companion for hard moments (Phase 2, P2-1). */
+    const val CRISIS_MODE: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 }
