@@ -39,6 +39,7 @@ import com.manna.bible.ui.calendar.JesusCalendarScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
+import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
 import com.manna.bible.ui.pastor.PastorModeScreen
@@ -62,6 +63,7 @@ private object Routes {
     const val PASTOR = "pastor"
     const val REMINDER = "reminder"
     const val CRISIS = "crisis"
+    const val GRIEF = "grief"
 }
 
 /** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
@@ -193,6 +195,9 @@ fun MannaApp(
                             onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
                                 { navController.navigate(Routes.CRISIS) }
                             } else null,
+                            onOpenGrief = if (FeatureFlags.GRIEF_COMPANION) {
+                                { navController.navigate(Routes.GRIEF) }
+                            } else null,
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -288,6 +293,16 @@ fun MannaApp(
                                     popUpTo(Routes.HOME)
                                 }
                             },
+                            onOpenVerse = { ref ->
+                                navController.navigate(readerRoute(ref)) {
+                                    popUpTo(Routes.HOME)
+                                }
+                            }
+                        )
+                    }
+                    composable(Routes.GRIEF) {
+                        GriefScreen(
+                            onBack = { navController.popBackStack() },
                             onOpenVerse = { ref ->
                                 navController.navigate(readerRoute(ref)) {
                                     popUpTo(Routes.HOME)

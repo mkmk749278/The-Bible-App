@@ -6,6 +6,7 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.manna.bible.domain.model.CanonProfile
@@ -87,6 +88,16 @@ interface PreferencesStore {
 
     /** Persists the daily-reminder time as an `HH:mm` string. */
     suspend fun setDailyReminderTime(value: String) {}
+
+    /**
+     * Emits the epoch day on which the 30-day grief journey began, or -1 when it has
+     * not been started. The current day is derived from this and today's date.
+     */
+    val griefStartEpochDay: Flow<Long>
+        get() = flowOf(-1L)
+
+    /** Persists the grief journey's start epoch day (begins the journey). */
+    suspend fun setGriefStartEpochDay(value: Long) {}
 }
 
 /**
@@ -115,6 +126,7 @@ class DataStorePreferencesStore @Inject constructor(
         val SIMPLIFIED_MODE = booleanPreferencesKey("simplified_mode")
         val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
         val DAILY_REMINDER_TIME = stringPreferencesKey("daily_reminder_time")
+        val GRIEF_START_EPOCH_DAY = longPreferencesKey("grief_start_epoch_day")
     }
 
     override val setupState: Flow<SetupState> =
@@ -134,6 +146,9 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val dailyReminderTime: Flow<String> =
         dataStore.data.map { prefs -> prefs[Keys.DAILY_REMINDER_TIME] ?: "07:00" }
+
+    override val griefStartEpochDay: Flow<Long> =
+        dataStore.data.map { prefs -> prefs[Keys.GRIEF_START_EPOCH_DAY] ?: -1L }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -191,6 +206,10 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setDailyReminderTime(value: String) {
         dataStore.edit { prefs -> prefs[Keys.DAILY_REMINDER_TIME] = value }
+    }
+
+    override suspend fun setGriefStartEpochDay(value: Long) {
+        dataStore.edit { prefs -> prefs[Keys.GRIEF_START_EPOCH_DAY] = value }
     }
 
     private fun putOrRemove(prefs: MutablePreferences, key: Preferences.Key<String>, value: String?) {
