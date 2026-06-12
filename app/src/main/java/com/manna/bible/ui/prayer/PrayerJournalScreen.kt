@@ -3,6 +3,7 @@ package com.manna.bible.ui.prayer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -179,16 +180,13 @@ private fun PrayerCard(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(
                     onClick = onPrimary,
-                    modifier = Modifier.defaultMinSizeHeight()
+                    modifier = Modifier.defaultMinSize(minHeight = MinTouchTarget)
                 ) { Text(primaryLabel) }
                 OutlinedButton(
                     onClick = onDelete,
-                    modifier = Modifier.defaultMinSizeHeight()
+                    modifier = Modifier.defaultMinSize(minHeight = MinTouchTarget)
                 ) { Text(stringResource(R.string.prayer_delete)) }
             }
         }
     }
 }
-
-private fun Modifier.defaultMinSizeHeight(): Modifier =
-    this.then(androidx.compose.foundation.layout.defaultMinSize(minHeight = MinTouchTarget))
