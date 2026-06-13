@@ -158,6 +158,16 @@
     <string name="nav_listen">Listen</string>
     <string name="nav_search">Search</string>
     <string name="nav_library">Library</string>
+    <string name="nav_more">More</string>
+
+    <!-- More hub sections -->
+    <string name="more_translations">Translations</string>
+    <string name="more_section_bible">Bible</string>
+    <string name="more_section_pray">Pray</string>
+    <string name="more_section_practice">Practice</string>
+    <string name="more_section_create">Create</string>
+    <string name="more_section_study">Study</string>
+    <string name="more_section_about">About</string>
 
     <!-- Home experience -->
     <string name="home_continue_reading">Continue reading</string>
