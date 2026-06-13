@@ -33,9 +33,10 @@ import androidx.room.RoomDatabase
         ChapterEntity::class,
         VerseEntity::class,
         VerseFtsEntity::class,
-        PrayerEntryEntity::class
+        PrayerEntryEntity::class,
+        ExplanationEntity::class
     ],
-    version = 4,
+    version = 5,
     exportSchema = false
 )
 abstract class MannaDatabase : RoomDatabase() {
@@ -44,4 +45,5 @@ abstract class MannaDatabase : RoomDatabase() {
     abstract fun annotationDao(): AnnotationDao
     abstract fun bibleContentDao(): BibleContentDao
     abstract fun prayerDao(): PrayerDao
+    abstract fun explanationDao(): ExplanationDao
 }

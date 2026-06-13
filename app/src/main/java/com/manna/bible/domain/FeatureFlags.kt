@@ -30,6 +30,13 @@ object FeatureFlags {
     /** On-device Gemini Nano AI; requires Android 16+ (Phase 3). */
     const val GEMINI_NANO_AI: Boolean = false
 
+    /**
+     * "Explain this passage" — tap a verse for a plain, pastoral explanation
+     * (cloud-primary hybrid: Gemini Flash + Room cache, Nano upgrade later). Replaces
+     * the Pastor Mode notebook as the study surface (Phase 3, P3-1).
+     */
+    const val EXPLAIN_PASSAGE: Boolean = true
+
     /** 3AM / Crisis Mode — compassionate companion for hard moments (Phase 2, P2-1). */
     const val CRISIS_MODE: Boolean = true
 

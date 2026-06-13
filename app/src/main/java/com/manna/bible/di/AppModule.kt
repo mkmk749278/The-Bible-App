@@ -2,14 +2,18 @@ package com.manna.bible.di
 
 import android.content.Context
 import androidx.room.Room
+import com.manna.bible.BuildConfig
 import com.manna.bible.data.local.AnnotationDao
 import com.manna.bible.data.local.BibleContentDao
+import com.manna.bible.data.local.ExplanationDao
 import com.manna.bible.data.local.MIGRATION_2_3
 import com.manna.bible.data.local.MIGRATION_3_4
+import com.manna.bible.data.local.MIGRATION_4_5
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
 import com.manna.bible.data.local.PrayerDao
 import com.manna.bible.data.local.TranslationDao
+import com.manna.bible.data.remote.GeminiApi
 import com.manna.bible.data.remote.HelloAoApi
 import dagger.Module
 import dagger.Provides
@@ -25,6 +29,7 @@ import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -68,7 +73,7 @@ object AppModule {
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4)
+            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -92,6 +97,10 @@ object AppModule {
     fun providePrayerDao(database: MannaDatabase): PrayerDao =
         database.prayerDao()
 
+    @Provides
+    fun provideExplanationDao(database: MannaDatabase): ExplanationDao =
+        database.explanationDao()
+
     // --- Free Use Bible API (helloao) networking -----------------------------
 
     @Provides
@@ -113,6 +122,27 @@ object AppModule {
     @Singleton
     fun provideHelloAoApi(retrofit: Retrofit): HelloAoApi = retrofit.create(HelloAoApi::class.java)
 
+    // --- Gemini ("Explain this passage" cloud engine) ------------------------
+
+    /**
+     * The Gemini REST API. Built on its own base URL (reusing the shared JSON parser
+     * and OkHttp client) so it stays independent of the Bible-content Retrofit.
+     */
+    @Provides
+    @Singleton
+    fun provideGeminiApi(json: Json, client: OkHttpClient): GeminiApi = Retrofit.Builder()
+        .baseUrl(GEMINI_BASE_URL)
+        .client(client)
+        .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE.toMediaType()))
+        .build()
+        .create(GeminiApi::class.java)
+
+    /** The Gemini API key, injected from BuildConfig (blank when unconfigured). */
+    @Provides
+    @Named("geminiApiKey")
+    fun provideGeminiApiKey(): String = BuildConfig.GEMINI_API_KEY
+
     private const val HELLO_AO_BASE_URL = "https://bible.helloao.org/api/"
+    private const val GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/"
     private const val JSON_MEDIA_TYPE = "application/json"
 }
