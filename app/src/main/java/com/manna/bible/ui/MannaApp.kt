@@ -7,10 +7,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -19,6 +18,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -26,12 +28,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
@@ -42,8 +42,6 @@ import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
 import com.manna.bible.ui.fasting.FastingScreen
 import com.manna.bible.ui.grief.GriefScreen
-import com.manna.bible.ui.home.HomeScreen
-import com.manna.bible.ui.listen.ListenScreen
 import com.manna.bible.ui.more.MoreScreen
 import com.manna.bible.ui.prayer.PrayerJournalScreen
 import com.manna.bible.ui.pastor.PastorModeScreen
@@ -52,18 +50,20 @@ import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.setup.SetupHost
 
-/** Navigation routes. Tabs are top-level; the reader opens full-screen above them. */
+/**
+ * Navigation routes. There are three primary tabs (Read · Calendar · More); the
+ * reader *is* the Read tab. Everything else (search, daily verse, tools, settings)
+ * is pushed above the tabs.
+ */
 private object Routes {
     const val SETUP = "setup"
-    const val HOME = "home"
-    const val LISTEN = "listen"
+    const val READ = "read"
+    const val CALENDAR = "calendar"
+    const val MORE = "more"
     const val SEARCH = "search"
-    const val LIBRARY = "library"
-    const val READER = "reader?ref={ref}&autoplay={autoplay}"
     const val CATALOG = "catalog"
     const val ATTRIBUTION = "attribution"
     const val DAILY = "daily"
-    const val CALENDAR = "calendar"
     const val PASTOR = "pastor"
     const val REMINDER = "reminder"
     const val CRISIS = "crisis"
@@ -73,46 +73,38 @@ private object Routes {
     const val CARD = "card"
 }
 
-/** Builds a concrete reader route, optionally opening at [ref] and auto-playing audio. */
-private fun readerRoute(ref: String? = null, autoplay: Boolean = false): String =
-    "reader?ref=${ref.orEmpty()}&autoplay=$autoplay"
-
-/** SavedStateHandle key for handing a selected reference to the reader. */
-private const val SCROLL_REF_KEY = "scrollToRef"
-
 /** Calm motion (UX directive): 300ms fades only — no bounce, no flashy transitions. */
 private const val MOTION_MS = 300
 
 private data class TabItem(val route: String, val labelRes: Int, val icon: ImageVector)
 
 private val Tabs = listOf(
-    TabItem(Routes.HOME, R.string.nav_home, Icons.Filled.Home),
-    TabItem(Routes.LISTEN, R.string.nav_listen, Icons.Filled.PlayArrow),
-    TabItem(Routes.SEARCH, R.string.nav_search, Icons.Filled.Search),
-    TabItem(Routes.LIBRARY, R.string.nav_more, Icons.Filled.Menu),
+    TabItem(Routes.READ, R.string.nav_read, Icons.Filled.Home),
+    TabItem(Routes.CALENDAR, R.string.nav_calendar, Icons.Filled.DateRange),
+    TabItem(Routes.MORE, R.string.nav_more, Icons.Filled.Menu),
 )
 
 private fun NavController.navigateToTab(route: String) {
     navigate(route) {
-        popUpTo(Routes.HOME) { saveState = true }
+        popUpTo(Routes.READ) { saveState = true }
         launchSingleTop = true
         restoreState = true
     }
 }
 
 /**
- * Application navigation root and first-launch gate (Requirement 1 + UX directive).
+ * Application navigation root and first-launch gate (Requirement 1 + UX redesign).
  *
- * After setup, the app lands on the Home experience (Continue Reading · Today's
- * Verse · Continue Listening) with a calm bottom bar of four primary destinations:
- * Home, Listen, Search, Library. The reader opens full-screen above the bar so the
- * scripture text dominates; catalog, attribution, and daily-verse surfaces are
- * pushed the same way. Transitions are gentle 300ms fades.
+ * After setup the app lands on the **Read** tab (the reader, opened at the last
+ * reading position) with a calm three-tab bar — **Read · Calendar · More**. Search,
+ * the daily verse, and the care/practice tools are pushed above the tabs. The reader
+ * carries its own search entry and audio mini-player, so reading, searching, and
+ * listening live in one place. Transitions are gentle 300ms fades.
  *
- * While [GateState.Loading], a centered progress indicator is shown; when
- * [GateState.NeedsSetup] the [NavHost] starts at the setup flow (Req 1.1, 1.4),
- * otherwise at Home (Req 1.2). Setup completion pops itself so back cannot
- * re-enter it.
+ * A "verse to open" handed back by search / the daily verse / the calendar / the care
+ * screens is held in app-scoped saveable state ([pendingRef]/[pendingAutoplay]) and
+ * consumed by the long-lived Read tab — so those flows land in the same reader instead
+ * of spawning a separate full-screen one.
  */
 @Composable
 fun MannaApp(
@@ -130,7 +122,16 @@ fun MannaApp(
         GateState.NeedsSetup, GateState.Ready -> {
             val navController = rememberNavController()
             val startDestination =
-                if (state == GateState.Ready) Routes.HOME else Routes.SETUP
+                if (state == GateState.Ready) Routes.READ else Routes.SETUP
+
+            // A pending "open this verse (and maybe play it)" request for the Read tab.
+            var pendingRef by rememberSaveable { mutableStateOf<String?>(null) }
+            var pendingAutoplay by rememberSaveable { mutableStateOf(false) }
+            val openInReader: (String?, Boolean) -> Unit = { ref, autoplay ->
+                if (ref != null) pendingRef = ref
+                if (autoplay) pendingAutoplay = true
+                navController.navigateToTab(Routes.READ)
+            }
 
             val currentRoute = navController.currentBackStackEntryAsState()
                 .value?.destination?.route
@@ -164,45 +165,44 @@ fun MannaApp(
                     composable(Routes.SETUP) {
                         SetupHost(
                             onSetupComplete = {
-                                navController.navigate(Routes.HOME) {
+                                navController.navigate(Routes.READ) {
                                     popUpTo(Routes.SETUP) { inclusive = true }
                                 }
                             },
                         )
                     }
-                    composable(Routes.HOME) {
-                        HomeScreen(
-                            onContinueReading = { navController.navigate(readerRoute()) },
-                            onOpenVerse = { ref -> navController.navigate(readerRoute(ref)) },
-                            onContinueListening = {
-                                navController.navigate(readerRoute(autoplay = true))
-                            }
+
+                    // --- Read tab (the reader) -----------------------------------
+                    composable(Routes.READ) {
+                        ReaderScreen(
+                            onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
+                            onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
+                            onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                            onOpenDaily = { navController.navigate(Routes.DAILY) },
+                            onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
+                                { navController.navigate(Routes.CRISIS) }
+                            } else null,
+                            pendingScrollRef = pendingRef,
+                            onScrollRefConsumed = { pendingRef = null },
+                            autoPlayAudio = pendingAutoplay,
+                            onAutoPlayConsumed = { pendingAutoplay = false }
                         )
                     }
-                    composable(Routes.LISTEN) {
-                        ListenScreen(
-                            onContinueListening = {
-                                navController.navigate(readerRoute(autoplay = true))
-                            }
+
+                    // --- Calendar tab --------------------------------------------
+                    composable(Routes.CALENDAR) {
+                        JesusCalendarScreen(
+                            onBack = null,
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
-                    composable(Routes.SEARCH) {
-                        SearchScreen(
-                            onBack = { navController.popBackStack() },
-                            onResultSelected = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
-                        )
-                    }
-                    composable(Routes.LIBRARY) {
+
+                    // --- More tab ------------------------------------------------
+                    composable(Routes.MORE) {
                         MoreScreen(
                             onOpenTranslations = { navController.navigate(Routes.CATALOG) },
                             onOpenDaily = { navController.navigate(Routes.DAILY) },
-                            onOpenCalendar = if (FeatureFlags.JESUS_CALENDAR) {
-                                { navController.navigate(Routes.CALENDAR) }
-                            } else null,
+                            onOpenCalendar = null, // Calendar is a primary tab now.
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }
                             } else null,
@@ -227,39 +227,12 @@ fun MannaApp(
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
                     }
-                    composable(
-                        route = Routes.READER,
-                        arguments = listOf(
-                            navArgument("ref") {
-                                type = NavType.StringType
-                                nullable = true
-                                defaultValue = null
-                            },
-                            navArgument("autoplay") {
-                                type = NavType.BoolType
-                                defaultValue = false
-                            }
-                        )
-                    ) { backStackEntry ->
-                        val handle = backStackEntry.savedStateHandle
-                        val initialRef = backStackEntry.arguments
-                            ?.getString("ref")?.takeIf { it.isNotBlank() }
-                        val autoplay = backStackEntry.arguments
-                            ?.getBoolean("autoplay") ?: false
-                        val scrollRef by handle
-                            .getStateFlow(SCROLL_REF_KEY, initialRef)
-                            .collectAsStateWithLifecycle()
-                        ReaderScreen(
-                            onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
-                            onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
-                            onOpenSearch = { navController.navigateToTab(Routes.SEARCH) },
-                            onOpenDaily = { navController.navigate(Routes.DAILY) },
-                            onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
-                                { navController.navigate(Routes.CRISIS) }
-                            } else null,
-                            pendingScrollRef = scrollRef,
-                            onScrollRefConsumed = { handle[SCROLL_REF_KEY] = null },
-                            autoPlayAudio = autoplay
+
+                    // --- Pushed destinations -------------------------------------
+                    composable(Routes.SEARCH) {
+                        SearchScreen(
+                            onBack = { navController.popBackStack() },
+                            onResultSelected = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.CATALOG) {
@@ -275,21 +248,7 @@ fun MannaApp(
                     composable(Routes.DAILY) {
                         DailyVerseScreen(
                             onBack = { navController.popBackStack() },
-                            onOpenVerse = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
-                        )
-                    }
-                    composable(Routes.CALENDAR) {
-                        JesusCalendarScreen(
-                            onBack = { navController.popBackStack() },
-                            onOpenVerse = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.PASTOR) {
@@ -305,26 +264,14 @@ fun MannaApp(
                     composable(Routes.CRISIS) {
                         CrisisModeScreen(
                             onBack = { navController.popBackStack() },
-                            onListen = { ref ->
-                                navController.navigate(readerRoute(ref, autoplay = true)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            },
-                            onOpenVerse = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
+                            onListen = { ref -> openInReader(ref, true) },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.GRIEF) {
                         GriefScreen(
                             onBack = { navController.popBackStack() },
-                            onOpenVerse = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.PRAYER) {
@@ -335,11 +282,7 @@ fun MannaApp(
                     composable(Routes.FASTING) {
                         FastingScreen(
                             onBack = { navController.popBackStack() },
-                            onOpenVerse = { ref ->
-                                navController.navigate(readerRoute(ref)) {
-                                    popUpTo(Routes.HOME)
-                                }
-                            }
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.CARD) {

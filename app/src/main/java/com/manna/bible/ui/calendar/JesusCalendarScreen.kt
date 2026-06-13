@@ -52,7 +52,7 @@ private val MinTouchTarget = 48.dp
 fun JesusCalendarScreen(
     modifier: Modifier = Modifier,
     viewModel: JesusCalendarViewModel = hiltViewModel(),
-    onBack: () -> Unit = {},
+    onBack: (() -> Unit)? = {},
     onOpenVerse: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -70,13 +70,15 @@ fun JesusCalendarScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onBack,
-                        modifier = Modifier
-                            .size(MinTouchTarget)
-                            .semantics { contentDescription = backDescription }
-                    ) {
-                        Text(text = "‹", fontSize = 26.sp)
+                    if (onBack != null) {
+                        IconButton(
+                            onClick = onBack,
+                            modifier = Modifier
+                                .size(MinTouchTarget)
+                                .semantics { contentDescription = backDescription }
+                        ) {
+                            Text(text = "‹", fontSize = 26.sp)
+                        }
                     }
                 }
             )

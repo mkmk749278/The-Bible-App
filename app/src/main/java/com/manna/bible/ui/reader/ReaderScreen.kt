@@ -92,7 +92,8 @@ fun ReaderScreen(
     onOpenCrisis: (() -> Unit)? = null,
     pendingScrollRef: String? = null,
     onScrollRefConsumed: () -> Unit = {},
-    autoPlayAudio: Boolean = false
+    autoPlayAudio: Boolean = false,
+    onAutoPlayConsumed: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -106,14 +107,12 @@ fun ReaderScreen(
         onScrollRefConsumed()
     }
 
-    // Continue Listening: start read-aloud once the chapter is on screen, exactly
-    // once per navigation (the flag survives configuration changes).
-    var autoPlayPending by androidx.compose.runtime.saveable.rememberSaveable {
-        mutableStateOf(autoPlayAudio)
-    }
-    androidx.compose.runtime.LaunchedEffect(autoPlayPending, state.isLoading, state.verses) {
-        if (autoPlayPending && !state.isLoading && state.verses.isNotEmpty()) {
-            autoPlayPending = false
+    // Continue Listening: start read-aloud once the chapter is on screen. [autoPlayAudio]
+    // is a one-shot request (owned by the caller via [onAutoPlayConsumed]) so it fires
+    // exactly once per request even though the Read tab is long-lived.
+    androidx.compose.runtime.LaunchedEffect(autoPlayAudio, state.isLoading, state.verses) {
+        if (autoPlayAudio && !state.isLoading && state.verses.isNotEmpty()) {
+            onAutoPlayConsumed()
             if (!state.isAudioActive) viewModel.onAudioPlayPause()
         }
     }
