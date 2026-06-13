@@ -131,6 +131,19 @@ Reader verse-action → explanation; cloud-primary hybrid engine with Room cachi
 upgrade; "for preaching" depth. *Caching/mapping + UI testable; live AI calls need the
 key + network (and Nano needs a device).*
 
+**Status (implemented):** cloud engine (Gemini Flash) + offline Room cache +
+repository (C1), the reader verse-action → Explain sheet with Plain/Preaching depth
+and needs-key/offline/error states (C2), and the old Pastor Mode notebook retired
+(C3). Enable the cloud path by adding the `GEMINI_API_KEY` GitHub Secret.
+
+**On-device Nano — deferred, not faked.** The hybrid's on-device leg uses the
+experimental ML Kit GenAI / AICore Prompt API, which only runs on specific Gemini-Nano
+devices (Pixel 8+/Galaxy S24-class) and cannot be compiled-against or verified without
+that SDK + hardware. Rather than ship an unverifiable integration, the engine layer is
+an interface (`ExplanationEngine`) so a `NanoExplanationEngine` can be added behind a
+"best available engine" selector once there is a device to validate it on; until then
+cloud-with-cache is the single engine.
+
 ### Phase D — Polish
 Fill empty screens (Today hub density), fix onboarding (`rc_calendar` → real names),
 tighten spacing, mini-player behaviour, accessibility pass on the new surfaces.
