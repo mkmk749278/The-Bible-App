@@ -3,6 +3,7 @@ package com.manna.bible.ui.calendar
 import androidx.annotation.StringRes
 import com.manna.bible.R
 import com.manna.bible.domain.calendar.LiturgicalSeason
+import com.manna.bible.domain.calendar.ReadingKind
 
 /** Localized name for a feast [id] from `JesusEventsProvider`. */
 @StringRes
@@ -54,4 +55,13 @@ internal fun seasonNameRes(season: LiturgicalSeason): Int = when (season) {
     LiturgicalSeason.HOLY_WEEK -> R.string.season_holy_week
     LiturgicalSeason.EASTER -> R.string.season_easter
     LiturgicalSeason.ORDINARY -> R.string.season_ordinary
+}
+
+/** Localized label for a reading's role in the liturgy. */
+@StringRes
+internal fun readingKindRes(kind: ReadingKind): Int = when (kind) {
+    ReadingKind.FIRST -> R.string.reading_first
+    ReadingKind.PSALM -> R.string.reading_psalm
+    ReadingKind.SECOND -> R.string.reading_second
+    ReadingKind.GOSPEL -> R.string.reading_gospel
 }

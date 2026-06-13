@@ -4,10 +4,17 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.calendar.JesusEventsProvider
+import com.manna.bible.domain.calendar.LectionaryReading
+import com.manna.bible.domain.calendar.LectionaryReadingsProvider
 import com.manna.bible.domain.calendar.LiturgicalCalendarProvider
 import com.manna.bible.domain.calendar.LiturgicalColor
 import com.manna.bible.domain.calendar.LiturgicalSeason
+import com.manna.bible.domain.calendar.ReadingKind
+import com.manna.bible.domain.canon.CanonEngine
+import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.Denomination
+import com.manna.bible.domain.share.ShareReferenceFormatter
+import com.manna.bible.domain.usecase.ReadingRef
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +39,13 @@ data class CalendarDayCell(
     val dayOfMonth: Int get() = date.dayOfMonth
 }
 
+/** A formatted appointed reading for the detail card. */
+data class ReadingRow(
+    val kind: ReadingKind,
+    val reference: String,
+    val osisRef: String
+)
+
 /** The currently selected day, expanded for the detail card. */
 data class SelectedDay(
     val date: LocalDate,
@@ -39,7 +53,8 @@ data class SelectedDay(
     val color: LiturgicalColor,
     val isFast: Boolean,
     val feastId: String?,
-    val osisRef: String?
+    val osisRef: String?,
+    val readings: List<ReadingRow> = emptyList()
 )
 
 /**
@@ -61,9 +76,10 @@ data class LiturgicalCalendarUiState(
 
 /**
  * Drives the month-grid Calendar from the [LiturgicalCalendarProvider], coloured and
- * fast-marked for the user's chosen tradition (observed from setup). Feast readings
- * are resolved from [JesusEventsProvider] so a selected feast can be opened in the
- * reader. Fully offline and synchronous — both providers are pure domain.
+ * fast-marked for the user's chosen tradition (observed from setup). For a selected
+ * day it also resolves the appointed [LectionaryReadingsProvider] readings and formats
+ * each reference in the tradition's naming/numbering convention via
+ * [ShareReferenceFormatter]. Feast readings can be opened in the reader.
  *
  * Uses only `androidx.lifecycle` + coroutines/flow — no Android framework types.
  */
@@ -71,6 +87,9 @@ data class LiturgicalCalendarUiState(
 class LiturgicalCalendarViewModel @Inject constructor(
     private val provider: LiturgicalCalendarProvider,
     private val jesusEvents: JesusEventsProvider,
+    private val lectionary: LectionaryReadingsProvider,
+    private val referenceFormatter: ShareReferenceFormatter,
+    private val canonEngine: CanonEngine,
     preferencesStore: PreferencesStore
 ) : ViewModel() {
 
@@ -80,14 +99,24 @@ class LiturgicalCalendarViewModel @Inject constructor(
     private val shownMonth = MutableStateFlow(YearMonth.now())
     private val selectedDate = MutableStateFlow(LocalDate.now())
 
-    private val denomination = preferencesStore.setupState
-        .map { it.denomination ?: Denomination.PROTESTANT_OTHER }
+    private data class CalContext(
+        val denomination: Denomination,
+        val language: String,
+        val profile: CanonProfile
+    )
+
+    private val context = preferencesStore.setupState
+        .map { setup ->
+            val denomination = setup.denomination ?: Denomination.PROTESTANT_OTHER
+            val language = setup.bibleLanguage ?: DEFAULT_LANGUAGE
+            CalContext(denomination, language, canonEngine.profileFor(denomination, language))
+        }
         .distinctUntilChanged()
 
     init {
         viewModelScope.launch {
-            combine(denomination, shownMonth, selectedDate) { denom, ym, selected ->
-                build(denom, ym, selected)
+            combine(context, shownMonth, selectedDate) { ctx, ym, selected ->
+                build(ctx, ym, selected)
             }.collect { _uiState.value = it }
         }
     }
@@ -116,12 +145,12 @@ class LiturgicalCalendarViewModel @Inject constructor(
     }
 
     private fun build(
-        denomination: Denomination,
+        ctx: CalContext,
         ym: YearMonth,
         selected: LocalDate
     ): LiturgicalCalendarUiState {
         val today = LocalDate.now()
-        val days = provider.month(ym.year, ym.monthValue, denomination).map { day ->
+        val days = provider.month(ym.year, ym.monthValue, ctx.denomination).map { day ->
             CalendarDayCell(
                 date = day.date,
                 color = day.color,
@@ -134,10 +163,12 @@ class LiturgicalCalendarViewModel @Inject constructor(
         // Sunday-first grid: Monday=1 … Sunday=7 → 1 … 0.
         val leadingBlanks = ym.atDay(1).dayOfWeek.value % 7
 
-        val selectedDay = provider.dayFor(selected, denomination)
+        val selectedDay = provider.dayFor(selected, ctx.denomination)
         val osisRef = jesusEvents.entriesFor(selected.year)
             .firstOrNull { it.date == selected }
             ?.verseRefs?.firstOrNull()?.format()
+        val readings = lectionary.readingsFor(selected, ctx.denomination)
+            .map { formatReading(ctx, it) }
 
         return LiturgicalCalendarUiState(
             year = ym.year,
@@ -150,10 +181,32 @@ class LiturgicalCalendarViewModel @Inject constructor(
                 color = selectedDay.color,
                 isFast = selectedDay.isFast,
                 feastId = selectedDay.feastId,
-                osisRef = osisRef
+                osisRef = osisRef,
+                readings = readings
             ),
             today = today,
             isLoading = false
         )
+    }
+
+    private fun formatReading(ctx: CalContext, reading: LectionaryReading): ReadingRow {
+        val reference = if (reading.endVerse != null) {
+            referenceFormatter.formatRange(
+                ctx.profile, ctx.language, reading.osisId, reading.chapter, reading.verse, reading.endVerse
+            )
+        } else {
+            referenceFormatter.formatReference(
+                ctx.profile, ctx.language, reading.osisId, reading.chapter, reading.verse
+            )
+        }
+        return ReadingRow(
+            kind = reading.kind,
+            reference = reference,
+            osisRef = ReadingRef(reading.osisId, reading.chapter, reading.verse).format()
+        )
+    }
+
+    private companion object {
+        const val DEFAULT_LANGUAGE = "en"
     }
 }

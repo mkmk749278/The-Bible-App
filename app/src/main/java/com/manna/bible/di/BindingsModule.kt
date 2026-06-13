@@ -28,8 +28,10 @@ import com.manna.bible.domain.audio.DefaultTtsReader
 import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.calendar.DefaultJesusEventsProvider
+import com.manna.bible.domain.calendar.DefaultLectionaryReadingsProvider
 import com.manna.bible.domain.calendar.DefaultLiturgicalCalendarProvider
 import com.manna.bible.domain.calendar.JesusEventsProvider
+import com.manna.bible.domain.calendar.LectionaryReadingsProvider
 import com.manna.bible.domain.calendar.LiturgicalCalendarProvider
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
@@ -207,6 +209,11 @@ abstract class BindingsModule {
     abstract fun bindLiturgicalCalendarProvider(
         impl: DefaultLiturgicalCalendarProvider
     ): LiturgicalCalendarProvider
+
+    @Binds
+    abstract fun bindLectionaryReadingsProvider(
+        impl: DefaultLectionaryReadingsProvider
+    ): LectionaryReadingsProvider
 
     // --- crisis / 3AM mode ---------------------------------------------------
 
