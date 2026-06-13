@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
+import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.translation.Translation
 
@@ -376,11 +377,21 @@ private fun LectionaryStep(lectionaryId: String?) {
     )
     Card(modifier = Modifier.fillMaxWidth()) {
         Text(
-            text = lectionaryId ?: stringResource(R.string.setup_lectionary_none),
+            text = stringResource(lectionaryLabelRes(lectionaryId)),
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(16.dp),
         )
     }
+}
+
+/** Maps a lectionary id to its human display name (never the raw id). */
+@androidx.annotation.StringRes
+private fun lectionaryLabelRes(id: String?): Int = when (id) {
+    DefaultLectionaryProvider.CSI_ALMANAC -> R.string.lectionary_csi
+    DefaultLectionaryProvider.RC_CALENDAR -> R.string.lectionary_rc
+    DefaultLectionaryProvider.ORTHODOX_CALENDAR -> R.string.lectionary_orthodox
+    DefaultLectionaryProvider.GENERAL_LECTIONARY -> R.string.lectionary_general
+    else -> R.string.setup_lectionary_none
 }
 
 @Composable
@@ -400,7 +411,7 @@ private fun SummaryStep(state: SetupUiState) {
     val translationLabel = state.availableTranslations
         .firstOrNull { it.id == state.bibleTranslationId }?.name
         ?: state.bibleTranslationId ?: notSelected
-    val lectionaryLabel = state.lectionaryId ?: stringResource(R.string.setup_lectionary_none)
+    val lectionaryLabel = stringResource(lectionaryLabelRes(state.lectionaryId))
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SummaryRow(stringResource(R.string.setup_summary_denomination), denominationLabel)
