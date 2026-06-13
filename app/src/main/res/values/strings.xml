@@ -101,6 +101,7 @@
 
     <!-- Reader: audio read-aloud (offline TTS) -->
     <string name="reader_audio_play">Read aloud</string>
+    <string name="reader_audio_now_playing">Reading aloud…</string>
     <string name="reader_audio_pause">Pause</string>
     <string name="reader_audio_resume">Resume</string>
     <string name="reader_audio_stop">Stop</string>

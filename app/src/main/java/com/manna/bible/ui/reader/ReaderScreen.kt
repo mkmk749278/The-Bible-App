@@ -29,6 +29,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.clip
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -36,6 +37,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -75,9 +77,6 @@ import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
-
-/** Number of non-verse items at the top of the verse list (the search bar). */
-private const val SEARCH_BAR_ITEMS = 1
 
 /**
  * The offline `Reader_Screen` (Requirements 2, 3, 6, 8, 11.1).
@@ -139,7 +138,6 @@ fun ReaderScreen(
                 bookName = state.bookName,
                 displayedChapterNumber = state.displayedChapterNumber,
                 onOpenPicker = { showPicker = true },
-                onOpenSearch = onOpenSearch,
                 showMenu = showMenu,
                 onMenuToggle = { showMenu = it },
                 onSwitchTranslation = {
@@ -244,7 +242,6 @@ private fun ReaderTopBar(
     bookName: String,
     displayedChapterNumber: Int,
     onOpenPicker: () -> Unit,
-    onOpenSearch: () -> Unit,
     showMenu: Boolean,
     onMenuToggle: (Boolean) -> Unit,
     onSwitchTranslation: () -> Unit,
@@ -258,7 +255,6 @@ private fun ReaderTopBar(
         "$bookName $displayedChapterNumber"
     }
     val pickerDescription = stringResource(R.string.reader_open_picker)
-    val searchDescription = stringResource(R.string.reader_search)
     val moreDescription = stringResource(R.string.reader_more_options)
     TopAppBar(
         title = {
@@ -282,14 +278,6 @@ private fun ReaderTopBar(
             }
         },
         actions = {
-            IconButton(
-                onClick = onOpenSearch,
-                modifier = Modifier
-                    .size(MinTouchTarget)
-                    .semantics { contentDescription = searchDescription }
-            ) {
-                Text(text = "\uD83D\uDD0D", fontSize = 18.sp)
-            }
             IconButton(
                 onClick = { onMenuToggle(true) },
                 modifier = Modifier
@@ -345,7 +333,8 @@ private fun ReaderBottomBar(
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                 )
             }
-            AudioBar(
+            // The mini audio player (play/pause \u00B7 speed \u00B7 continuous \u00B7 stop).
+            AudioMiniPlayer(
                 isPlaying = state.isAudioPlaying,
                 isActive = state.isAudioActive,
                 speed = state.ttsSpeed,
@@ -355,34 +344,68 @@ private fun ReaderBottomBar(
                 onCycleSpeed = onCycleSpeed,
                 onToggleContinuous = onToggleContinuous
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 8.dp, vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                val prevDescription = stringResource(R.string.reader_previous_chapter)
-                val nextDescription = stringResource(R.string.reader_next_chapter)
-                IconButton(
-                    onClick = onPrev,
-                    enabled = state.canPrev,
-                    modifier = Modifier
-                        .size(MinTouchTarget)
-                        .semantics { contentDescription = prevDescription }
-                ) {
-                    Text(text = "\u2039", fontSize = 26.sp)
-                }
-                IconButton(
-                    onClick = onNext,
-                    enabled = state.canNext,
-                    modifier = Modifier
-                        .size(MinTouchTarget)
-                        .semantics { contentDescription = nextDescription }
-                ) {
-                    Text(text = "\u203A", fontSize = 26.sp)
-                }
-            }
+            HorizontalDivider(color = MannaTheme.colors.border, thickness = 1.dp)
+            // Chapter navigation, with the current chapter named between the arrows.
+            ChapterNavBar(
+                label = if (state.bookName.isBlank()) "" else {
+                    "${state.bookName} ${state.displayedChapterNumber}"
+                },
+                canPrev = state.canPrev,
+                canNext = state.canNext,
+                onPrev = onPrev,
+                onNext = onNext
+            )
+        }
+    }
+}
+
+/**
+ * Chapter navigation: previous / next arrows with the current chapter named in the
+ * centre, so the arrows always have context. Arrows use a 56dp target and disable at
+ * canon boundaries.
+ */
+@Composable
+private fun ChapterNavBar(
+    label: String,
+    canPrev: Boolean,
+    canNext: Boolean,
+    onPrev: () -> Unit,
+    onNext: () -> Unit
+) {
+    val prevDescription = stringResource(R.string.reader_previous_chapter)
+    val nextDescription = stringResource(R.string.reader_next_chapter)
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 4.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        IconButton(
+            onClick = onPrev,
+            enabled = canPrev,
+            modifier = Modifier
+                .size(56.dp)
+                .semantics { contentDescription = prevDescription }
+        ) {
+            Text(text = "\u2039", fontSize = 28.sp, color = MannaTheme.colors.ink)
+        }
+        Text(
+            text = label,
+            style = androidx.compose.material3.MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+            color = MannaTheme.colors.soft,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.weight(1f)
+        )
+        IconButton(
+            onClick = onNext,
+            enabled = canNext,
+            modifier = Modifier
+                .size(56.dp)
+                .semantics { contentDescription = nextDescription }
+        ) {
+            Text(text = "\u203A", fontSize = 28.sp, color = MannaTheme.colors.ink)
         }
     }
 }
@@ -401,13 +424,13 @@ private fun formatSpeed(speed: Float): String =
     if (speed % 1f == 0f) speed.toInt().toString() else speed.toString()
 
 /**
- * Offline read-aloud controls (Requirement 9.3, 9.4, 9.7): play/pause, stop (only
- * while active), a tappable speed multiplier that cycles 0.5x-2.0x, and a
- * continuous-play toggle. Each control meets the 48dp touch target and carries a
- * TalkBack description.
+ * Offline read-aloud mini player (Requirement 9.3, 9.4, 9.7): a prominent circular
+ * play/pause button leads, followed by a tappable speed multiplier (cycles 0.5x-2.0x),
+ * a continuous-play toggle, and a stop control that appears only while active. Each
+ * control meets the 48dp touch target and carries a TalkBack description.
  */
 @Composable
-private fun AudioBar(
+private fun AudioMiniPlayer(
     isPlaying: Boolean,
     isActive: Boolean,
     speed: Float,
@@ -433,27 +456,36 @@ private fun AudioBar(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp, vertical = 4.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        IconButton(
-            onClick = onPlayPause,
+        // Prominent circular play/pause — the primary control of the mini player.
+        Box(
             modifier = Modifier
-                .size(MinTouchTarget)
-                .semantics { contentDescription = playPauseLabel }
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(MannaTheme.colors.gold)
+                .clickable(onClick = onPlayPause)
+                .semantics { contentDescription = playPauseLabel },
+            contentAlignment = Alignment.Center
         ) {
-            Text(text = if (isPlaying) "⏸" else "▶", fontSize = 20.sp)
+            Text(
+                text = if (isPlaying) "⏸" else "▶",
+                fontSize = 20.sp,
+                color = MannaTheme.colors.bg
+            )
         }
-        IconButton(
-            onClick = onStop,
-            enabled = isActive,
-            modifier = Modifier
-                .size(MinTouchTarget)
-                .semantics { contentDescription = stopLabel }
-        ) {
-            Text(text = "■", fontSize = 18.sp)
-        }
+        // Read-aloud label, doubling as the state line.
+        Text(
+            text = stringResource(
+                if (isActive) R.string.reader_audio_now_playing else R.string.reader_audio_play
+            ),
+            style = androidx.compose.material3.MaterialTheme.typography.bodyMedium,
+            color = MannaTheme.colors.soft,
+            modifier = Modifier.weight(1f)
+        )
+        // Speed pill.
         TextButton(
             onClick = onCycleSpeed,
             modifier = Modifier
@@ -466,7 +498,7 @@ private fun AudioBar(
                 fontWeight = FontWeight.Bold
             )
         }
-        Spacer(Modifier.weight(1f))
+        // Continuous-play toggle.
         TextButton(
             onClick = onToggleContinuous,
             modifier = Modifier
@@ -478,6 +510,17 @@ private fun AudioBar(
                 color = if (continuousPlay) MannaTheme.colors.gold else MannaTheme.colors.soft,
                 fontWeight = if (continuousPlay) FontWeight.Bold else FontWeight.Normal
             )
+        }
+        // Stop appears only while audio is active.
+        if (isActive) {
+            IconButton(
+                onClick = onStop,
+                modifier = Modifier
+                    .size(MinTouchTarget)
+                    .semantics { contentDescription = stopLabel }
+            ) {
+                Text(text = "■", fontSize = 18.sp, color = MannaTheme.colors.soft)
+            }
         }
     }
 }
@@ -549,8 +592,7 @@ private fun VerseList(
         val target = state.scrollToVerse ?: return@LaunchedEffect
         val index = state.verses.indexOfFirst { it.verse == target }
         if (index >= 0) {
-            // +1 for the leading search-bar item.
-            listState.animateScrollToItem(index + SEARCH_BAR_ITEMS)
+            listState.animateScrollToItem(index)
         }
         onScrollHandled()
     }
@@ -560,32 +602,41 @@ private fun VerseList(
         val target = state.audioVerse ?: return@LaunchedEffect
         val index = state.verses.indexOfFirst { it.verse == target }
         if (index >= 0) {
-            // +1 for the leading search-bar item.
-            listState.animateScrollToItem(index + SEARCH_BAR_ITEMS)
+            listState.animateScrollToItem(index)
         }
     }
 
-    LazyColumn(
-        state = listState,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(
-            start = 20.dp,
-            end = 20.dp,
-            top = contentPadding.calculateTopPadding() + 12.dp,
-            bottom = contentPadding.calculateBottomPadding() + 24.dp
-        ),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        item(key = "__reader_search_bar") {
-            ReaderSearchBar(onClick = onOpenSearch)
-        }
-        items(items = state.verses, key = { it.verse }) { verse ->
-            VerseRow(
-                verse = verse,
-                isSpoken = verse.verse == state.audioVerse,
-                enlarged = state.simplifiedMode,
-                onClick = { onVerseClick(verse.verse) }
+    // The search bar is pinned above the verses (it no longer scrolls away with the
+    // text), so the chapter is always one tap from a search.
+    Column(modifier = Modifier.fillMaxSize()) {
+        ReaderSearchBar(
+            onClick = onOpenSearch,
+            modifier = Modifier.padding(
+                start = 20.dp,
+                end = 20.dp,
+                top = contentPadding.calculateTopPadding() + 12.dp,
+                bottom = 8.dp
             )
+        )
+        LazyColumn(
+            state = listState,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(
+                start = 20.dp,
+                end = 20.dp,
+                top = 4.dp,
+                bottom = contentPadding.calculateBottomPadding() + 24.dp
+            ),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            items(items = state.verses, key = { it.verse }) { verse ->
+                VerseRow(
+                    verse = verse,
+                    isSpoken = verse.verse == state.audioVerse,
+                    enlarged = state.simplifiedMode,
+                    onClick = { onVerseClick(verse.verse) }
+                )
+            }
         }
     }
 }
@@ -1004,11 +1055,11 @@ private fun ExplainSheet(
 }
 
 @Composable
-private fun ReaderSearchBar(onClick: () -> Unit) {
+private fun ReaderSearchBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .heightIn(min = 48.dp)
             .clickable(onClick = onClick)
