@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -168,7 +169,80 @@ fun LiturgicalCalendarScreen(
                 SelectedDayCard(selected = selected, onOpenVerse = onOpenVerse)
             }
 
+            Spacer(Modifier.height(20.dp))
+
+            // The whole month's feasts at a glance — tap one to jump to its day.
+            MonthEventsList(
+                events = state.monthEvents,
+                selectedDate = state.selected?.date,
+                onSelect = viewModel::selectDate
+            )
+
             Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+/**
+ * The shown month's feasts as a tappable overview, so the user sees every event at
+ * once rather than discovering them by tapping individual cells. Selecting one jumps
+ * the detail card (and the grid selection) to that day.
+ */
+@Composable
+private fun MonthEventsList(
+    events: List<MonthEvent>,
+    selectedDate: java.time.LocalDate?,
+    onSelect: (java.time.LocalDate) -> Unit
+) {
+    Text(
+        text = stringResource(R.string.calendar_events_header),
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        color = MannaTheme.colors.gold,
+        modifier = Modifier.padding(bottom = 6.dp)
+    )
+    if (events.isEmpty()) {
+        Text(
+            text = stringResource(R.string.calendar_events_none),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MannaTheme.colors.muted
+        )
+        return
+    }
+    val dayFormatter = remember { DateTimeFormatter.ofPattern("EEE d", Locale.getDefault()) }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        events.forEach { event ->
+            val isSelected = event.date == selectedDate
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clip(RoundedCornerShape(10.dp))
+                    .then(
+                        if (isSelected) {
+                            Modifier.background(MannaTheme.colors.gold.copy(alpha = 0.12f))
+                        } else {
+                            Modifier
+                        }
+                    )
+                    .clickable { onSelect(event.date) }
+                    .padding(horizontal = 12.dp, vertical = 12.dp)
+            ) {
+                Dot(MannaTheme.colors.gold)
+                Spacer(Modifier.size(10.dp))
+                Text(
+                    text = event.date.format(dayFormatter),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MannaTheme.colors.soft,
+                    modifier = Modifier.width(56.dp)
+                )
+                Text(
+                    text = stringResource(eventNameRes(event.feastId)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                    color = MannaTheme.colors.ink
+                )
+            }
         }
     }
 }
