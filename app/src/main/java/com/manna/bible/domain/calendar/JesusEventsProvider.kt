@@ -51,7 +51,7 @@ interface JesusEventsProvider {
 class DefaultJesusEventsProvider @Inject constructor() : JesusEventsProvider {
 
     override fun entriesFor(year: Int): List<JesusCalendarEntry> {
-        val easter = gregorianEaster(year)
+        val easter = Computus.gregorianEaster(year)
         val fixed = FIXED_FEASTS.map { feast ->
             JesusCalendarEntry(feast.id, LocalDate.of(year, feast.month, feast.day), feast.verseRefs)
         }
@@ -81,28 +81,6 @@ class DefaultJesusEventsProvider @Inject constructor() : JesusEventsProvider {
     )
 
     private companion object {
-
-        /**
-         * Computes the date of Western (Gregorian) Easter Sunday for [year] using the
-         * Anonymous Gregorian algorithm. Valid for all Gregorian years.
-         */
-        fun gregorianEaster(year: Int): LocalDate {
-            val a = year % 19
-            val b = year / 100
-            val c = year % 100
-            val d = b / 4
-            val e = b % 4
-            val f = (b + 8) / 25
-            val g = (b - f + 1) / 3
-            val h = (19 * a + b - d - g + 15) % 30
-            val i = c / 4
-            val k = c % 4
-            val l = (32 + 2 * e + 2 * i - h - k) % 7
-            val m = (a + 11 * h + 22 * l) / 451
-            val month = (h + l - 7 * m + 114) / 31
-            val day = ((h + l - 7 * m + 114) % 31) + 1
-            return LocalDate.of(year, month, day)
-        }
 
         val FIXED_FEASTS: List<FixedFeast> = listOf(
             FixedFeast("holy_name", 1, 1, listOf(ReadingRef("LUK", 2, 21))),
