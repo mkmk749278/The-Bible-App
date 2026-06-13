@@ -56,7 +56,8 @@ fun PrayersHubScreen(
     onOpenStations: (() -> Unit)? = null,
     onOpenRosary: (() -> Unit)? = null,
     onOpenJesusPrayer: (() -> Unit)? = null,
-    onOpenParaloka: (() -> Unit)? = null
+    onOpenParaloka: (() -> Unit)? = null,
+    onOpenSramanikal: (() -> Unit)? = null
 ) {
     val categories = listOfNotNull(
         onOpenStations?.let {
@@ -92,6 +93,15 @@ fun PrayersHubScreen(
                 description = stringResource(R.string.prayers_category_paraloka_desc),
                 glyph = "✴", // ✴ star
                 accent = MannaTheme.colors.cyan,
+                onClick = it
+            )
+        },
+        onOpenSramanikal?.let {
+            PrayerCategory(
+                title = stringResource(R.string.prayers_category_sramanikal_title),
+                description = stringResource(R.string.prayers_category_sramanikal_desc),
+                glyph = "✦", // ✦ remembrance
+                accent = MannaTheme.colors.lavender,
                 onClick = it
             )
         }

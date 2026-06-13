@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tamil (ta) localization for the Prayers hub. This first pass translates the UI
+  chrome and the structural names (navigation, categories, section labels,
+  indicators, station / mystery / set names, button labels). The longer devotional
+  prose, the liturgical prayer bodies, and the Creed intentionally fall back to the
+  English default until they have been reviewed by native Tamil speakers in each
+  tradition (CSI / Catholic / Orthodox), so we never ship unverified sacred text.
+  (MissingTranslation is disabled in build.gradle.kts to allow this graceful fallback.)
+-->
+<resources>
+
+    <!-- Navigation & hub -->
+    <string name="nav_prayers">ஜெபங்கள்</string>
+    <string name="prayers_hub_title">ஜெபங்கள்</string>
+    <string name="prayers_hub_subtitle">வேதவசனங்களை ஒவ்வொரு படியாக ஜெபியுங்கள்.</string>
+
+    <string name="prayers_category_stations_title">சிலுவைப் பாதை</string>
+    <string name="prayers_category_stations_desc">தீர்ப்பு முதல் கல்லறை வரை கிறிஸ்துவுடன் நடவுங்கள் — அவரது பாடுகளின் பதினான்கு படிகள்.</string>
+    <string name="prayers_category_rosary_title">ஜெபமாலை</string>
+    <string name="prayers_category_rosary_desc">மணிமாலை ஜெபத்தின் மூலம் நற்செய்தியின் இரகசியங்களைத் தியானியுங்கள்.</string>
+    <string name="prayers_category_jesus_title">இயேசு ஜெபம்</string>
+    <string name="prayers_category_jesus_desc">“ஆண்டவராகிய இயேசுவே, என்மேல் இரக்கமாயிரும்” — இருதயத்தின் ஜெபம்.</string>
+    <string name="prayers_category_paraloka_title">பரலோகம் · நித்திய ஜீவன்</string>
+    <string name="prayers_category_paraloka_desc">மரணத்தின் முன் நம்பிக்கை — அப்பால் உள்ள உலகத்திற்கான வேதவசனமும் ஜெபமும்.</string>
+    <string name="prayers_category_sramanikal_title">நினைவு நாற்பது நாள்</string>
+    <string name="prayers_category_sramanikal_desc">பிரிந்து சென்ற அன்பானவருக்காக நினைவும் நம்பிக்கையும் கொண்ட நாற்பது நாள் பயணம்.</string>
+
+    <string name="prayers_open_in_reader">சூழலில் வாசிக்க</string>
+    <string name="prayers_back">திரும்பு</string>
+
+    <!-- Stations of the Cross -->
+    <string name="stations_title">சிலுவைப் பாதை</string>
+    <string name="stations_subtitle">சிலுவையின் வழி — Via Crucis</string>
+    <string name="stations_versicle">கிறிஸ்துவே, உம்மை ஆராதிக்கிறோம், உம்மைத் துதிக்கிறோம்.</string>
+    <string name="stations_response">ஏனெனில் உமது பரிசுத்த சிலுவையால் உலகத்தை மீட்டீர்.</string>
+    <string name="stations_indicator">படி %1$d / %2$d</string>
+    <string name="stations_previous">முந்தையது</string>
+    <string name="stations_next">அடுத்தது</string>
+    <string name="stations_reflection_label">தியானம்</string>
+    <string name="stations_prayer_label">ஜெபம்</string>
+    <string name="stations_scripture_label">வேதவசனம்</string>
+
+    <string name="station_01_title">இயேசு மரணத்திற்குத் தீர்ப்பிடப்படுகிறார்</string>
+    <string name="station_02_title">இயேசு தமது சிலுவையை ஏற்கிறார்</string>
+    <string name="station_03_title">இயேசு முதல்முறை விழுகிறார்</string>
+    <string name="station_04_title">இயேசு தமது தாயைச் சந்திக்கிறார்</string>
+    <string name="station_05_title">சிரேனே ஊர் சீமோன் சிலுவையைச் சுமக்க உதவுகிறான்</string>
+    <string name="station_06_title">வெரோனிக்கா இயேசுவின் முகத்தைத் துடைக்கிறாள்</string>
+    <string name="station_07_title">இயேசு இரண்டாம்முறை விழுகிறார்</string>
+    <string name="station_08_title">இயேசு எருசலேம் பெண்களைச் சந்திக்கிறார்</string>
+    <string name="station_09_title">இயேசு மூன்றாம்முறை விழுகிறார்</string>
+    <string name="station_10_title">இயேசுவின் ஆடைகள் களையப்படுகின்றன</string>
+    <string name="station_11_title">இயேசு சிலுவையில் அறையப்படுகிறார்</string>
+    <string name="station_12_title">இயேசு சிலுவையில் மரிக்கிறார்</string>
+    <string name="station_13_title">இயேசு சிலுவையிலிருந்து இறக்கப்படுகிறார்</string>
+    <string name="station_14_title">இயேசு கல்லறையில் வைக்கப்படுகிறார்</string>
+
+    <!-- The Rosary -->
+    <string name="rosary_title">ஜெபமாலை</string>
+    <string name="rosary_subtitle">மணிமாலை ஜெபம்</string>
+    <string name="rosary_choose_mysteries">இரகசியங்களைத் தேர்ந்தெடுங்கள்</string>
+    <string name="rosary_set_joyful">மகிழ்ச்சியின் இரகசியங்கள்</string>
+    <string name="rosary_set_sorrowful">துயரத்தின் இரகசியங்கள்</string>
+    <string name="rosary_set_glorious">மகிமையின் இரகசியங்கள்</string>
+    <string name="rosary_set_luminous">ஒளியின் இரகசியங்கள்</string>
+    <string name="rosary_set_joyful_days">திங்கள் &amp; சனி</string>
+    <string name="rosary_set_sorrowful_days">செவ்வாய் &amp; வெள்ளி</string>
+    <string name="rosary_set_glorious_days">புதன் &amp; ஞாயிறு</string>
+    <string name="rosary_set_luminous_days">வியாழன்</string>
+    <string name="rosary_today_label">இன்று</string>
+    <string name="rosary_mystery_indicator">இரகசியம் %1$d / %2$d</string>
+    <string name="rosary_fruit_label">இரகசியத்தின் பலன்</string>
+    <string name="rosary_previous">முந்தையது</string>
+    <string name="rosary_next">அடுத்தது</string>
+
+    <string name="joyful_1_title">மங்கள வார்த்தை</string>
+    <string name="joyful_2_title">மரியாள் எலிசபெத்தைச் சந்தித்தல்</string>
+    <string name="joyful_3_title">இயேசுவின் பிறப்பு</string>
+    <string name="joyful_4_title">ஆலயத்தில் காணிக்கையாக்குதல்</string>
+    <string name="joyful_5_title">ஆலயத்தில் இயேசுவைக் கண்டடைதல்</string>
+    <string name="sorrowful_1_title">தோட்டத்தில் வேதனை</string>
+    <string name="sorrowful_2_title">தூணில் கட்டி அடித்தல்</string>
+    <string name="sorrowful_3_title">முள்முடி சூட்டுதல்</string>
+    <string name="sorrowful_4_title">சிலுவையைச் சுமத்தல்</string>
+    <string name="sorrowful_5_title">சிலுவையில் அறையப்படுதல்</string>
+    <string name="glorious_1_title">உயிர்த்தெழுதல்</string>
+    <string name="glorious_2_title">விண்ணேற்றம்</string>
+    <string name="glorious_3_title">பரிசுத்த ஆவியின் வருகை</string>
+    <string name="glorious_4_title">மரியாளின் விண்ணேற்பு</string>
+    <string name="glorious_5_title">மரியாளுக்கு மணிமுடி சூட்டுதல்</string>
+    <string name="luminous_1_title">யோர்தானில் ஞானஸ்நானம்</string>
+    <string name="luminous_2_title">கானா திருமணம்</string>
+    <string name="luminous_3_title">இறையாட்சியை அறிவித்தல்</string>
+    <string name="luminous_4_title">உருமாற்றம்</string>
+    <string name="luminous_5_title">திருவிருந்தை ஏற்படுத்துதல்</string>
+
+    <!-- The Jesus Prayer -->
+    <string name="jesus_prayer_title">இயேசு ஜெபம்</string>
+    <string name="jesus_prayer_subtitle">இருதயத்தின் ஜெபம்</string>
+    <string name="jesus_prayer_text">ஆண்டவராகிய இயேசு கிறிஸ்துவே, தேவனுடைய குமாரனே, பாவியாகிய என்மேல் இரக்கமாயிரும்.</string>
+    <string name="jesus_prayer_breath_in">ஆண்டவராகிய இயேசு கிறிஸ்துவே, தேவனுடைய குமாரனே</string>
+    <string name="jesus_prayer_breath_out">பாவியாகிய என்மேல் இரக்கமாயிரும்</string>
+    <string name="jesus_prayer_breath_in_label">மூச்சை உள்ளிழுங்கள்</string>
+    <string name="jesus_prayer_breath_out_label">மூச்சை வெளிவிடுங்கள்</string>
+    <string name="jesus_prayer_begin">ஜெபிக்கத் தொடங்கு</string>
+    <string name="jesus_prayer_stop">இளைப்பாறு</string>
+    <string name="jesus_prayer_vocal_title">உதடுகளால்</string>
+    <string name="jesus_prayer_mental_title">மனதில்</string>
+    <string name="jesus_prayer_heart_title">இருதயத்தில்</string>
+
+    <!-- Paraloka -->
+    <string name="paraloka_title">பரலோகம் · நித்திய ஜீவன்</string>
+    <string name="paraloka_subtitle">அப்பால் உள்ள உலகம்</string>
+    <string name="paraloka_scripture_heading">நம்பிக்கையின் வேதவசனம்</string>
+    <string name="paraloka_prayers_heading">நம்பிக்கையின் ஜெபங்கள்</string>
+
+    <!-- Sramanikal -->
+    <string name="sramanikal_title">நினைவு நாற்பது நாள்</string>
+    <string name="sramanikal_intro_title">நாற்பது நாள் நினைவு</string>
+    <string name="sramanikal_name_label">நினைவுகூரப்படுபவரின் பெயர்</string>
+    <string name="sramanikal_begin">நாற்பது நாட்களைத் தொடங்கு</string>
+    <string name="sramanikal_day_indicator">நாள் %1$d / %2$d</string>
+    <string name="sramanikal_remembering">%1$s அவர்களை நினைவுகூர்தல்</string>
+    <string name="sramanikal_prayer_label">ஒப்படைப்பு ஜெபம்</string>
+    <string name="sramanikal_previous">முந்தையது</string>
+    <string name="sramanikal_next">அடுத்தது</string>
+    <string name="sramanikal_end">இந்த நினைவை முடி</string>
+
+</resources>
