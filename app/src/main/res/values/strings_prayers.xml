@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Prayers hub — guided devotional practices (Stations of the Cross, the Rosary /
+  Japamala, the Jesus Prayer, and Paraloka). The prayer texts here are the
+  traditional, public-domain forms used across the Indian churches; the domain layer
+  holds only structure and Scripture anchors, so this file is the single place to
+  localize the prose (add values-ta/, values-te/, values-hi/, values-ml/ to translate).
+-->
+<resources>
+
+    <!-- ===== Navigation & hub ===== -->
+    <string name="nav_prayers">Prayers</string>
+    <string name="prayers_hub_title">Prayers</string>
+    <string name="prayers_hub_subtitle">Pray the Scriptures, one step at a time.</string>
+
+    <string name="prayers_category_stations_title">Stations of the Cross</string>
+    <string name="prayers_category_stations_desc">Walk with Christ from condemnation to the tomb — fourteen steps of His passion.</string>
+    <string name="prayers_category_rosary_title">The Rosary · Japamala</string>
+    <string name="prayers_category_rosary_desc">Meditate the mysteries of the Gospel through the prayer of the beads.</string>
+    <string name="prayers_category_jesus_title">The Jesus Prayer</string>
+    <string name="prayers_category_jesus_desc">“Lord Jesus Christ, have mercy on me” — the prayer of the heart.</string>
+    <string name="prayers_category_paraloka_title">Paraloka · Eternal Life</string>
+    <string name="prayers_category_paraloka_desc">Scripture and prayer for the world beyond — hope in the face of death.</string>
+
+    <string name="prayers_open_in_reader">Read in context</string>
+    <string name="prayers_back">Back</string>
+
+    <!-- ===== Stations of the Cross ===== -->
+    <string name="stations_title">Stations of the Cross</string>
+    <string name="stations_subtitle">The Way of the Cross — Via Crucis</string>
+    <string name="stations_intro">A meditation on the last journey of Jesus, from His condemnation to His burial. Move through the fourteen stations slowly. At each, pause, read the Scripture, and pray.</string>
+    <string name="stations_versicle">We adore you, O Christ, and we praise you.</string>
+    <string name="stations_response">Because by your holy cross you have redeemed the world.</string>
+    <string name="stations_indicator">Station %1$d of %2$d</string>
+    <string name="stations_previous">Previous</string>
+    <string name="stations_next">Next</string>
+    <string name="stations_reflection_label">Reflection</string>
+    <string name="stations_prayer_label">Prayer</string>
+    <string name="stations_scripture_label">Scripture</string>
+
+    <!-- Station titles -->
+    <string name="station_01_title">Jesus is condemned to death</string>
+    <string name="station_02_title">Jesus takes up His cross</string>
+    <string name="station_03_title">Jesus falls the first time</string>
+    <string name="station_04_title">Jesus meets His mother</string>
+    <string name="station_05_title">Simon of Cyrene helps Jesus carry the cross</string>
+    <string name="station_06_title">Veronica wipes the face of Jesus</string>
+    <string name="station_07_title">Jesus falls the second time</string>
+    <string name="station_08_title">Jesus meets the women of Jerusalem</string>
+    <string name="station_09_title">Jesus falls the third time</string>
+    <string name="station_10_title">Jesus is stripped of His garments</string>
+    <string name="station_11_title">Jesus is nailed to the cross</string>
+    <string name="station_12_title">Jesus dies on the cross</string>
+    <string name="station_13_title">Jesus is taken down from the cross</string>
+    <string name="station_14_title">Jesus is laid in the tomb</string>
+
+    <!-- Station reflections -->
+    <string name="station_01_reflection">Pilate washes his hands of the innocent. Jesus stands in silence, and accepts the unjust sentence for love of us. When I am judged unfairly, give me His quiet trust in the Father.</string>
+    <string name="station_02_reflection">He receives the heavy cross without complaint. Whatever weight I am asked to carry today, let me take it up as He did — not in despair, but in love.</string>
+    <string name="station_03_reflection">The weight of the wood and of the world brings Him to the ground. He rises again. When I fall under my burdens, teach me to rise and go on.</string>
+    <string name="station_04_reflection">Along the road His mother meets His eyes. No word is needed. In my own grief, let me know that I am seen, and never alone.</string>
+    <string name="station_05_reflection">Simon is pressed into service, and finds he is carrying the cross of the Lord. When I am asked to help another bear their burden, let me not turn away.</string>
+    <string name="station_06_reflection">A woman steps from the crowd to wipe His face, and His likeness remains on the cloth. Let me show such courage and tenderness to those who suffer.</string>
+    <string name="station_07_reflection">He falls a second time. The road is long and the cross does not grow lighter. When I grow weary of doing good, give me strength to begin again.</string>
+    <string name="station_08_reflection">“Do not weep for me,” He tells the women, “but for yourselves and your children.” Turn my sorrow into repentance, and my tears into prayer.</string>
+    <string name="station_09_reflection">A third time He falls, almost at the end. When I am exhausted and tempted to give up, let me find in Him the will to rise once more.</string>
+    <string name="station_10_reflection">They strip Him of His garments, leaving Him nothing. Strip from me all that is not love, that I may stand before God as He did — with nothing held back.</string>
+    <string name="station_11_reflection">The nails pierce His hands and feet. “Father, forgive them.” Nail my heart to Yours, that it may stay there, and learn to forgive as You forgive.</string>
+    <string name="station_12_reflection">“It is finished.” He bows His head and gives up His spirit. Into His death I place my own dying, and all that I fear, trusting the Father’s hands.</string>
+    <string name="station_13_reflection">His body is laid in His mother’s arms. In every loss I carry, let me hold it as Mary held her Son — with grief, and with hope that is not yet seen.</string>
+    <string name="station_14_reflection">They lay Him in the tomb and roll the stone across. The silence is not the end. Make me rise glorious with Him on the last day.</string>
+
+    <!-- Station prayers -->
+    <string name="station_01_prayer">O Jesus, condemned though innocent, when I am wronged let me answer with Your silence and Your love. Amen.</string>
+    <string name="station_02_prayer">O Jesus, You took up the cross for me. Help me take up mine each day and follow You. Amen.</string>
+    <string name="station_03_prayer">O Jesus, fallen beneath the cross, lift me whenever I fall, and set my feet again on Your way. Amen.</string>
+    <string name="station_04_prayer">O Jesus, who met Your mother on the road of sorrow, be near to all who walk in grief today. Amen.</string>
+    <string name="station_05_prayer">O Jesus, helped by Simon, make me willing to carry the burdens of my neighbour as my own. Amen.</string>
+    <string name="station_06_prayer">O Jesus, whose face was wiped by Veronica, give me courage to comfort those who suffer. Amen.</string>
+    <string name="station_07_prayer">O Jesus, fallen a second time, when I am weary of doing good, give me strength to rise. Amen.</string>
+    <string name="station_08_prayer">O Jesus, who turned to the weeping women, turn my sorrow into true repentance. Amen.</string>
+    <string name="station_09_prayer">O Jesus, fallen a third time, when I am at the end of my strength, let me lean on Yours. Amen.</string>
+    <string name="station_10_prayer">O Jesus, stripped of all things, strip from me whatever is not love, that I may belong wholly to You. Amen.</string>
+    <string name="station_11_prayer">O Jesus, nailed to the cross, fasten my wandering heart to Yours, and teach me to forgive. Amen.</string>
+    <string name="station_12_prayer">O Jesus, dying for me, into Your death I commend my life and my every fear. Amen.</string>
+    <string name="station_13_prayer">O Jesus, taken down and laid in loving arms, hold all that I have lost, and keep it safe in You. Amen.</string>
+    <string name="station_14_prayer">O Jesus, laid in the tomb, plant in me the hope of resurrection, that I may rise with You. Amen.</string>
+
+    <!-- ===== The Rosary (Japamala) ===== -->
+    <string name="rosary_title">The Rosary · Japamala</string>
+    <string name="rosary_subtitle">The prayer of the beads</string>
+    <string name="rosary_intro">The Rosary leads the heart through the Gospel, one decade at a time. Choose the mysteries for today, then pray each decade slowly: an Our Father, ten Hail Marys, and a Glory Be, holding the scene before your mind.</string>
+    <string name="rosary_choose_mysteries">Choose the mysteries</string>
+    <string name="rosary_how_to_title">How to pray the Rosary</string>
+    <string name="rosary_how_to_body">Begin with the Sign of the Cross and the Apostles’ Creed. On the first bead pray an Our Father, then three Hail Marys, then a Glory Be. For each of the five mysteries: announce the mystery, pray an Our Father, ten Hail Marys while meditating on it, and a Glory Be. Close with the Hail Holy Queen.</string>
+
+    <string name="rosary_set_joyful">Joyful Mysteries</string>
+    <string name="rosary_set_sorrowful">Sorrowful Mysteries</string>
+    <string name="rosary_set_glorious">Glorious Mysteries</string>
+    <string name="rosary_set_luminous">Luminous Mysteries</string>
+    <string name="rosary_set_joyful_days">Mondays &amp; Saturdays</string>
+    <string name="rosary_set_sorrowful_days">Tuesdays &amp; Fridays</string>
+    <string name="rosary_set_glorious_days">Wednesdays &amp; Sundays</string>
+    <string name="rosary_set_luminous_days">Thursdays</string>
+    <string name="rosary_today_label">Today</string>
+
+    <string name="rosary_mystery_indicator">Mystery %1$d of %2$d</string>
+    <string name="rosary_fruit_label">Fruit of the mystery</string>
+    <string name="rosary_decade_label">Pray one Our Father, ten Hail Marys, and a Glory Be.</string>
+    <string name="rosary_bead_counter_title">Hail Mary</string>
+    <string name="rosary_bead_count">%1$d of 10</string>
+    <string name="rosary_bead_reset">Reset decade</string>
+    <string name="rosary_bead_tap_hint">Tap a bead for each Hail Mary.</string>
+    <string name="rosary_previous">Previous</string>
+    <string name="rosary_next">Next</string>
+    <string name="rosary_prayers_title">The prayers</string>
+
+    <!-- Rosary prayer texts -->
+    <string name="rosary_prayer_sign">In the name of the Father, and of the Son, and of the Holy Spirit. Amen.</string>
+    <string name="rosary_prayer_creed">I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, his only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; he descended into hell; on the third day he rose again from the dead; he ascended into heaven, and is seated at the right hand of God the Father almighty; from there he will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.</string>
+    <string name="rosary_prayer_our_father">Our Father, who art in heaven, hallowed be thy name; thy kingdom come; thy will be done on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.</string>
+    <string name="rosary_prayer_hail_mary">Hail Mary, full of grace, the Lord is with thee; blessed art thou amongst women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.</string>
+    <string name="rosary_prayer_glory_be">Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen.</string>
+    <string name="rosary_prayer_fatima">O my Jesus, forgive us our sins, save us from the fires of hell, and lead all souls to heaven, especially those most in need of thy mercy. Amen.</string>
+    <string name="rosary_prayer_hail_holy_queen">Hail, holy Queen, Mother of mercy, our life, our sweetness, and our hope. To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy toward us, and after this our exile show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary. Amen.</string>
+
+    <!-- Joyful mysteries -->
+    <string name="joyful_1_title">The Annunciation</string>
+    <string name="joyful_2_title">The Visitation</string>
+    <string name="joyful_3_title">The Nativity</string>
+    <string name="joyful_4_title">The Presentation in the Temple</string>
+    <string name="joyful_5_title">The Finding of Jesus in the Temple</string>
+    <string name="joyful_1_fruit">Humility</string>
+    <string name="joyful_2_fruit">Love of neighbour</string>
+    <string name="joyful_3_fruit">Poverty of spirit</string>
+    <string name="joyful_4_fruit">Obedience</string>
+    <string name="joyful_5_fruit">Joy in seeking Jesus</string>
+
+    <!-- Sorrowful mysteries -->
+    <string name="sorrowful_1_title">The Agony in the Garden</string>
+    <string name="sorrowful_2_title">The Scourging at the Pillar</string>
+    <string name="sorrowful_3_title">The Crowning with Thorns</string>
+    <string name="sorrowful_4_title">The Carrying of the Cross</string>
+    <string name="sorrowful_5_title">The Crucifixion</string>
+    <string name="sorrowful_1_fruit">Sorrow for sin</string>
+    <string name="sorrowful_2_fruit">Purity</string>
+    <string name="sorrowful_3_fruit">Courage</string>
+    <string name="sorrowful_4_fruit">Patience</string>
+    <string name="sorrowful_5_fruit">Perseverance</string>
+
+    <!-- Glorious mysteries -->
+    <string name="glorious_1_title">The Resurrection</string>
+    <string name="glorious_2_title">The Ascension</string>
+    <string name="glorious_3_title">The Descent of the Holy Spirit</string>
+    <string name="glorious_4_title">The Assumption</string>
+    <string name="glorious_5_title">The Coronation of Mary</string>
+    <string name="glorious_1_fruit">Faith</string>
+    <string name="glorious_2_fruit">Hope</string>
+    <string name="glorious_3_fruit">Love</string>
+    <string name="glorious_4_fruit">A holy death</string>
+    <string name="glorious_5_fruit">Trust in Mary’s prayers</string>
+
+    <!-- Luminous mysteries -->
+    <string name="luminous_1_title">The Baptism in the Jordan</string>
+    <string name="luminous_2_title">The Wedding at Cana</string>
+    <string name="luminous_3_title">The Proclamation of the Kingdom</string>
+    <string name="luminous_4_title">The Transfiguration</string>
+    <string name="luminous_5_title">The Institution of the Eucharist</string>
+    <string name="luminous_1_fruit">Faithfulness to baptism</string>
+    <string name="luminous_2_fruit">To Jesus through Mary</string>
+    <string name="luminous_3_fruit">Repentance and trust</string>
+    <string name="luminous_4_fruit">Desire for holiness</string>
+    <string name="luminous_5_fruit">Adoration</string>
+
+    <!-- ===== The Jesus Prayer ===== -->
+    <string name="jesus_prayer_title">The Jesus Prayer</string>
+    <string name="jesus_prayer_subtitle">The prayer of the heart</string>
+    <string name="jesus_prayer_text">Lord Jesus Christ, Son of God, have mercy on me, a sinner.</string>
+    <string name="jesus_prayer_intro">From the deserts of the early Church comes one short prayer, repeated until it becomes the breath of the soul. Pray it slowly. Let the words rise and fall with your breathing, until the prayer prays itself within you.</string>
+    <string name="jesus_prayer_breath_in">Lord Jesus Christ, Son of God</string>
+    <string name="jesus_prayer_breath_out">have mercy on me, a sinner</string>
+    <string name="jesus_prayer_breath_in_label">Breathe in</string>
+    <string name="jesus_prayer_breath_out_label">Breathe out</string>
+    <string name="jesus_prayer_begin">Begin praying</string>
+    <string name="jesus_prayer_stop">Rest</string>
+    <string name="jesus_prayer_guidance_label">Guidance</string>
+
+    <string name="jesus_prayer_vocal_title">With the lips</string>
+    <string name="jesus_prayer_vocal_guidance">Begin by speaking the prayer softly, again and again — fifty times, a hundred, as many as you wish. Do not hurry. Let the words become familiar, like a path your feet know well. This is the prayer of the tax collector, who could only say, “God, be merciful to me, a sinner,” and went home justified.</string>
+    <string name="jesus_prayer_mental_title">In the mind</string>
+    <string name="jesus_prayer_mental_guidance">When the words come easily, let the lips grow still and carry the prayer in your mind alone. Join it to your breathing: “Lord Jesus Christ, Son of God” as you breathe in, “have mercy on me, a sinner” as you breathe out. When the mind wanders, gently bring it back. This is to begin to “pray without ceasing.”</string>
+    <string name="jesus_prayer_heart_title">In the heart</string>
+    <string name="jesus_prayer_heart_guidance">In time the prayer descends from the mind into the heart, and continues of itself — in work and in rest, in waking and in sleep. This is a gift, not an achievement; seek it humbly and leave it to God. Then it is no longer you who pray, but Christ who lives and prays in you.</string>
+
+    <!-- ===== Paraloka (eternal life) ===== -->
+    <string name="paraloka_title">Paraloka · Eternal Life</string>
+    <string name="paraloka_subtitle">The world beyond</string>
+    <string name="paraloka_intro">Paraloka — the world beyond. Here is the Scripture our people return to in the hour of death and in the long days of grief: the promise of a home prepared, of tears wiped away, of a life that does not end. Read it slowly, and let hope take root.</string>
+    <string name="paraloka_scripture_heading">Scripture of hope</string>
+    <string name="paraloka_prayers_heading">Prayers of hope</string>
+    <string name="paraloka_theme_label">Theme</string>
+    <string name="paraloka_reflection_label">Reflection</string>
+    <string name="paraloka_prayer_label">Prayer</string>
+
+    <!-- Paraloka passage themes -->
+    <string name="paraloka_01_theme">A place prepared</string>
+    <string name="paraloka_02_theme">An eternal home</string>
+    <string name="paraloka_03_theme">No more tears</string>
+    <string name="paraloka_04_theme">Citizens of heaven</string>
+    <string name="paraloka_05_theme">Paradise today</string>
+    <string name="paraloka_06_theme">To meet the Lord</string>
+    <string name="paraloka_07_theme">Raised imperishable</string>
+    <string name="paraloka_08_theme">Eternal life</string>
+    <string name="paraloka_09_theme">Held in His hand</string>
+    <string name="paraloka_10_theme">The city of God</string>
+    <string name="paraloka_11_theme">An inheritance kept</string>
+    <string name="paraloka_12_theme">Nothing can separate us</string>
+    <string name="paraloka_13_theme">The resurrection and the life</string>
+    <string name="paraloka_14_theme">Through the valley</string>
+    <string name="paraloka_15_theme">The crown of righteousness</string>
+
+    <!-- Paraloka passage reflections -->
+    <string name="paraloka_01_reflection">In my Father’s house are many rooms, and Jesus Himself has gone to prepare a place for me. Death is not a door into emptiness, but the path to a home already made ready.</string>
+    <string name="paraloka_02_reflection">When this earthly tent is folded away, we have a building from God, eternal in the heavens. What is mortal is swallowed up by life.</string>
+    <string name="paraloka_03_reflection">He will wipe every tear from their eyes, and death shall be no more, nor mourning nor crying nor pain. The old order of grief is passing away.</string>
+    <string name="paraloka_04_reflection">Our citizenship is in heaven, and from there we await our Saviour. We are pilgrims here; our true country lies ahead.</string>
+    <string name="paraloka_05_reflection">To the thief beside Him Jesus said, “Today you will be with me in paradise.” Mercy is never too late, and the promise is for this very day.</string>
+    <string name="paraloka_06_reflection">The Lord Himself will descend, and the dead in Christ will rise, and we shall be caught up to meet Him. So we shall always be with the Lord.</string>
+    <string name="paraloka_07_reflection">What is sown perishable is raised imperishable; sown in weakness, raised in power. The body laid in the ground is a seed of glory.</string>
+    <string name="paraloka_08_reflection">God so loved the world that He gave His only Son, that whoever believes in Him should not perish but have eternal life. Love is the source of our hope.</string>
+    <string name="paraloka_09_reflection">“I give them eternal life, and they shall never perish, and no one shall snatch them out of my hand.” We are held by a grip that does not loosen.</string>
+    <string name="paraloka_10_reflection">Abraham looked for the city that has foundations, whose architect and builder is God. We seek the same city, and it is not made by human hands.</string>
+    <string name="paraloka_11_reflection">We are born again to a living hope, to an inheritance imperishable and unfading, kept in heaven for us. It cannot be lost or taken.</string>
+    <string name="paraloka_12_reflection">Neither death nor life, nor things present nor things to come, can separate us from the love of God in Christ Jesus our Lord.</string>
+    <string name="paraloka_13_reflection">“I am the resurrection and the life. Whoever believes in me, though he die, yet shall he live.” In Him, death does not have the last word.</string>
+    <string name="paraloka_14_reflection">Even though I walk through the valley of the shadow of death, I will fear no evil, for You are with me. The Shepherd walks the dark path beside me.</string>
+    <string name="paraloka_15_reflection">I have fought the good fight, I have finished the race, I have kept the faith. Now there is laid up a crown of righteousness. The end of the road is a gift, not a loss.</string>
+
+    <!-- Paraloka prayers -->
+    <string name="paraloka_prayer_commendation_title">Prayer of commendation</string>
+    <string name="paraloka_prayer_commendation_text">Into Your hands, O merciful Saviour, we commend Your servant. Acknowledge, we humbly beseech You, a sheep of Your own fold, a lamb of Your own flock. Receive them into the arms of Your mercy, into the blessed rest of everlasting peace, and into the glorious company of the saints in light. Amen.</string>
+    <string name="paraloka_prayer_rest_title">Prayer for rest</string>
+    <string name="paraloka_prayer_rest_text">Eternal rest grant unto them, O Lord, and let light perpetual shine upon them. May they rest from their labours, and may their works follow them. May they rest in peace. Amen.</string>
+    <string name="paraloka_prayer_comfort_title">Prayer for those who mourn</string>
+    <string name="paraloka_prayer_comfort_text">O God of all comfort, look in mercy on all who mourn. Blessed are those who mourn, for they shall be comforted. Be near to the broken-hearted; carry those who cannot carry themselves; and let Your peace, which passes understanding, guard their hearts in Christ Jesus. Amen.</string>
+    <string name="paraloka_prayer_hope_title">Prayer of hope</string>
+    <string name="paraloka_prayer_hope_text">Lord, we do not grieve as those who have no hope, for we believe that Jesus died and rose again, and that through Him You will bring with Him those who have fallen asleep. Keep us in this hope until the morning of the resurrection, when death is swallowed up in victory. Amen.</string>
+    <string name="paraloka_prayer_light_title">Prayer to the Light of life</string>
+    <string name="paraloka_prayer_light_text">Lord Jesus, You are the light of the world; whoever follows You will not walk in darkness but will have the light of life. Shine in our darkness, scatter the shadow of death, and lead us and those we love into Your unfading light. Amen.</string>
+
+</resources>

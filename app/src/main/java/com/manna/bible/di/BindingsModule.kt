@@ -41,6 +41,14 @@ import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.devotion.DefaultJesusPrayerProvider
+import com.manna.bible.domain.devotion.DefaultParalokaProvider
+import com.manna.bible.domain.devotion.DefaultRosaryProvider
+import com.manna.bible.domain.devotion.DefaultStationsProvider
+import com.manna.bible.domain.devotion.JesusPrayerProvider
+import com.manna.bible.domain.devotion.ParalokaProvider
+import com.manna.bible.domain.devotion.RosaryProvider
+import com.manna.bible.domain.devotion.StationsProvider
 import com.manna.bible.domain.fasting.DefaultFastingPlans
 import com.manna.bible.domain.fasting.FastingPlans
 import com.manna.bible.domain.grief.DefaultGriefJourney
@@ -249,6 +257,20 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindFastingPlans(impl: DefaultFastingPlans): FastingPlans
+
+    // --- prayers hub (devotional practices) ----------------------------------
+
+    @Binds
+    abstract fun bindStationsProvider(impl: DefaultStationsProvider): StationsProvider
+
+    @Binds
+    abstract fun bindRosaryProvider(impl: DefaultRosaryProvider): RosaryProvider
+
+    @Binds
+    abstract fun bindJesusPrayerProvider(impl: DefaultJesusPrayerProvider): JesusPrayerProvider
+
+    @Binds
+    abstract fun bindParalokaProvider(impl: DefaultParalokaProvider): ParalokaProvider
 
     // --- daily reminder ------------------------------------------------------
 

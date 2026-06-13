@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +45,11 @@ import com.manna.bible.ui.fasting.FastingScreen
 import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.more.MoreScreen
 import com.manna.bible.ui.prayer.PrayerJournalScreen
+import com.manna.bible.ui.prayers.PrayersHubScreen
+import com.manna.bible.ui.prayers.jesus.JesusPrayerScreen
+import com.manna.bible.ui.prayers.paraloka.ParalokaScreen
+import com.manna.bible.ui.prayers.rosary.RosaryScreen
+import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.search.SearchScreen
@@ -58,7 +64,12 @@ private object Routes {
     const val SETUP = "setup"
     const val READ = "read"
     const val CALENDAR = "calendar"
+    const val PRAYERS = "prayers"
     const val MORE = "more"
+    const val STATIONS = "stations"
+    const val ROSARY = "rosary"
+    const val JESUS_PRAYER = "jesus_prayer"
+    const val PARALOKA = "paraloka"
     const val SEARCH = "search"
     const val CATALOG = "catalog"
     const val ATTRIBUTION = "attribution"
@@ -76,9 +87,12 @@ private const val MOTION_MS = 300
 
 private data class TabItem(val route: String, val labelRes: Int, val icon: ImageVector)
 
-private val Tabs = listOf(
+private val Tabs = listOfNotNull(
     TabItem(Routes.READ, R.string.nav_read, Icons.Filled.Home),
     TabItem(Routes.CALENDAR, R.string.nav_calendar, Icons.Filled.DateRange),
+    if (FeatureFlags.PRAYERS_HUB) {
+        TabItem(Routes.PRAYERS, R.string.nav_prayers, Icons.Filled.Favorite)
+    } else null,
     TabItem(Routes.MORE, R.string.nav_more, Icons.Filled.Menu),
 )
 
@@ -194,6 +208,26 @@ fun MannaApp(
                         )
                     }
 
+                    // --- Prayers tab (devotional practices hub) ------------------
+                    if (FeatureFlags.PRAYERS_HUB) {
+                        composable(Routes.PRAYERS) {
+                            PrayersHubScreen(
+                                onOpenStations = if (FeatureFlags.STATIONS_OF_THE_CROSS) {
+                                    { navController.navigate(Routes.STATIONS) }
+                                } else null,
+                                onOpenRosary = if (FeatureFlags.ROSARY) {
+                                    { navController.navigate(Routes.ROSARY) }
+                                } else null,
+                                onOpenJesusPrayer = if (FeatureFlags.JESUS_PRAYER) {
+                                    { navController.navigate(Routes.JESUS_PRAYER) }
+                                } else null,
+                                onOpenParaloka = if (FeatureFlags.PARALOKA) {
+                                    { navController.navigate(Routes.PARALOKA) }
+                                } else null
+                            )
+                        }
+                    }
+
                     // --- More tab ------------------------------------------------
                     composable(Routes.MORE) {
                         MoreScreen(
@@ -266,6 +300,32 @@ fun MannaApp(
                     composable(Routes.PRAYER) {
                         PrayerJournalScreen(
                             onBack = { navController.popBackStack() }
+                        )
+                    }
+
+                    // --- Prayers-hub practices -----------------------------------
+                    composable(Routes.STATIONS) {
+                        StationsScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
+                        )
+                    }
+                    composable(Routes.ROSARY) {
+                        RosaryScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
+                        )
+                    }
+                    composable(Routes.JESUS_PRAYER) {
+                        JesusPrayerScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
+                        )
+                    }
+                    composable(Routes.PARALOKA) {
+                        ParalokaScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
                     composable(Routes.FASTING) {
