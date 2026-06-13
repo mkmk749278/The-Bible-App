@@ -44,7 +44,6 @@ import com.manna.bible.ui.fasting.FastingScreen
 import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.more.MoreScreen
 import com.manna.bible.ui.prayer.PrayerJournalScreen
-import com.manna.bible.ui.pastor.PastorModeScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.search.SearchScreen
@@ -64,7 +63,6 @@ private object Routes {
     const val CATALOG = "catalog"
     const val ATTRIBUTION = "attribution"
     const val DAILY = "daily"
-    const val PASTOR = "pastor"
     const val REMINDER = "reminder"
     const val CRISIS = "crisis"
     const val GRIEF = "grief"
@@ -220,9 +218,6 @@ fun MannaApp(
                             onOpenCard = if (FeatureFlags.SCRIPTURE_CARD) {
                                 { navController.navigate(Routes.CARD) }
                             } else null,
-                            onOpenPastor = if (FeatureFlags.PASTOR_MODE) {
-                                { navController.navigate(Routes.PASTOR) }
-                            } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
                     }
@@ -248,11 +243,6 @@ fun MannaApp(
                         DailyVerseScreen(
                             onBack = { navController.popBackStack() },
                             onOpenVerse = { ref -> openInReader(ref, false) }
-                        )
-                    }
-                    composable(Routes.PASTOR) {
-                        PastorModeScreen(
-                            onBack = { navController.popBackStack() }
                         )
                     }
                     composable(Routes.REMINDER) {

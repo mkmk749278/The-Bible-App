@@ -50,7 +50,6 @@ fun MoreScreen(
     onOpenGrief: (() -> Unit)? = null,
     onOpenFasting: (() -> Unit)? = null,
     onOpenCard: (() -> Unit)? = null,
-    onOpenPastor: (() -> Unit)? = null,
     onOpenAttribution: () -> Unit = {}
 ) {
     Scaffold(
@@ -89,12 +88,6 @@ fun MoreScreen(
                 stringResource(R.string.more_section_create),
                 listOfNotNull(
                     onOpenCard?.let { MoreEntry(stringResource(R.string.card_tool_entry), it) }
-                )
-            ),
-            MoreSection(
-                stringResource(R.string.more_section_study),
-                listOfNotNull(
-                    onOpenPastor?.let { MoreEntry(stringResource(R.string.pastor_title), it) }
                 )
             ),
             MoreSection(

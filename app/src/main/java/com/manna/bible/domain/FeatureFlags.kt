@@ -8,8 +8,6 @@ package com.manna.bible.domain
  * the feature; phase-gated features default to `false` until their phase begins.
  */
 object FeatureFlags {
-    /** Pastor Mode — guided 5-step sermon preparation (Phase 1). */
-    const val PASTOR_MODE: Boolean = true
 
     /** Jesus Events Calendar — liturgical events of Jesus' life (Phase 1). */
     const val JESUS_CALENDAR: Boolean = true
