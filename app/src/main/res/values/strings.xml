@@ -153,6 +153,16 @@
     <string name="annotation_save_note">Save note</string>
     <string name="annotation_close">Close</string>
 
+    <!-- Explain this passage -->
+    <string name="explain_action">Explain this verse</string>
+    <string name="explain_title">Explain · %1$s</string>
+    <string name="explain_depth_plain">Plain</string>
+    <string name="explain_depth_preaching">For preaching</string>
+    <string name="explain_loading">Reflecting on the passage…</string>
+    <string name="explain_unavailable_key">AI explanations aren\'t set up yet. Add a Gemini API key to enable them.</string>
+    <string name="explain_unavailable_offline">You\'re offline. Connect to the internet to explain a new passage; once explained, it\'s saved for offline reading.</string>
+    <string name="explain_unavailable_error">Couldn\'t load an explanation just now. Please try again.</string>
+
     <!-- Bottom navigation (UX directive: Home · Listen · Search · Library) -->
     <string name="nav_home">Home</string>
     <string name="nav_listen">Listen</string>

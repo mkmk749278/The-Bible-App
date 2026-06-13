@@ -81,7 +81,9 @@ class ReaderViewModelTest {
         content: FakeBibleContentRepository = protestantContent(),
         prefs: FakePreferencesStore = FakePreferencesStore(),
         annotations: FakeAnnotationRepository = FakeAnnotationRepository(),
-        ttsReader: FakeTtsReader = FakeTtsReader()
+        ttsReader: FakeTtsReader = FakeTtsReader(),
+        explanationRepository: com.manna.bible.domain.explain.ExplanationRepository =
+            FakeExplanationRepository()
     ): ReaderViewModel {
         val getChapter = GetChapterUseCase(content)
         return ReaderViewModel(
@@ -96,8 +98,46 @@ class ReaderViewModelTest {
             bibleContentRepository = content,
             translationRepository = FakeTranslationRepository(),
             downloadManager = FakeDownloadManager(),
-            ttsReader = ttsReader
+            ttsReader = ttsReader,
+            explanationRepository = explanationRepository
         )
+    }
+
+    private class FakeExplanationRepository(
+        private val result: com.manna.bible.domain.explain.ExplanationResult =
+            com.manna.bible.domain.explain.ExplanationResult.Unavailable(
+                com.manna.bible.domain.explain.ExplanationUnavailableReason.NOT_CONFIGURED
+            ),
+        private val configured: Boolean = false
+    ) : com.manna.bible.domain.explain.ExplanationRepository {
+        override fun isConfigured(): Boolean = configured
+        override suspend fun explain(
+            request: com.manna.bible.domain.explain.ExplanationRequest
+        ): com.manna.bible.domain.explain.ExplanationResult = result
+    }
+
+    @Test
+    @DisplayName("explainVerse shows the explanation for the selected verse")
+    fun explainVerseShowsExplanation() = runTest {
+        val repo = FakeExplanationRepository(
+            result = com.manna.bible.domain.explain.ExplanationResult.Success("It means new beginnings."),
+            configured = true
+        )
+        val vm = viewModel(explanationRepository = repo)
+        advanceUntilIdle()
+
+        vm.explainVerse(1)
+        advanceUntilIdle()
+
+        val explain = vm.uiState.value.explain
+        assertEquals("Genesis 1:1", explain?.reference)
+        assertEquals(
+            com.manna.bible.ui.reader.ExplainStatus.Ready("It means new beginnings."),
+            explain?.status
+        )
+
+        vm.dismissExplain()
+        assertEquals(null, vm.uiState.value.explain)
     }
 
     @Test
