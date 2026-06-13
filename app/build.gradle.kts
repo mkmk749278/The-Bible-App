@@ -99,6 +99,13 @@ android {
         unitTests.all { it.useJUnitPlatform() }
         unitTests.isReturnDefaultValues = true
     }
+    lint {
+        // Localization is incremental: a locale (e.g. values-ta) may translate the
+        // UI chrome and core prayers while the longer devotional prose still falls
+        // back to the English default until it has been reviewed by native speakers.
+        // Don't fail the build on those intentional gaps.
+        disable += "MissingTranslation"
+    }
 }
 
 dependencies {

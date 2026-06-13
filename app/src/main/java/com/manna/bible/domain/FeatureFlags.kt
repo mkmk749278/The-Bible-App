@@ -72,4 +72,7 @@ object FeatureFlags {
 
     /** Paraloka — eternal-life Scripture and prayers of Christian hope. */
     const val PARALOKA: Boolean = true
+
+    /** Sramanikal — the 40-day memorial journey for a departed loved one. */
+    const val SRAMANIKAL: Boolean = true
 }

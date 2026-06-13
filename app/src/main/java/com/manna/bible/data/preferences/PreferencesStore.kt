@@ -109,6 +109,23 @@ interface PreferencesStore {
 
     /** Starts/clears the active fast (start millis < 0 and blank id clear it). */
     suspend fun setActiveFast(startMillis: Long, planId: String) {}
+
+    /**
+     * Emits the epoch day on which the active 40-day Sramanikal (memorial) began, or
+     * -1 when none is active. The current day is derived from this and today's date.
+     */
+    val sramanikalStartEpochDay: Flow<Long>
+        get() = flowOf(-1L)
+
+    /** Emits the name of the one being remembered in the active Sramanikal, or "". */
+    val sramanikalName: Flow<String>
+        get() = flowOf("")
+
+    /** Starts a Sramanikal for [name] beginning on [startEpochDay]. */
+    suspend fun setSramanikal(startEpochDay: Long, name: String) {}
+
+    /** Clears the active Sramanikal. */
+    suspend fun clearSramanikal() {}
 }
 
 /**
@@ -140,6 +157,8 @@ class DataStorePreferencesStore @Inject constructor(
         val GRIEF_START_EPOCH_DAY = longPreferencesKey("grief_start_epoch_day")
         val FAST_START_MILLIS = longPreferencesKey("fast_start_millis")
         val FAST_PLAN_ID = stringPreferencesKey("fast_plan_id")
+        val SRAMANIKAL_START_EPOCH_DAY = longPreferencesKey("sramanikal_start_epoch_day")
+        val SRAMANIKAL_NAME = stringPreferencesKey("sramanikal_name")
     }
 
     override val setupState: Flow<SetupState> =
@@ -168,6 +187,12 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val fastPlanId: Flow<String> =
         dataStore.data.map { prefs -> prefs[Keys.FAST_PLAN_ID] ?: "" }
+
+    override val sramanikalStartEpochDay: Flow<Long> =
+        dataStore.data.map { prefs -> prefs[Keys.SRAMANIKAL_START_EPOCH_DAY] ?: -1L }
+
+    override val sramanikalName: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.SRAMANIKAL_NAME] ?: "" }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -235,6 +260,20 @@ class DataStorePreferencesStore @Inject constructor(
         dataStore.edit { prefs ->
             prefs[Keys.FAST_START_MILLIS] = startMillis
             prefs[Keys.FAST_PLAN_ID] = planId
+        }
+    }
+
+    override suspend fun setSramanikal(startEpochDay: Long, name: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.SRAMANIKAL_START_EPOCH_DAY] = startEpochDay
+            prefs[Keys.SRAMANIKAL_NAME] = name
+        }
+    }
+
+    override suspend fun clearSramanikal() {
+        dataStore.edit { prefs ->
+            prefs.remove(Keys.SRAMANIKAL_START_EPOCH_DAY)
+            prefs.remove(Keys.SRAMANIKAL_NAME)
         }
     }
 

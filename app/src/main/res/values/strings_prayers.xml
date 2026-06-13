@@ -21,6 +21,8 @@
     <string name="prayers_category_jesus_desc">“Lord Jesus Christ, have mercy on me” — the prayer of the heart.</string>
     <string name="prayers_category_paraloka_title">Paraloka · Eternal Life</string>
     <string name="prayers_category_paraloka_desc">Scripture and prayer for the world beyond — hope in the face of death.</string>
+    <string name="prayers_category_sramanikal_title">Sramanikal · 40 Days</string>
+    <string name="prayers_category_sramanikal_desc">A forty-day journey of remembrance and hope for a departed loved one.</string>
 
     <string name="prayers_open_in_reader">Read in context</string>
     <string name="prayers_back">Back</string>
@@ -247,5 +249,62 @@
     <string name="paraloka_prayer_hope_text">Lord, we do not grieve as those who have no hope, for we believe that Jesus died and rose again, and that through Him You will bring with Him those who have fallen asleep. Keep us in this hope until the morning of the resurrection, when death is swallowed up in victory. Amen.</string>
     <string name="paraloka_prayer_light_title">Prayer to the Light of life</string>
     <string name="paraloka_prayer_light_text">Lord Jesus, You are the light of the world; whoever follows You will not walk in darkness but will have the light of life. Shine in our darkness, scatter the shadow of death, and lead us and those we love into Your unfading light. Amen.</string>
+
+    <!-- ===== Sramanikal (40-day memorial) ===== -->
+    <string name="sramanikal_title">Sramanikal · 40 Days</string>
+    <string name="sramanikal_intro_title">A forty-day remembrance</string>
+    <string name="sramanikal_intro_body">In the way of our churches, we keep the forty days after a death in prayer — walking through grief toward the sure hope of the resurrection, and gathering on the fortieth day in remembrance. Name the one you are remembering, and each day a passage of Scripture and a prayer will be given.</string>
+    <string name="sramanikal_name_label">Name of the one remembered</string>
+    <string name="sramanikal_begin">Begin the forty days</string>
+    <string name="sramanikal_day_indicator">Day %1$d of %2$d</string>
+    <string name="sramanikal_remembering">Remembering %1$s</string>
+    <string name="sramanikal_prayer_label">Prayer of commendation</string>
+    <string name="sramanikal_previous">Previous</string>
+    <string name="sramanikal_next">Next</string>
+    <string name="sramanikal_end">End this remembrance</string>
+
+    <!-- Forty daily reflections, aligned to the journey's passages -->
+    <string-array name="sramanikal_reflections">
+        <item>The Lord is near to the broken-hearted. In the rawness of this loss, He does not stand far off, but draws close to us.</item>
+        <item>Even now, in the valley of the shadow, we do not walk alone. The Shepherd walks the dark path beside us.</item>
+        <item>His mercies are new every morning; they never come to an end. Even in grief, His faithfulness holds us.</item>
+        <item>He heals the broken-hearted and binds up their wounds. We bring Him this wound, and ask for His healing.</item>
+        <item>Blessed are those who mourn, for they shall be comforted. Our tears are not wasted; they are seen and answered.</item>
+        <item>God keeps each of our tears; not one is forgotten. He counts our sorrows and treasures them.</item>
+        <item>The Lord gave, and the Lord has taken away; blessed be the name of the Lord. We hold this life as a gift we were lent.</item>
+        <item>Be gracious to me, O Lord, for I am in distress. We may bring our weakness honestly before Him.</item>
+        <item>Blessed be the God of all comfort, who comforts us in all our affliction. From Him alone comes the comfort that lasts.</item>
+        <item>Fear not, for I am with you; I will strengthen and uphold you. His presence is stronger than our fear.</item>
+        <item>God is our refuge and strength, a very present help in trouble. We shelter in Him today.</item>
+        <item>When you pass through the waters, I will be with you. The flood does not overwhelm those whom God holds.</item>
+        <item>Come to me, all who are weary and heavy-laden, and I will give you rest. We lay this weight at His feet.</item>
+        <item>I lift up my eyes to the hills — where does my help come from? Our help is from the Lord, maker of heaven and earth.</item>
+        <item>Weeping may tarry for the night, but joy comes with the morning. This night of sorrow will not last forever.</item>
+        <item>The peace of God, which surpasses all understanding, will guard your hearts. We ask for that peace today.</item>
+        <item>“I am the resurrection and the life,” says the Lord. In Him, death is not the end of the story.</item>
+        <item>Death is swallowed up in victory. The grave has lost its sting for those who belong to Christ.</item>
+        <item>If we have been united with Him in a death like His, we shall be united with Him in His resurrection.</item>
+        <item>God will bring with Him those who have fallen asleep in Jesus. They are not lost — they are kept.</item>
+        <item>“Let not your hearts be troubled; believe in God, believe also in me.” His word steadies our trembling.</item>
+        <item>In my Father’s house are many rooms, and a place has been prepared. Our beloved is welcomed home.</item>
+        <item>We have a building from God, an eternal house in the heavens, not made with hands. What is mortal is clothed with life.</item>
+        <item>What is sown perishable is raised imperishable; sown in weakness, raised in power. The body laid down is a seed of glory.</item>
+        <item>Our citizenship is in heaven, from which we await our Saviour. Our true country lies ahead.</item>
+        <item>I have fought the good fight, I have finished the race. For the faithful, a crown of righteousness is laid up.</item>
+        <item>He will wipe away every tear; death shall be no more, nor mourning nor crying nor pain. The old order of grief is passing.</item>
+        <item>The Lamb at the centre of the throne will be their shepherd and guide them to springs of living water.</item>
+        <item>We are surrounded by so great a cloud of witnesses. Our beloved has joined that great company.</item>
+        <item>Abraham looked for the city whose architect and builder is God. We seek that same city, not made by hands.</item>
+        <item>“Today you will be with me in paradise.” Mercy is never too late, and the promise is sure.</item>
+        <item>“No one shall snatch them out of my hand.” We are held by a grip that does not loosen.</item>
+        <item>Neither death nor life can separate us from the love of God in Christ Jesus. Not even this loss.</item>
+        <item>Precious in the sight of the Lord is the death of His saints. This life was precious to Him.</item>
+        <item>By His great mercy we have been born again to a living hope through the resurrection of Jesus Christ.</item>
+        <item>“Blessed are the dead who die in the Lord; they rest from their labours.” We give them to His rest.</item>
+        <item>My flesh and my heart may fail, but God is the strength of my heart and my portion forever.</item>
+        <item>You make known to me the path of life; in Your presence is fullness of joy. That is where our beloved has gone.</item>
+        <item>“Father, into Your hands I commend my spirit.” With the same trust, we commend the one we love to You.</item>
+        <item>The Lord bless you and keep you; the Lord make His face shine upon you and give you peace. Go now in that peace.</item>
+    </string-array>
 
 </resources>

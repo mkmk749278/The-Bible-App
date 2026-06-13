@@ -49,6 +49,7 @@ import com.manna.bible.ui.prayers.PrayersHubScreen
 import com.manna.bible.ui.prayers.jesus.JesusPrayerScreen
 import com.manna.bible.ui.prayers.paraloka.ParalokaScreen
 import com.manna.bible.ui.prayers.rosary.RosaryScreen
+import com.manna.bible.ui.prayers.sramanikal.SramanikalScreen
 import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
@@ -70,6 +71,7 @@ private object Routes {
     const val ROSARY = "rosary"
     const val JESUS_PRAYER = "jesus_prayer"
     const val PARALOKA = "paraloka"
+    const val SRAMANIKAL = "sramanikal"
     const val SEARCH = "search"
     const val CATALOG = "catalog"
     const val ATTRIBUTION = "attribution"
@@ -223,6 +225,9 @@ fun MannaApp(
                                 } else null,
                                 onOpenParaloka = if (FeatureFlags.PARALOKA) {
                                     { navController.navigate(Routes.PARALOKA) }
+                                } else null,
+                                onOpenSramanikal = if (FeatureFlags.SRAMANIKAL) {
+                                    { navController.navigate(Routes.SRAMANIKAL) }
                                 } else null
                             )
                         }
@@ -324,6 +329,12 @@ fun MannaApp(
                     }
                     composable(Routes.PARALOKA) {
                         ParalokaScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
+                        )
+                    }
+                    composable(Routes.SRAMANIKAL) {
+                        SramanikalScreen(
                             onBack = { navController.popBackStack() },
                             onOpenVerse = { ref -> openInReader(ref, false) }
                         )

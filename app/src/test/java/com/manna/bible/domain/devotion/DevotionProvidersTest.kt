@@ -143,4 +143,27 @@ class DevotionProvidersTest {
             assertEquals(5, prayers.map { it.id }.toSet().size, "prayer ids must be unique")
         }
     }
+
+    @Nested
+    @DisplayName("Sramanikal")
+    inner class Sramanikal {
+        private val journey = DefaultSramanikalJourney()
+
+        @Test
+        @DisplayName("is a forty-day journey of canon-valid passages")
+        fun fortyValidDays() {
+            assertEquals(40, journey.dayCount)
+            for (day in 1..journey.dayCount) {
+                assertValidCanonRef(journey.verseFor(day)!!)
+            }
+        }
+
+        @Test
+        @DisplayName("returns null for out-of-range days")
+        fun outOfRange() {
+            assertNull(journey.verseFor(0))
+            assertNull(journey.verseFor(41))
+            assertNull(journey.verseFor(-1))
+        }
+    }
 }

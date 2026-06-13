@@ -44,10 +44,12 @@ import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.devotion.DefaultJesusPrayerProvider
 import com.manna.bible.domain.devotion.DefaultParalokaProvider
 import com.manna.bible.domain.devotion.DefaultRosaryProvider
+import com.manna.bible.domain.devotion.DefaultSramanikalJourney
 import com.manna.bible.domain.devotion.DefaultStationsProvider
 import com.manna.bible.domain.devotion.JesusPrayerProvider
 import com.manna.bible.domain.devotion.ParalokaProvider
 import com.manna.bible.domain.devotion.RosaryProvider
+import com.manna.bible.domain.devotion.SramanikalJourney
 import com.manna.bible.domain.devotion.StationsProvider
 import com.manna.bible.domain.fasting.DefaultFastingPlans
 import com.manna.bible.domain.fasting.FastingPlans
@@ -271,6 +273,9 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindParalokaProvider(impl: DefaultParalokaProvider): ParalokaProvider
+
+    @Binds
+    abstract fun bindSramanikalJourney(impl: DefaultSramanikalJourney): SramanikalJourney
 
     // --- daily reminder ------------------------------------------------------
 
