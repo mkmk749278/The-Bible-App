@@ -1,0 +1,296 @@
+package com.manna.bible.ui.calendar
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.manna.bible.R
+import com.manna.bible.domain.calendar.LiturgicalColor
+import com.manna.bible.ui.theme.MannaTheme
+import java.time.YearMonth
+import java.time.format.DateTimeFormatter
+import java.util.Locale
+
+/** Maps a liturgical (vestment) colour to a palette token. */
+@Composable
+private fun liturgicalColor(color: LiturgicalColor): Color = when (color) {
+    LiturgicalColor.VIOLET -> MannaTheme.colors.lavender
+    LiturgicalColor.WHITE -> MannaTheme.colors.gold
+    LiturgicalColor.GREEN -> MannaTheme.colors.sage
+    LiturgicalColor.RED -> MannaTheme.colors.red
+}
+
+/**
+ * The Calendar tab — a real month grid of the liturgical year for the chosen tradition.
+ * Days are tinted by their season's colour; feasts and fast days are marked. Tapping a
+ * day shows its detail (season, feast + readings, fast); a feast can be opened in the
+ * reader. "Today" jumps back to the current month.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LiturgicalCalendarScreen(
+    modifier: Modifier = Modifier,
+    viewModel: LiturgicalCalendarViewModel = hiltViewModel(),
+    onOpenVerse: (String) -> Unit = {}
+) {
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault()) }
+
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(stringResource(R.string.nav_calendar), fontWeight = FontWeight.SemiBold)
+                },
+                actions = {
+                    TextButton(onClick = viewModel::goToToday) {
+                        Text(stringResource(R.string.calendar_today))
+                    }
+                }
+            )
+        }
+    ) { padding ->
+        if (state.isLoading) return@Scaffold
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(padding)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp)
+        ) {
+            // Month navigation.
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = viewModel::previousMonth) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = stringResource(R.string.calendar_previous_month)
+                    )
+                }
+                Text(
+                    text = YearMonth.of(state.year, state.month).format(monthFormatter),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MannaTheme.colors.ink,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+                IconButton(onClick = viewModel::nextMonth) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = stringResource(R.string.calendar_next_month)
+                    )
+                }
+            }
+
+            // Weekday header.
+            val weekdays = stringArrayResource(R.array.calendar_weekdays)
+            Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)) {
+                weekdays.forEach { letter ->
+                    Text(
+                        text = letter,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MannaTheme.colors.muted,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f).clearAndSetSemantics {}
+                    )
+                }
+            }
+
+            // The month grid, Sunday-first, chunked into weeks.
+            val cells: List<CalendarDayCell?> =
+                List(state.leadingBlanks) { null } + state.days
+            val padded = cells + List((7 - cells.size % 7) % 7) { null }
+            padded.chunked(7).forEach { week ->
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    week.forEach { cell ->
+                        Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            if (cell != null) {
+                                DayCell(
+                                    cell = cell,
+                                    selected = cell.date == state.selected?.date,
+                                    onClick = { viewModel.selectDate(cell.date) }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+
+            Spacer(Modifier.height(12.dp))
+
+            state.selected?.let { selected ->
+                SelectedDayCard(selected = selected, onOpenVerse = onOpenVerse)
+            }
+
+            Spacer(Modifier.height(24.dp))
+        }
+    }
+}
+
+@Composable
+private fun DayCell(cell: CalendarDayCell, selected: Boolean, onClick: () -> Unit) {
+    val tint = liturgicalColor(cell.color)
+    val feastLabel = stringResource(R.string.calendar_feast_label)
+    val fastLabel = stringResource(R.string.calendar_fast_label)
+    val description = buildString {
+        append(cell.date.format(DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())))
+        if (cell.isFeast) append(", ").append(feastLabel)
+        if (cell.isFast) append(", ").append(fastLabel)
+    }
+    Box(
+        modifier = Modifier
+            .padding(2.dp)
+            .heightIn(min = 44.dp)
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(10.dp))
+            .background(tint.copy(alpha = 0.16f))
+            .then(
+                if (selected) Modifier.border(2.dp, MannaTheme.colors.gold, RoundedCornerShape(10.dp))
+                else Modifier
+            )
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = description },
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+            modifier = Modifier.padding(vertical = 6.dp)
+        ) {
+            Text(
+                text = cell.dayOfMonth.toString(),
+                fontSize = 15.sp,
+                fontWeight = if (cell.isToday || cell.isFeast) FontWeight.Bold else FontWeight.Normal,
+                color = if (cell.isToday) MannaTheme.colors.gold else MannaTheme.colors.ink
+            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(3.dp),
+                modifier = Modifier.padding(top = 2.dp)
+            ) {
+                if (cell.isFeast) Dot(MannaTheme.colors.gold)
+                if (cell.isFast) Dot(MannaTheme.colors.lavender)
+            }
+        }
+    }
+}
+
+@Composable
+private fun Dot(color: Color) {
+    Box(
+        modifier = Modifier
+            .size(5.dp)
+            .clip(CircleShape)
+            .background(color)
+    )
+}
+
+@Composable
+private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit) {
+    val dateFormatter = remember {
+        DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())
+    }
+    Surface(
+        color = MannaTheme.colors.card,
+        shape = RoundedCornerShape(16.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(20.dp)) {
+            Text(
+                text = selected.date.format(dateFormatter),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                color = MannaTheme.colors.ink
+            )
+            Spacer(Modifier.height(6.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Dot(liturgicalColor(selected.color))
+                Spacer(Modifier.size(6.dp))
+                Text(
+                    text = stringResource(seasonNameRes(selected.season)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MannaTheme.colors.soft
+                )
+                if (selected.isFast) {
+                    Spacer(Modifier.size(10.dp))
+                    Text(
+                        text = stringResource(R.string.calendar_fast_label),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MannaTheme.colors.lavender,
+                        fontWeight = FontWeight.Medium
+                    )
+                }
+            }
+
+            if (selected.feastId != null) {
+                Spacer(Modifier.height(14.dp))
+                Text(
+                    text = stringResource(eventNameRes(selected.feastId)),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MannaTheme.colors.gold
+                )
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    text = stringResource(eventDescriptionRes(selected.feastId)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MannaTheme.colors.soft
+                )
+                if (selected.osisRef != null) {
+                    Spacer(Modifier.height(8.dp))
+                    TextButton(
+                        onClick = { onOpenVerse(selected.osisRef) },
+                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                    ) {
+                        Text(stringResource(R.string.calendar_read_passage))
+                    }
+                }
+            }
+        }
+    }
+}

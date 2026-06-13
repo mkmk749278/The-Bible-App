@@ -6,6 +6,34 @@
     <string name="calendar_next_badge">Next</string>
     <string name="calendar_tool_entry">Jesus Events Calendar</string>
 
+    <!-- Liturgical month grid -->
+    <string name="calendar_today">Today</string>
+    <string name="calendar_previous_month">Previous month</string>
+    <string name="calendar_next_month">Next month</string>
+    <string name="calendar_feast_label">Feast</string>
+    <string name="calendar_fast_label">Fast day</string>
+    <string name="calendar_read_passage">Read the passage</string>
+
+    <!-- Weekday initials (Sunday-first) -->
+    <string-array name="calendar_weekdays">
+        <item>S</item>
+        <item>M</item>
+        <item>T</item>
+        <item>W</item>
+        <item>T</item>
+        <item>F</item>
+        <item>S</item>
+    </string-array>
+
+    <!-- Liturgical seasons -->
+    <string name="season_advent">Advent</string>
+    <string name="season_christmas">Christmas</string>
+    <string name="season_epiphany">Epiphany</string>
+    <string name="season_lent">Lent</string>
+    <string name="season_holy_week">Holy Week</string>
+    <string name="season_easter">Eastertide</string>
+    <string name="season_ordinary">Ordinary Time</string>
+
     <string name="calendar_event_holy_name_name">Holy Name of Jesus</string>
     <string name="calendar_event_holy_name_desc">Jesus is named and circumcised on the eighth day.</string>
 

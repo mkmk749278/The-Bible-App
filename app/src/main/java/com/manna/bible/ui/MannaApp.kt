@@ -35,7 +35,7 @@ import androidx.navigation.compose.rememberNavController
 import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
-import com.manna.bible.ui.calendar.JesusCalendarScreen
+import com.manna.bible.ui.calendar.LiturgicalCalendarScreen
 import com.manna.bible.ui.card.ScriptureCardScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.crisis.CrisisModeScreen
@@ -191,8 +191,7 @@ fun MannaApp(
 
                     // --- Calendar tab --------------------------------------------
                     composable(Routes.CALENDAR) {
-                        JesusCalendarScreen(
-                            onBack = null,
+                        LiturgicalCalendarScreen(
                             onOpenVerse = { ref -> openInReader(ref, false) }
                         )
                     }
