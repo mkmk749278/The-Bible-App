@@ -33,6 +33,10 @@ import com.manna.bible.domain.calendar.DefaultLiturgicalCalendarProvider
 import com.manna.bible.domain.calendar.JesusEventsProvider
 import com.manna.bible.domain.calendar.LectionaryReadingsProvider
 import com.manna.bible.domain.calendar.LiturgicalCalendarProvider
+import com.manna.bible.data.explain.DefaultExplanationRepository
+import com.manna.bible.data.explain.GeminiExplanationEngine
+import com.manna.bible.domain.explain.ExplanationEngine
+import com.manna.bible.domain.explain.ExplanationRepository
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
@@ -214,6 +218,16 @@ abstract class BindingsModule {
     abstract fun bindLectionaryReadingsProvider(
         impl: DefaultLectionaryReadingsProvider
     ): LectionaryReadingsProvider
+
+    // --- Explain this passage ------------------------------------------------
+
+    @Binds
+    abstract fun bindExplanationEngine(impl: GeminiExplanationEngine): ExplanationEngine
+
+    @Binds
+    abstract fun bindExplanationRepository(
+        impl: DefaultExplanationRepository
+    ): ExplanationRepository
 
     // --- crisis / 3AM mode ---------------------------------------------------
 

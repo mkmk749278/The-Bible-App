@@ -31,6 +31,15 @@ android {
             "BIBLE_BRAIN_API_KEY",
             "\"${System.getenv("BIBLE_BRAIN_API_KEY") ?: ""}\""
         )
+
+        // Gemini API key for the cloud "Explain this passage" engine. Injected from a
+        // GitHub Secret (GEMINI_API_KEY) at CI time, or local.properties for dev.
+        // Blank by default -> Explain shows a graceful "add a key" state.
+        buildConfigField(
+            "String",
+            "GEMINI_API_KEY",
+            "\"${System.getenv("GEMINI_API_KEY") ?: ""}\""
+        )
     }
 
     signingConfigs {

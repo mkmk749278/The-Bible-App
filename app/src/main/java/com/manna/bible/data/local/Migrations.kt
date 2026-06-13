@@ -95,3 +95,18 @@ val MIGRATION_3_4: Migration = object : Migration(3, 4) {
         )
     }
 }
+
+/**
+ * v4 -> v5: adds the [ExplanationEntity] `explanations` cache table for the "Explain
+ * this passage" feature. Purely additive — existing data is untouched.
+ */
+val MIGRATION_4_5: Migration = object : Migration(4, 5) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `explanations` (" +
+                "`cacheKey` TEXT PRIMARY KEY NOT NULL, " +
+                "`text` TEXT NOT NULL, " +
+                "`createdAt` INTEGER NOT NULL)"
+        )
+    }
+}
