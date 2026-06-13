@@ -22,11 +22,17 @@ import com.manna.bible.domain.repository.BookSummary
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.usecase.GetChapterUseCase
 import com.manna.bible.domain.usecase.NavigateChapterUseCase
+import com.manna.bible.domain.explain.ExplainDepth
+import com.manna.bible.domain.explain.ExplanationRepository
+import com.manna.bible.domain.explain.ExplanationRequest
+import com.manna.bible.domain.explain.ExplanationResult
+import com.manna.bible.domain.explain.ExplanationUnavailableReason
 import com.manna.bible.domain.usecase.ReadingRef
 import com.manna.bible.domain.usecase.RestoreReadingPositionUseCase
 import com.manna.bible.domain.usecase.SaveReadingPositionUseCase
 import com.manna.bible.domain.usecase.SetActiveTranslationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -58,6 +64,21 @@ data class ReaderVerse(
     val hasHighlight: Boolean = false,
     val hasBookmark: Boolean = false,
     val hasNote: Boolean = false
+)
+
+/** Progress of an in-flight or finished "Explain this passage" request. */
+sealed interface ExplainStatus {
+    data object Loading : ExplainStatus
+    data class Ready(val text: String) : ExplainStatus
+    data class Unavailable(val reason: ExplanationUnavailableReason) : ExplainStatus
+}
+
+/** State of the Explain bottom sheet for one verse, or null when closed. */
+data class ExplainSheetState(
+    val verse: Int,
+    val reference: String,
+    val depth: ExplainDepth,
+    val status: ExplainStatus
 )
 
 /**
@@ -107,7 +128,9 @@ data class ReaderUiState(
     /** True when the active Bible language uses a right-to-left script (Req 14.4). */
     val isRtl: Boolean = false,
     /** True when Simplified Mode (audio-first, enlarged controls) is enabled (Req 14.5). */
-    val simplifiedMode: Boolean = false
+    val simplifiedMode: Boolean = false,
+    /** The Explain bottom sheet state for the selected verse, or null when closed. */
+    val explain: ExplainSheetState? = null
 ) {
     /** True when audio is playing or paused — the audio bar shows stop/resume controls. */
     val isAudioActive: Boolean get() = isAudioPlaying || isAudioPaused
@@ -140,7 +163,8 @@ class ReaderViewModel @Inject constructor(
     private val bibleContentRepository: BibleContentRepository,
     private val translationRepository: TranslationRepository,
     private val downloadManager: DownloadManager,
-    private val ttsReader: TtsReader
+    private val ttsReader: TtsReader,
+    private val explanationRepository: ExplanationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReaderUiState())
@@ -153,6 +177,8 @@ class ReaderViewModel @Inject constructor(
 
     // BCP-47 language tag of the active Bible text, used to pick a TTS voice (Req 9.5).
     private var bibleLanguageTag: String? = null
+    private var uiLanguageTag: String = DEFAULT_UI_LANGUAGE
+    private var explainJob: Job? = null
 
     init {
         observeSetup()
@@ -247,11 +273,20 @@ class ReaderViewModel @Inject constructor(
                 .map { setup ->
                     val denomination = setup.denomination ?: Denomination.PROTESTANT_OTHER
                     val language = setup.bibleLanguage ?: DEFAULT_BIBLE_LANGUAGE
-                    Triple(denomination, language, setup.bibleTranslationId)
+                    SetupSnapshot(
+                        denomination = denomination,
+                        bibleLanguage = language,
+                        translationId = setup.bibleTranslationId,
+                        uiLanguage = setup.uiLanguage ?: DEFAULT_UI_LANGUAGE
+                    )
                 }
                 .distinctUntilChanged()
-                .collect { (denomination, language, translationId) ->
+                .collect { snapshot ->
+                    val denomination = snapshot.denomination
+                    val language = snapshot.bibleLanguage
+                    val translationId = snapshot.translationId
                     bibleLanguageTag = language
+                    uiLanguageTag = snapshot.uiLanguage
                     val profile = canonEngine.profileFor(denomination, language)
                     val resolvedTranslation = resolveActiveTranslation(translationId)
                     _uiState.value = _uiState.value.copy(
@@ -494,6 +529,68 @@ class ReaderViewModel @Inject constructor(
         return ReadingRef(osisId, _uiState.value.chapter, verse).format()
     }
 
+    // --- Explain this passage (Phase 3) --------------------------------------
+
+    /** Opens the Explain sheet for [verse] at the plain depth and starts the request. */
+    fun explainVerse(verse: Int) {
+        _uiState.value = _uiState.value.copy(selectedVerse = null)
+        startExplain(verse, ExplainDepth.PLAIN)
+    }
+
+    /** Re-runs the current explanation at a different [depth]. */
+    fun setExplainDepth(depth: ExplainDepth) {
+        val current = _uiState.value.explain ?: return
+        if (current.depth == depth) return
+        startExplain(current.verse, depth)
+    }
+
+    /** Closes the Explain sheet and cancels any in-flight request. */
+    fun dismissExplain() {
+        explainJob?.cancel()
+        _uiState.value = _uiState.value.copy(explain = null)
+    }
+
+    private fun startExplain(verse: Int, depth: ExplainDepth) {
+        val state = _uiState.value
+        val osisRef = verseRefOf(verse) ?: return
+        val verseLine = state.verses.firstOrNull { it.verse == verse } ?: return
+        val reference = "${state.bookName} ${state.displayedChapterNumber}:" +
+            "${verseLine.displayNumber ?: verse}"
+
+        _uiState.value = state.copy(
+            explain = ExplainSheetState(verse, reference, depth, ExplainStatus.Loading)
+        )
+
+        explainJob?.cancel()
+        explainJob = viewModelScope.launch {
+            val result = explanationRepository.explain(
+                ExplanationRequest(
+                    osisRef = osisRef,
+                    reference = reference,
+                    passageText = verseLine.text,
+                    uiLanguageCode = uiLanguageTag,
+                    depth = depth
+                )
+            )
+            val status = when (result) {
+                is ExplanationResult.Success -> ExplainStatus.Ready(result.text)
+                is ExplanationResult.Unavailable -> ExplainStatus.Unavailable(result.reason)
+            }
+            val current = _uiState.value.explain
+            if (current != null && current.verse == verse && current.depth == depth) {
+                _uiState.value = _uiState.value.copy(explain = current.copy(status = status))
+            }
+        }
+    }
+
+    /** Snapshot of setup values the reader reacts to. */
+    private data class SetupSnapshot(
+        val denomination: Denomination,
+        val bibleLanguage: String,
+        val translationId: String?,
+        val uiLanguage: String
+    )
+
     /**
      * Fetches and renders [osisId]/[chapter] for the active translation, persisting
      * the position and recomputing navigation availability. Surfaces the
@@ -591,6 +688,7 @@ class ReaderViewModel @Inject constructor(
     private companion object {
         const val PSALMS_OSIS_ID = "PSA"
         const val DEFAULT_BIBLE_LANGUAGE = "en"
+        const val DEFAULT_UI_LANGUAGE = "en"
         // Manna gold (0xFFC9952A) — kept in sync with the design system highlight color.
         const val DEFAULT_HIGHLIGHT_COLOR_ARGB = 0xFFC9952A.toInt()
     }

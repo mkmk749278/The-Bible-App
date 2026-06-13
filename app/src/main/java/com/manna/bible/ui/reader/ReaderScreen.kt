@@ -26,6 +26,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,6 +62,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
+import com.manna.bible.domain.FeatureFlags
+import com.manna.bible.domain.explain.ExplainDepth
+import com.manna.bible.domain.explain.ExplanationUnavailableReason
 import com.manna.bible.domain.reader.CanonBookOrdering
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
@@ -208,7 +212,18 @@ fun ReaderScreen(
             onToggleBookmark = { viewModel.toggleBookmark(selected) },
             onAddNote = { content -> viewModel.addNote(selected, content) },
             onRemoveNote = { viewModel.removeNotes(selected) },
+            onExplain = if (FeatureFlags.EXPLAIN_PASSAGE) {
+                { viewModel.explainVerse(selected) }
+            } else null,
             onDismiss = { viewModel.selectVerse(null) }
+        )
+    }
+
+    state.explain?.let { explain ->
+        ExplainSheet(
+            explain = explain,
+            onDepthChange = viewModel::setExplainDepth,
+            onDismiss = viewModel::dismissExplain
         )
     }
     }
@@ -807,6 +822,7 @@ private fun AnnotationSheet(
     onToggleBookmark: () -> Unit,
     onAddNote: (String) -> Unit,
     onRemoveNote: () -> Unit,
+    onExplain: (() -> Unit)? = null,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -826,6 +842,13 @@ private fun AnnotationSheet(
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+
+            if (onExplain != null) {
+                AnnotationAction(
+                    label = stringResource(R.string.explain_action),
+                    onClick = onExplain
+                )
+            }
 
             AnnotationAction(
                 label = if (hasHighlight) {
@@ -868,6 +891,87 @@ private fun AnnotationSheet(
                     .defaultMinSize(minHeight = MinTouchTarget)
             ) {
                 Text(stringResource(R.string.annotation_save_note))
+            }
+
+            TextButton(
+                onClick = onDismiss,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = MinTouchTarget)
+            ) {
+                Text(stringResource(R.string.annotation_close))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ExplainSheet(
+    explain: ExplainSheetState,
+    onDepthChange: (ExplainDepth) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 24.dp)
+                .padding(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Text(
+                text = stringResource(R.string.explain_title, explain.reference),
+                style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                FilterChip(
+                    selected = explain.depth == ExplainDepth.PLAIN,
+                    onClick = { onDepthChange(ExplainDepth.PLAIN) },
+                    label = { Text(stringResource(R.string.explain_depth_plain)) }
+                )
+                FilterChip(
+                    selected = explain.depth == ExplainDepth.PREACHING,
+                    onClick = { onDepthChange(ExplainDepth.PREACHING) },
+                    label = { Text(stringResource(R.string.explain_depth_preaching)) }
+                )
+            }
+
+            when (val status = explain.status) {
+                ExplainStatus.Loading -> {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        modifier = Modifier.padding(vertical = 16.dp)
+                    ) {
+                        CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
+                        Text(stringResource(R.string.explain_loading))
+                    }
+                }
+                is ExplainStatus.Ready -> {
+                    Text(
+                        text = status.text,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
+                    )
+                }
+                is ExplainStatus.Unavailable -> {
+                    val message = when (status.reason) {
+                        ExplanationUnavailableReason.NOT_CONFIGURED ->
+                            stringResource(R.string.explain_unavailable_key)
+                        ExplanationUnavailableReason.OFFLINE ->
+                            stringResource(R.string.explain_unavailable_offline)
+                        ExplanationUnavailableReason.ERROR ->
+                            stringResource(R.string.explain_unavailable_error)
+                    }
+                    Text(
+                        text = message,
+                        style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
 
             TextButton(
