@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +44,7 @@ import com.manna.bible.ui.fasting.FastingScreen
 import com.manna.bible.ui.grief.GriefScreen
 import com.manna.bible.ui.home.HomeScreen
 import com.manna.bible.ui.listen.ListenScreen
+import com.manna.bible.ui.more.MoreScreen
 import com.manna.bible.ui.prayer.PrayerJournalScreen
 import com.manna.bible.ui.pastor.PastorModeScreen
 import com.manna.bible.ui.reader.ReaderScreen
@@ -88,7 +89,7 @@ private val Tabs = listOf(
     TabItem(Routes.HOME, R.string.nav_home, Icons.Filled.Home),
     TabItem(Routes.LISTEN, R.string.nav_listen, Icons.Filled.PlayArrow),
     TabItem(Routes.SEARCH, R.string.nav_search, Icons.Filled.Search),
-    TabItem(Routes.LIBRARY, R.string.nav_library, Icons.Filled.List),
+    TabItem(Routes.LIBRARY, R.string.nav_more, Icons.Filled.Menu),
 )
 
 private fun NavController.navigateToTab(route: String) {
@@ -196,16 +197,23 @@ fun MannaApp(
                         )
                     }
                     composable(Routes.LIBRARY) {
-                        TranslationCatalogScreen(
-                            onBack = null,
+                        MoreScreen(
+                            onOpenTranslations = { navController.navigate(Routes.CATALOG) },
+                            onOpenDaily = { navController.navigate(Routes.DAILY) },
+                            onOpenCalendar = if (FeatureFlags.JESUS_CALENDAR) {
+                                { navController.navigate(Routes.CALENDAR) }
+                            } else null,
+                            onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
+                                { navController.navigate(Routes.REMINDER) }
+                            } else null,
+                            onOpenPrayer = if (FeatureFlags.PRAYER_JOURNAL) {
+                                { navController.navigate(Routes.PRAYER) }
+                            } else null,
                             onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
                                 { navController.navigate(Routes.CRISIS) }
                             } else null,
                             onOpenGrief = if (FeatureFlags.GRIEF_COMPANION) {
                                 { navController.navigate(Routes.GRIEF) }
-                            } else null,
-                            onOpenPrayer = if (FeatureFlags.PRAYER_JOURNAL) {
-                                { navController.navigate(Routes.PRAYER) }
                             } else null,
                             onOpenFasting = if (FeatureFlags.FASTING_COMPANION) {
                                 { navController.navigate(Routes.FASTING) }
@@ -213,13 +221,7 @@ fun MannaApp(
                             onOpenCard = if (FeatureFlags.SCRIPTURE_CARD) {
                                 { navController.navigate(Routes.CARD) }
                             } else null,
-                            onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
-                                { navController.navigate(Routes.REMINDER) }
-                            } else null,
-                            onOpenCalendar = if (FeatureFlags.JESUS_CALENDAR) {
-                                { navController.navigate(Routes.CALENDAR) }
-                            } else null,
-                            onOpenPastorMode = if (FeatureFlags.PASTOR_MODE) {
+                            onOpenPastor = if (FeatureFlags.PASTOR_MODE) {
                                 { navController.navigate(Routes.PASTOR) }
                             } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
