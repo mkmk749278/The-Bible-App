@@ -2,12 +2,16 @@ package com.manna.bible.ui.calendar
 
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.calendar.DefaultJesusEventsProvider
+import com.manna.bible.domain.calendar.DefaultLectionaryReadingsProvider
 import com.manna.bible.domain.calendar.DefaultLiturgicalCalendarProvider
+import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.CanonType
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.model.NumberingScheme
 import com.manna.bible.domain.model.SetupState
+import com.manna.bible.domain.share.DefaultBookNameProvider
+import com.manna.bible.domain.share.ShareReferenceFormatter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -42,8 +46,25 @@ class LiturgicalCalendarViewModelTest {
         LiturgicalCalendarViewModel(
             provider = DefaultLiturgicalCalendarProvider(DefaultJesusEventsProvider()),
             jesusEvents = DefaultJesusEventsProvider(),
+            lectionary = DefaultLectionaryReadingsProvider(DefaultJesusEventsProvider()),
+            referenceFormatter = ShareReferenceFormatter(DefaultBookNameProvider()),
+            canonEngine = FakeCanonEngine,
             preferencesStore = FakePreferencesStore(denomination)
         )
+
+    private object FakeCanonEngine : CanonEngine {
+        override fun canonTypeFor(denomination: Denomination) = CanonType.PROTESTANT_66
+        override suspend fun profileFor(denomination: Denomination, bibleLanguage: String) =
+            CanonProfile(
+                denomination = denomination,
+                canonType = CanonType.PROTESTANT_66,
+                books = emptyList(),
+                numberingScheme = NumberingScheme.MASORETIC,
+                namingConventionId = null,
+                suggestedTranslationId = null,
+                lectionaryId = null
+            )
+    }
 
     @Test
     @DisplayName("Initial state shows the current month, a full grid, and selects today")
@@ -80,7 +101,7 @@ class LiturgicalCalendarViewModelTest {
     }
 
     @Test
-    @DisplayName("Selecting Christmas resolves its feast and a readable passage")
+    @DisplayName("Selecting Christmas resolves its feast and proper readings")
     fun selectFeast() = runTest(dispatcher) {
         val vm = viewModel()
         advanceUntilIdle()
@@ -92,6 +113,22 @@ class LiturgicalCalendarViewModelTest {
         assertEquals(christmas, selected!!.date)
         assertEquals("nativity", selected.feastId)
         assertNotNull(selected.osisRef)
+        // Christmas has its four proper readings, each with a non-blank reference.
+        assertEquals(4, selected.readings.size)
+        assertTrue(selected.readings.all { it.reference.isNotBlank() && it.osisRef.isNotBlank() })
+        assertEquals("LUK.2.1", selected.readings.last().osisRef) // Gospel: Luke 2:1
+    }
+
+    @Test
+    @DisplayName("An ordinary day has no proper readings")
+    fun ordinaryDayNoReadings() = runTest(dispatcher) {
+        val vm = viewModel()
+        advanceUntilIdle()
+        vm.selectDate(LocalDate.of(LocalDate.now().year, 7, 15))
+        advanceUntilIdle()
+        val selected = vm.uiState.value.selected
+        assertNotNull(selected)
+        assertTrue(selected!!.readings.isEmpty())
     }
 
     private class FakePreferencesStore(denomination: Denomination) : PreferencesStore {

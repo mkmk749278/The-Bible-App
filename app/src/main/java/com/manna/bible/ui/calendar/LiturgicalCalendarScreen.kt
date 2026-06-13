@@ -281,16 +281,54 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
                     style = MaterialTheme.typography.bodyMedium,
                     color = MannaTheme.colors.soft
                 )
-                if (selected.osisRef != null) {
-                    Spacer(Modifier.height(8.dp))
-                    TextButton(
-                        onClick = { onOpenVerse(selected.osisRef) },
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
-                    ) {
-                        Text(stringResource(R.string.calendar_read_passage))
-                    }
+            }
+
+            if (selected.readings.isNotEmpty()) {
+                Spacer(Modifier.height(16.dp))
+                Text(
+                    text = stringResource(R.string.calendar_readings_header),
+                    style = MaterialTheme.typography.labelLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MannaTheme.colors.muted
+                )
+                Spacer(Modifier.height(4.dp))
+                selected.readings.forEach { reading ->
+                    ReadingRowItem(reading = reading, onOpenVerse = onOpenVerse)
+                }
+            } else if (selected.feastId != null && selected.osisRef != null) {
+                Spacer(Modifier.height(8.dp))
+                TextButton(
+                    onClick = { onOpenVerse(selected.osisRef) },
+                    contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                ) {
+                    Text(stringResource(R.string.calendar_read_passage))
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ReadingRowItem(reading: ReadingRow, onOpenVerse: (String) -> Unit) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onOpenVerse(reading.osisRef) }
+            .padding(vertical = 8.dp)
+    ) {
+        Text(
+            text = stringResource(readingKindRes(reading.kind)),
+            style = MaterialTheme.typography.labelMedium,
+            color = MannaTheme.colors.gold,
+            modifier = Modifier.weight(0.4f)
+        )
+        Text(
+            text = reading.reference,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MannaTheme.colors.ink,
+            modifier = Modifier.weight(0.6f)
+        )
     }
 }

@@ -13,6 +13,13 @@
     <string name="calendar_feast_label">Feast</string>
     <string name="calendar_fast_label">Fast day</string>
     <string name="calendar_read_passage">Read the passage</string>
+    <string name="calendar_readings_header">Readings</string>
+
+    <!-- Lectionary reading roles -->
+    <string name="reading_first">Old Testament</string>
+    <string name="reading_psalm">Psalm</string>
+    <string name="reading_second">Epistle</string>
+    <string name="reading_gospel">Gospel</string>
 
     <!-- Weekday initials (Sunday-first) -->
     <string-array name="calendar_weekdays">
