@@ -1,0 +1,95 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Georgia, serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  min-height: 100vh;
+}
+
+header {
+  background: #16213e;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  border-bottom: 2px solid #e2b96f;
+}
+
+header h1 {
+  color: #e2b96f;
+  font-size: 2rem;
+  letter-spacing: 0.05em;
+}
+
+main {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+}
+
+#verse-of-the-day {
+  background: #16213e;
+  border-left: 4px solid #e2b96f;
+  padding: 1.5rem;
+  border-radius: 4px;
+  margin-bottom: 2rem;
+}
+
+#verse-of-the-day h2 {
+  color: #e2b96f;
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+blockquote {
+  font-size: 1.2rem;
+  line-height: 1.7;
+  font-style: italic;
+  margin-bottom: 0.75rem;
+}
+
+cite {
+  color: #a0a0c0;
+  font-size: 0.9rem;
+}
+
+#search {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+#search-input {
+  padding: 0.75rem 1rem;
+  border: 1px solid #333;
+  border-radius: 4px;
+  background: #16213e;
+  color: #e0e0e0;
+  font-size: 1rem;
+  width: 100%;
+}
+
+#search-btn {
+  padding: 0.75rem 1.5rem;
+  background: #e2b96f;
+  color: #1a1a2e;
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  align-self: flex-start;
+}
+
+#search-btn:hover {
+  background: #c9a255;
+}
+
+#results {
+  margin-top: 1rem;
+}

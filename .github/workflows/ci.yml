@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check HTML file exists
+        run: test -f index.html
+
+      - name: Check JS file exists
+        run: test -f app.js
+
+      - name: Check CSS file exists
+        run: test -f style.css
+
+      - name: Validate no syntax errors in JS
+        run: node --check app.js
