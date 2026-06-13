@@ -52,4 +52,24 @@ object FeatureFlags {
 
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
+
+    /**
+     * Prayers tab — a grouped hub of guided devotional practices rooted in Indian
+     * Christian tradition: the Stations of the Cross, the Rosary (Japamala), the
+     * Jesus Prayer, and Paraloka (eternal-life) Scripture. Surfaces as a primary tab
+     * (Read · Calendar · Prayers · More) and links every passage back to the reader.
+     */
+    const val PRAYERS_HUB: Boolean = true
+
+    /** Stations of the Cross — 14-station Via Crucis meditation (Prayers hub). */
+    const val STATIONS_OF_THE_CROSS: Boolean = true
+
+    /** The Rosary / Japamala — Joyful, Sorrowful, Glorious & Luminous mysteries. */
+    const val ROSARY: Boolean = true
+
+    /** The Jesus Prayer — the Orthodox prayer of the heart, three depths. */
+    const val JESUS_PRAYER: Boolean = true
+
+    /** Paraloka — eternal-life Scripture and prayers of Christian hope. */
+    const val PARALOKA: Boolean = true
 }
