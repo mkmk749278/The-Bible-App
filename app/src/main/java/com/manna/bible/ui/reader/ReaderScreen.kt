@@ -128,6 +128,14 @@ fun ReaderScreen(
         }
     }
 
+    // A jump-to highlight fades on its own: show it for a moment, then clear it.
+    androidx.compose.runtime.LaunchedEffect(state.highlightedVerse) {
+        if (state.highlightedVerse != null) {
+            kotlinx.coroutines.delay(2500)
+            viewModel.onHighlightHandled()
+        }
+    }
+
     // Render the reader right-to-left for RTL Bible languages (Req 14.4).
     val layoutDirection = if (state.isRtl) LayoutDirection.Rtl else LayoutDirection.Ltr
     CompositionLocalProvider(LocalLayoutDirection provides layoutDirection) {
@@ -633,6 +641,7 @@ private fun VerseList(
                 VerseRow(
                     verse = verse,
                     isSpoken = verse.verse == state.audioVerse,
+                    isFocused = verse.verse == state.highlightedVerse,
                     enlarged = state.simplifiedMode,
                     onClick = { onVerseClick(verse.verse) }
                 )
@@ -645,6 +654,7 @@ private fun VerseList(
 private fun VerseRow(
     verse: ReaderVerse,
     isSpoken: Boolean,
+    isFocused: Boolean,
     enlarged: Boolean,
     onClick: () -> Unit
 ) {
@@ -656,12 +666,20 @@ private fun VerseRow(
         if (verse.hasBookmark) append(", ${stringResource(R.string.a11y_has_bookmark)}")
         if (verse.hasNote) append(", ${stringResource(R.string.a11y_has_note)}")
     }
+    // A jump from a prayer / the calendar / search briefly tints the verse gold; the
+    // verse being read aloud keeps the steadier card tint.
+    val rowBackground = when {
+        isFocused -> MannaTheme.colors.gold.copy(alpha = 0.18f)
+        isSpoken -> MannaTheme.colors.card
+        else -> null
+    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = MinTouchTarget)
+            .clip(RoundedCornerShape(8.dp))
+            .then(if (rowBackground != null) Modifier.background(rowBackground) else Modifier)
             .clickable(onClick = onClick)
-            .then(if (isSpoken) Modifier.background(MannaTheme.colors.card) else Modifier)
             .clearAndSetSemantics { contentDescription = verseDescription }
             .padding(vertical = 6.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp)

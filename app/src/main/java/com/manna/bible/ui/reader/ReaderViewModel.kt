@@ -111,6 +111,12 @@ data class ReaderUiState(
     val selectedVerse: Int? = null,
     /** A one-shot scroll target consumed by the screen, then cleared (Req 3.6, 10.4). */
     val scrollToVerse: Int? = null,
+    /**
+     * A verse to briefly highlight after jumping here from elsewhere (a prayer, the
+     * calendar, search). The screen renders a transient tint, then clears it via
+     * [ReaderViewModel.onHighlightHandled] so the highlight fades on its own.
+     */
+    val highlightedVerse: Int? = null,
     // --- audio read-aloud (Req 9) -------------------------------------------
     /** True while a chapter is being read aloud (Req 9.1, 9.3). */
     val isAudioPlaying: Boolean = false,
@@ -359,10 +365,14 @@ class ReaderViewModel @Inject constructor(
         viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = 1) }
     }
 
-    /** Opens [osisId]/[chapter] and scrolls to [verse] (e.g. from search, Req 10.4). */
+    /**
+     * Opens [osisId]/[chapter], scrolls to [verse], and briefly highlights it (e.g.
+     * from search, a prayer, or the calendar — Req 10.4). The highlight is transient
+     * and cleared by the screen via [onHighlightHandled].
+     */
     fun openAt(osisId: String, chapter: Int, verse: Int) {
         stopAudio()
-        viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = verse) }
+        viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = verse, highlight = true) }
     }
 
     /** Advances to the next chapter in canon order, if one exists (Req 3.1). */
@@ -411,6 +421,13 @@ class ReaderViewModel @Inject constructor(
     fun onScrollHandled() {
         if (_uiState.value.scrollToVerse != null) {
             _uiState.value = _uiState.value.copy(scrollToVerse = null)
+        }
+    }
+
+    /** Clears the transient jump highlight once it has been shown for a moment. */
+    fun onHighlightHandled() {
+        if (_uiState.value.highlightedVerse != null) {
+            _uiState.value = _uiState.value.copy(highlightedVerse = null)
         }
     }
 
@@ -596,7 +613,12 @@ class ReaderViewModel @Inject constructor(
      * the position and recomputing navigation availability. Surfaces the
      * download/switch state when the chapter is not stored (Req 2.6).
      */
-    private suspend fun loadChapter(osisId: String, chapter: Int, targetVerse: Int) {
+    private suspend fun loadChapter(
+        osisId: String,
+        chapter: Int,
+        targetVerse: Int,
+        highlight: Boolean = false
+    ) {
         val state = _uiState.value
         val translationId = state.activeTranslationId ?: return
         val profile = state.profile ?: return
@@ -649,7 +671,8 @@ class ReaderViewModel @Inject constructor(
             isLoading = false,
             chapterUnavailable = false,
             isEmptyContent = false,
-            scrollToVerse = targetVerse.takeIf { it > 1 }
+            scrollToVerse = targetVerse.takeIf { it > 1 },
+            highlightedVerse = targetVerse.takeIf { highlight }
         )
 
         saveReadingPositionUseCase(ReadingRef(osisId, chapter, targetVerse))
