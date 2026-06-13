@@ -46,6 +46,13 @@ data class ReadingRow(
     val osisRef: String
 )
 
+/** A feast in the shown month, for the "this month" overview list. */
+data class MonthEvent(
+    val date: LocalDate,
+    val feastId: String,
+    val osisRef: String?
+)
+
 /** The currently selected day, expanded for the detail card. */
 data class SelectedDay(
     val date: LocalDate,
@@ -69,6 +76,7 @@ data class LiturgicalCalendarUiState(
     val month: Int = 0,
     val days: List<CalendarDayCell> = emptyList(),
     val leadingBlanks: Int = 0,
+    val monthEvents: List<MonthEvent> = emptyList(),
     val selected: SelectedDay? = null,
     val today: LocalDate = LocalDate.now(),
     val isLoading: Boolean = true
@@ -163,6 +171,12 @@ class LiturgicalCalendarViewModel @Inject constructor(
         // Sunday-first grid: Monday=1 … Sunday=7 → 1 … 0.
         val leadingBlanks = ym.atDay(1).dayOfWeek.value % 7
 
+        // Every feast that falls in the shown month, for the "this month" overview.
+        val monthEvents = jesusEvents.entriesFor(ym.year)
+            .filter { it.date.monthValue == ym.monthValue }
+            .sortedBy { it.date }
+            .map { MonthEvent(it.date, it.id, it.verseRefs.firstOrNull()?.format()) }
+
         val selectedDay = provider.dayFor(selected, ctx.denomination)
         val osisRef = jesusEvents.entriesFor(selected.year)
             .firstOrNull { it.date == selected }
@@ -175,6 +189,7 @@ class LiturgicalCalendarViewModel @Inject constructor(
             month = ym.monthValue,
             days = days,
             leadingBlanks = leadingBlanks,
+            monthEvents = monthEvents,
             selected = SelectedDay(
                 date = selected,
                 season = selectedDay.season,
