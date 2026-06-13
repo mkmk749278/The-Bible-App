@@ -11,6 +11,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -70,6 +75,9 @@ import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
+
+/** Number of non-verse items at the top of the verse list (the search bar). */
+private const val SEARCH_BAR_ITEMS = 1
 
 /**
  * The offline `Reader_Screen` (Requirements 2, 3, 6, 8, 11.1).
@@ -173,7 +181,8 @@ fun ReaderScreen(
             onScrollHandled = viewModel::onScrollHandled,
             onRetry = viewModel::refresh,
             onDownload = viewModel::downloadActiveTranslation,
-            onSwitchTranslation = onSwitchTranslation
+            onSwitchTranslation = onSwitchTranslation,
+            onOpenSearch = onOpenSearch
         )
     }
 
@@ -481,7 +490,8 @@ private fun ReaderContent(
     onScrollHandled: () -> Unit,
     onRetry: () -> Unit,
     onDownload: () -> Unit,
-    onSwitchTranslation: () -> Unit
+    onSwitchTranslation: () -> Unit,
+    onOpenSearch: () -> Unit
 ) {
     when {
         state.isLoading && state.verses.isEmpty() -> CenteredState(contentPadding) {
@@ -519,7 +529,8 @@ private fun ReaderContent(
             state = state,
             contentPadding = contentPadding,
             onVerseClick = onVerseClick,
-            onScrollHandled = onScrollHandled
+            onScrollHandled = onScrollHandled,
+            onOpenSearch = onOpenSearch
         )
     }
 }
@@ -529,7 +540,8 @@ private fun VerseList(
     state: ReaderUiState,
     contentPadding: PaddingValues,
     onVerseClick: (Int) -> Unit,
-    onScrollHandled: () -> Unit
+    onScrollHandled: () -> Unit,
+    onOpenSearch: () -> Unit
 ) {
     val listState = rememberLazyListState()
 
@@ -537,7 +549,8 @@ private fun VerseList(
         val target = state.scrollToVerse ?: return@LaunchedEffect
         val index = state.verses.indexOfFirst { it.verse == target }
         if (index >= 0) {
-            listState.animateScrollToItem(index)
+            // +1 for the leading search-bar item.
+            listState.animateScrollToItem(index + SEARCH_BAR_ITEMS)
         }
         onScrollHandled()
     }
@@ -547,7 +560,8 @@ private fun VerseList(
         val target = state.audioVerse ?: return@LaunchedEffect
         val index = state.verses.indexOfFirst { it.verse == target }
         if (index >= 0) {
-            listState.animateScrollToItem(index)
+            // +1 for the leading search-bar item.
+            listState.animateScrollToItem(index + SEARCH_BAR_ITEMS)
         }
     }
 
@@ -562,6 +576,9 @@ private fun VerseList(
         ),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+        item(key = "__reader_search_bar") {
+            ReaderSearchBar(onClick = onOpenSearch)
+        }
         items(items = state.verses, key = { it.verse }) { verse ->
             VerseRow(
                 verse = verse,
@@ -982,6 +999,34 @@ private fun ExplainSheet(
             ) {
                 Text(stringResource(R.string.annotation_close))
             }
+        }
+    }
+}
+
+@Composable
+private fun ReaderSearchBar(onClick: () -> Unit) {
+    Surface(
+        color = MannaTheme.colors.card,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 48.dp)
+            .clickable(onClick = onClick)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = null,
+                tint = MannaTheme.colors.muted
+            )
+            Spacer(Modifier.width(12.dp))
+            Text(
+                text = stringResource(R.string.reader_search_hint),
+                color = MannaTheme.colors.muted
+            )
         }
     }
 }
