@@ -45,7 +45,14 @@ android {
     signingConfigs {
         create("release") {
             // All values supplied by GitHub Actions from GitHub Secrets at CI time.
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "release-keystore.jks")
+            // This block is evaluated even when the release build type doesn't use it,
+            // so guard against a blank KEYSTORE_PATH: file("") throws "path may not be
+            // null or empty". A blank/unset path falls back to the default name (which
+            // the release build type then treats as "no keystore" → unsigned build).
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+                ?.takeIf { it.isNotBlank() }
+                ?: "release-keystore.jks"
+            storeFile = file(keystorePath)
             storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
             keyAlias = System.getenv("KEY_ALIAS") ?: ""
             keyPassword = System.getenv("KEY_PASSWORD") ?: ""
@@ -63,12 +70,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Only sign when a keystore is actually provided (CI release builds).
-            signingConfig = if (System.getenv("KEYSTORE_PATH") != null) {
-                signingConfigs.getByName("release")
-            } else {
-                null
-            }
+            // Sign only when a real keystore is provided (CI release builds): the path
+            // must be set, non-blank, AND point at a file that exists. Otherwise build
+            // an unsigned release rather than failing on a missing/garbage keystore, so
+            // the pipeline still produces an artifact and reports the cause clearly.
+            signingConfig = System.getenv("KEYSTORE_PATH")
+                ?.takeIf { it.isNotBlank() && file(it).exists() }
+                ?.let { signingConfigs.getByName("release") }
         }
     }
 
