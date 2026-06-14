@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) localization for the Prayers hub — first pass. Translates the UI chrome
+  and structural names (navigation, categories, section labels, indicators, station /
+  mystery / set names, button labels) and the Jesus Prayer. Longer liturgical prose,
+  reflections, and the Creed fall back to the English default until reviewed by native
+  speakers in each tradition.
+-->
+<resources>
+
+    <!-- Navigation & hub -->
+    <string name="nav_prayers">प्रार्थनाएँ</string>
+    <string name="prayers_hub_title">प्रार्थनाएँ</string>
+    <string name="prayers_hub_subtitle">पवित्रशास्त्र को एक-एक कदम प्रार्थना करें।</string>
+
+    <string name="prayers_category_stations_title">क्रूस का मार्ग</string>
+    <string name="prayers_category_stations_desc">दोषसिद्धि से कब्र तक मसीह के साथ चलें — उनके दुखभोग के चौदह चरण।</string>
+    <string name="prayers_category_rosary_title">जपमाला</string>
+    <string name="prayers_category_rosary_desc">माला की प्रार्थना द्वारा सुसमाचार के रहस्यों का ध्यान करें।</string>
+    <string name="prayers_category_jesus_title">यीशु प्रार्थना</string>
+    <string name="prayers_category_jesus_desc">“हे प्रभु यीशु, मुझ पर दया कर” — हृदय की प्रार्थना।</string>
+    <string name="prayers_category_paraloka_title">परलोक · अनन्त जीवन</string>
+    <string name="prayers_category_paraloka_desc">मृत्यु के सामने आशा — परलोक के लिए पवित्रशास्त्र और प्रार्थना।</string>
+    <string name="prayers_category_sramanikal_title">स्मरण के चालीस दिन</string>
+    <string name="prayers_category_sramanikal_desc">किसी प्रिय दिवंगत के लिए स्मरण और आशा की चालीस दिन की यात्रा।</string>
+
+    <string name="prayers_open_in_reader">संदर्भ में पढ़ें</string>
+    <string name="prayers_back">वापस</string>
+
+    <!-- Stations of the Cross -->
+    <string name="stations_title">क्रूस का मार्ग</string>
+    <string name="stations_subtitle">क्रूस का रास्ता — Via Crucis</string>
+    <string name="stations_versicle">हे मसीह, हम आपकी आराधना करते और आपकी स्तुति करते हैं।</string>
+    <string name="stations_response">क्योंकि अपने पवित्र क्रूस के द्वारा आपने जगत को छुड़ाया है।</string>
+    <string name="stations_indicator">चरण %1$d / %2$d</string>
+    <string name="stations_previous">पिछला</string>
+    <string name="stations_next">अगला</string>
+    <string name="stations_reflection_label">मनन</string>
+    <string name="stations_prayer_label">प्रार्थना</string>
+    <string name="stations_scripture_label">पवित्रशास्त्र</string>
+
+    <string name="station_01_title">यीशु को मृत्युदंड की आज्ञा मिलती है</string>
+    <string name="station_02_title">यीशु अपना क्रूस उठाते हैं</string>
+    <string name="station_03_title">यीशु पहली बार गिरते हैं</string>
+    <string name="station_04_title">यीशु अपनी माता से मिलते हैं</string>
+    <string name="station_05_title">कुरेने का शमौन क्रूस उठाने में सहायता करता है</string>
+    <string name="station_06_title">वरोनिका यीशु का मुख पोंछती है</string>
+    <string name="station_07_title">यीशु दूसरी बार गिरते हैं</string>
+    <string name="station_08_title">यीशु यरूशलेम की स्त्रियों से मिलते हैं</string>
+    <string name="station_09_title">यीशु तीसरी बार गिरते हैं</string>
+    <string name="station_10_title">यीशु के वस्त्र उतारे जाते हैं</string>
+    <string name="station_11_title">यीशु क्रूस पर कीलों से जड़े जाते हैं</string>
+    <string name="station_12_title">यीशु क्रूस पर प्राण त्यागते हैं</string>
+    <string name="station_13_title">यीशु क्रूस से उतारे जाते हैं</string>
+    <string name="station_14_title">यीशु कब्र में रखे जाते हैं</string>
+
+    <!-- The Rosary -->
+    <string name="rosary_title">जपमाला</string>
+    <string name="rosary_subtitle">माला की प्रार्थना</string>
+    <string name="rosary_choose_mysteries">रहस्य चुनें</string>
+    <string name="rosary_set_joyful">आनन्द के रहस्य</string>
+    <string name="rosary_set_sorrowful">दुख के रहस्य</string>
+    <string name="rosary_set_glorious">महिमा के रहस्य</string>
+    <string name="rosary_set_luminous">प्रकाश के रहस्य</string>
+    <string name="rosary_set_joyful_days">सोमवार और शनिवार</string>
+    <string name="rosary_set_sorrowful_days">मंगलवार और शुक्रवार</string>
+    <string name="rosary_set_glorious_days">बुधवार और रविवार</string>
+    <string name="rosary_set_luminous_days">गुरुवार</string>
+    <string name="rosary_today_label">आज</string>
+    <string name="rosary_mystery_indicator">रहस्य %1$d / %2$d</string>
+    <string name="rosary_fruit_label">रहस्य का फल</string>
+    <string name="rosary_previous">पिछला</string>
+    <string name="rosary_next">अगला</string>
+
+    <string name="joyful_1_title">मंगलवार्ता</string>
+    <string name="joyful_2_title">मरियम का एलीशिबा से मिलना</string>
+    <string name="joyful_3_title">यीशु का जन्म</string>
+    <string name="joyful_4_title">मंदिर में अर्पण</string>
+    <string name="joyful_5_title">मंदिर में यीशु का मिलना</string>
+    <string name="sorrowful_1_title">बारी में यातना</string>
+    <string name="sorrowful_2_title">खंभे पर कोड़े</string>
+    <string name="sorrowful_3_title">कांटों का मुकुट</string>
+    <string name="sorrowful_4_title">क्रूस उठाना</string>
+    <string name="sorrowful_5_title">क्रूस पर चढ़ाया जाना</string>
+    <string name="glorious_1_title">पुनरुत्थान</string>
+    <string name="glorious_2_title">स्वर्गारोहण</string>
+    <string name="glorious_3_title">पवित्र आत्मा का अवतरण</string>
+    <string name="glorious_4_title">मरियम का स्वर्ग में उठाया जाना</string>
+    <string name="glorious_5_title">मरियम का राज्याभिषेक</string>
+    <string name="luminous_1_title">यरदन में बपतिस्मा</string>
+    <string name="luminous_2_title">काना का विवाह</string>
+    <string name="luminous_3_title">राज्य का प्रचार</string>
+    <string name="luminous_4_title">रूपान्तरण</string>
+    <string name="luminous_5_title">पवित्र भोज की स्थापना</string>
+
+    <!-- The Jesus Prayer -->
+    <string name="jesus_prayer_title">यीशु प्रार्थना</string>
+    <string name="jesus_prayer_subtitle">हृदय की प्रार्थना</string>
+    <string name="jesus_prayer_text">हे प्रभु यीशु मसीह, परमेश्वर के पुत्र, मुझ पापी पर दया कर।</string>
+    <string name="jesus_prayer_breath_in">हे प्रभु यीशु मसीह, परमेश्वर के पुत्र</string>
+    <string name="jesus_prayer_breath_out">मुझ पापी पर दया कर</string>
+    <string name="jesus_prayer_breath_in_label">श्वास लें</string>
+    <string name="jesus_prayer_breath_out_label">श्वास छोड़ें</string>
+    <string name="jesus_prayer_begin">प्रार्थना आरंभ करें</string>
+    <string name="jesus_prayer_stop">विश्राम</string>
+    <string name="jesus_prayer_vocal_title">होंठों से</string>
+    <string name="jesus_prayer_mental_title">मन में</string>
+    <string name="jesus_prayer_heart_title">हृदय में</string>
+
+    <!-- Paraloka -->
+    <string name="paraloka_title">परलोक · अनन्त जीवन</string>
+    <string name="paraloka_subtitle">परलोक</string>
+    <string name="paraloka_scripture_heading">आशा का पवित्रशास्त्र</string>
+    <string name="paraloka_prayers_heading">आशा की प्रार्थनाएँ</string>
+
+    <!-- Sramanikal -->
+    <string name="sramanikal_title">स्मरण के चालीस दिन</string>
+    <string name="sramanikal_intro_title">चालीस दिन का स्मरण</string>
+    <string name="sramanikal_name_label">जिनका स्मरण किया जा रहा है उनका नाम</string>
+    <string name="sramanikal_begin">चालीस दिन आरंभ करें</string>
+    <string name="sramanikal_day_indicator">दिन %1$d / %2$d</string>
+    <string name="sramanikal_remembering">%1$s का स्मरण</string>
+    <string name="sramanikal_prayer_label">समर्पण प्रार्थना</string>
+    <string name="sramanikal_previous">पिछला</string>
+    <string name="sramanikal_next">अगला</string>
+    <string name="sramanikal_end">यह स्मरण समाप्त करें</string>
+
+</resources>

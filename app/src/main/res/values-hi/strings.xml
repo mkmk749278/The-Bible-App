@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) localization for the primary navigation chrome. Other app strings fall
+  back to the English default until reviewed (MissingTranslation is disabled for
+  incremental localization — see build.gradle.kts).
+-->
+<resources>
+    <string name="nav_read">पढ़ें</string>
+    <string name="nav_calendar">कैलेंडर</string>
+    <string name="nav_more">और</string>
+    <string name="reader_search_hint">बाइबल में खोजें</string>
+</resources>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) localization for the primary navigation chrome. Other strings fall back
+  to the English default until reviewed (incremental localization — see build.gradle.kts).
+-->
+<resources>
+    <string name="nav_read">చదవండి</string>
+    <string name="nav_calendar">క్యాలెండర్</string>
+    <string name="nav_more">మరిన్ని</string>
+    <string name="reader_search_hint">బైబిల్‌లో వెతకండి</string>
+</resources>
