@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Malayalam (ml) localization for the Prayers hub — first pass. Translates the UI
+  chrome and structural names plus the Jesus Prayer; longer liturgical prose,
+  reflections, and the Creed fall back to the English default until reviewed by native
+  speakers in each tradition (CSI / Catholic / Orthodox / Mar Thoma).
+-->
+<resources>
+
+    <!-- Navigation & hub -->
+    <string name="nav_prayers">പ്രാർത്ഥനകൾ</string>
+    <string name="prayers_hub_title">പ്രാർത്ഥനകൾ</string>
+    <string name="prayers_hub_subtitle">തിരുവെഴുത്തുകൾ ഓരോ ചുവടായി പ്രാർത്ഥിക്കുക.</string>
+
+    <string name="prayers_category_stations_title">കുരിശിന്റെ വഴി</string>
+    <string name="prayers_category_stations_desc">വിധി മുതൽ കല്ലറ വരെ ക്രിസ്തുവിനോടൊപ്പം നടക്കുക — അവിടുത്തെ പീഡാനുഭവത്തിന്റെ പതിന്നാല് പടികൾ.</string>
+    <string name="prayers_category_rosary_title">ജപമാല</string>
+    <string name="prayers_category_rosary_desc">മാല പ്രാർത്ഥനയിലൂടെ സുവിശേഷ രഹസ്യങ്ങൾ ധ്യാനിക്കുക.</string>
+    <string name="prayers_category_jesus_title">യേശു പ്രാർത്ഥന</string>
+    <string name="prayers_category_jesus_desc">“കർത്താവായ യേശുവേ, എന്നോട് കരുണ ചെയ്യണമേ” — ഹൃദയത്തിന്റെ പ്രാർത്ഥന.</string>
+    <string name="prayers_category_paraloka_title">പരലോകം · നിത്യജീവൻ</string>
+    <string name="prayers_category_paraloka_desc">മരണത്തിന് മുന്നിൽ പ്രത്യാശ — പരലോകത്തിനായുള്ള തിരുവെഴുത്തും പ്രാർത്ഥനയും.</string>
+    <string name="prayers_category_sramanikal_title">ഓർമ്മയുടെ നാല്പത് ദിനങ്ങൾ</string>
+    <string name="prayers_category_sramanikal_desc">വേർപിരിഞ്ഞ പ്രിയപ്പെട്ടവർക്കായി ഓർമ്മയും പ്രത്യാശയും നിറഞ്ഞ നാല്പത് ദിന യാത്ര.</string>
+
+    <string name="prayers_open_in_reader">സന്ദർഭത്തിൽ വായിക്കുക</string>
+    <string name="prayers_back">മടങ്ങുക</string>
+
+    <!-- Stations of the Cross -->
+    <string name="stations_title">കുരിശിന്റെ വഴി</string>
+    <string name="stations_subtitle">കുരിശിന്റെ വഴി — Via Crucis</string>
+    <string name="stations_versicle">ക്രിസ്തുവേ, ഞങ്ങൾ അങ്ങയെ ആരാധിക്കുന്നു, അങ്ങയെ സ്തുതിക്കുന്നു.</string>
+    <string name="stations_response">എന്തെന്നാൽ അങ്ങയുടെ വിശുദ്ധ കുരിശിനാൽ ലോകത്തെ വീണ്ടെടുത്തു.</string>
+    <string name="stations_indicator">സ്ഥാനം %1$d / %2$d</string>
+    <string name="stations_previous">മുമ്പത്തേത്</string>
+    <string name="stations_next">അടുത്തത്</string>
+    <string name="stations_reflection_label">ധ്യാനം</string>
+    <string name="stations_prayer_label">പ്രാർത്ഥന</string>
+    <string name="stations_scripture_label">തിരുവെഴുത്ത്</string>
+
+    <string name="station_01_title">യേശു മരണത്തിന് വിധിക്കപ്പെടുന്നു</string>
+    <string name="station_02_title">യേശു തന്റെ കുരിശ് ഏറ്റെടുക്കുന്നു</string>
+    <string name="station_03_title">യേശു ഒന്നാം പ്രാവശ്യം വീഴുന്നു</string>
+    <string name="station_04_title">യേശു തന്റെ അമ്മയെ കണ്ടുമുട്ടുന്നു</string>
+    <string name="station_05_title">കുറേനക്കാരൻ ശിമോൻ കുരിശ് ചുമക്കാൻ സഹായിക്കുന്നു</string>
+    <string name="station_06_title">വെറോനിക്ക യേശുവിന്റെ മുഖം തുടയ്ക്കുന്നു</string>
+    <string name="station_07_title">യേശു രണ്ടാം പ്രാവശ്യം വീഴുന്നു</string>
+    <string name="station_08_title">യേശു യെരൂശലേം സ്ത്രീകളെ കണ്ടുമുട്ടുന്നു</string>
+    <string name="station_09_title">യേശു മൂന്നാം പ്രാവശ്യം വീഴുന്നു</string>
+    <string name="station_10_title">യേശുവിന്റെ വസ്ത്രങ്ങൾ ഉരിയപ്പെടുന്നു</string>
+    <string name="station_11_title">യേശു കുരിശിൽ തറയ്ക്കപ്പെടുന്നു</string>
+    <string name="station_12_title">യേശു കുരിശിൽ മരിക്കുന്നു</string>
+    <string name="station_13_title">യേശു കുരിശിൽ നിന്ന് ഇറക്കപ്പെടുന്നു</string>
+    <string name="station_14_title">യേശു കല്ലറയിൽ വയ്ക്കപ്പെടുന്നു</string>
+
+    <!-- The Rosary -->
+    <string name="rosary_title">ജപമാല</string>
+    <string name="rosary_subtitle">മാല പ്രാർത്ഥന</string>
+    <string name="rosary_choose_mysteries">രഹസ്യങ്ങൾ തിരഞ്ഞെടുക്കുക</string>
+    <string name="rosary_set_joyful">സന്തോഷ രഹസ്യങ്ങൾ</string>
+    <string name="rosary_set_sorrowful">ദുഃഖ രഹസ്യങ്ങൾ</string>
+    <string name="rosary_set_glorious">മഹിമ രഹസ്യങ്ങൾ</string>
+    <string name="rosary_set_luminous">പ്രകാശ രഹസ്യങ്ങൾ</string>
+    <string name="rosary_set_joyful_days">തിങ്കൾ &amp; ശനി</string>
+    <string name="rosary_set_sorrowful_days">ചൊവ്വ &amp; വെള്ളി</string>
+    <string name="rosary_set_glorious_days">ബുധൻ &amp; ഞായർ</string>
+    <string name="rosary_set_luminous_days">വ്യാഴം</string>
+    <string name="rosary_today_label">ഇന്ന്</string>
+    <string name="rosary_mystery_indicator">രഹസ്യം %1$d / %2$d</string>
+    <string name="rosary_fruit_label">രഹസ്യത്തിന്റെ ഫലം</string>
+    <string name="rosary_previous">മുമ്പത്തേത്</string>
+    <string name="rosary_next">അടുത്തത്</string>
+
+    <string name="joyful_1_title">മംഗളവാർത്ത</string>
+    <string name="joyful_2_title">മറിയം എലിസബത്തിനെ സന്ദർശിക്കുന്നു</string>
+    <string name="joyful_3_title">യേശുവിന്റെ ജനനം</string>
+    <string name="joyful_4_title">ദേവാലയത്തിൽ സമർപ്പണം</string>
+    <string name="joyful_5_title">ദേവാലയത്തിൽ യേശുവിനെ കണ്ടെത്തൽ</string>
+    <string name="sorrowful_1_title">തോട്ടത്തിലെ വേദന</string>
+    <string name="sorrowful_2_title">തൂണിൽ ചമ്മട്ടിയടി</string>
+    <string name="sorrowful_3_title">മുൾമുടി ചാർത്തൽ</string>
+    <string name="sorrowful_4_title">കുരിശ് ചുമക്കൽ</string>
+    <string name="sorrowful_5_title">കുരിശുമരണം</string>
+    <string name="glorious_1_title">ഉയിർപ്പ്</string>
+    <string name="glorious_2_title">സ്വർഗ്ഗാരോഹണം</string>
+    <string name="glorious_3_title">പരിശുദ്ധാത്മാവിന്റെ ആഗമനം</string>
+    <string name="glorious_4_title">മറിയത്തിന്റെ സ്വർഗ്ഗാരോപണം</string>
+    <string name="glorious_5_title">മറിയത്തിന്റെ കിരീടധാരണം</string>
+    <string name="luminous_1_title">യോർദ്ദാനിലെ സ്നാനം</string>
+    <string name="luminous_2_title">കാനായിലെ വിവാഹം</string>
+    <string name="luminous_3_title">ദൈവരാജ്യ പ്രഖ്യാപനം</string>
+    <string name="luminous_4_title">രൂപാന്തരീകരണം</string>
+    <string name="luminous_5_title">വിശുദ്ധ കുർബാന സ്ഥാപനം</string>
+
+    <!-- The Jesus Prayer -->
+    <string name="jesus_prayer_title">യേശു പ്രാർത്ഥന</string>
+    <string name="jesus_prayer_subtitle">ഹൃദയത്തിന്റെ പ്രാർത്ഥന</string>
+    <string name="jesus_prayer_text">കർത്താവായ യേശുക്രിസ്തുവേ, ദൈവപുത്രാ, പാപിയായ എന്നോട് കരുണ ചെയ്യണമേ.</string>
+    <string name="jesus_prayer_breath_in">കർത്താവായ യേശുക്രിസ്തുവേ, ദൈവപുത്രാ</string>
+    <string name="jesus_prayer_breath_out">പാപിയായ എന്നോട് കരുണ ചെയ്യണമേ</string>
+    <string name="jesus_prayer_breath_in_label">ശ്വാസം ഉള്ളിലേക്ക്</string>
+    <string name="jesus_prayer_breath_out_label">ശ്വാസം പുറത്തേക്ക്</string>
+    <string name="jesus_prayer_begin">പ്രാർത്ഥന ആരംഭിക്കുക</string>
+    <string name="jesus_prayer_stop">വിശ്രമം</string>
+    <string name="jesus_prayer_vocal_title">ചുണ്ടുകളാൽ</string>
+    <string name="jesus_prayer_mental_title">മനസ്സിൽ</string>
+    <string name="jesus_prayer_heart_title">ഹൃദയത്തിൽ</string>
+
+    <!-- Paraloka -->
+    <string name="paraloka_title">പരലോകം · നിത്യജീവൻ</string>
+    <string name="paraloka_subtitle">അപ്പുറത്തെ ലോകം</string>
+    <string name="paraloka_scripture_heading">പ്രത്യാശയുടെ തിരുവെഴുത്ത്</string>
+    <string name="paraloka_prayers_heading">പ്രത്യാശയുടെ പ്രാർത്ഥനകൾ</string>
+
+    <!-- Sramanikal -->
+    <string name="sramanikal_title">ഓർമ്മയുടെ നാല്പത് ദിനങ്ങൾ</string>
+    <string name="sramanikal_intro_title">നാല്പത് ദിന ഓർമ്മ</string>
+    <string name="sramanikal_name_label">ഓർമ്മിക്കുന്ന വ്യക്തിയുടെ പേര്</string>
+    <string name="sramanikal_begin">നാല്പത് ദിനങ്ങൾ ആരംഭിക്കുക</string>
+    <string name="sramanikal_day_indicator">ദിവസം %1$d / %2$d</string>
+    <string name="sramanikal_remembering">%1$s -നെ ഓർമ്മിക്കുന്നു</string>
+    <string name="sramanikal_prayer_label">സമർപ്പണ പ്രാർത്ഥന</string>
+    <string name="sramanikal_previous">മുമ്പത്തേത്</string>
+    <string name="sramanikal_next">അടുത്തത്</string>
+    <string name="sramanikal_end">ഈ ഓർമ്മ അവസാനിപ്പിക്കുക</string>
+
+</resources>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) localization for the Prayers hub — first pass. Translates the UI chrome
+  and structural names plus the Jesus Prayer; longer liturgical prose, reflections,
+  and the Creed fall back to the English default until reviewed by native speakers.
+-->
+<resources>
+
+    <!-- Navigation & hub -->
+    <string name="nav_prayers">ప్రార్థనలు</string>
+    <string name="prayers_hub_title">ప్రార్థనలు</string>
+    <string name="prayers_hub_subtitle">లేఖనాలను ఒక్కో అడుగుగా ప్రార్థించండి.</string>
+
+    <string name="prayers_category_stations_title">సిలువ మార్గం</string>
+    <string name="prayers_category_stations_desc">తీర్పు నుండి సమాధి వరకు క్రీస్తుతో నడవండి — ఆయన శ్రమల పద్నాలుగు దశలు.</string>
+    <string name="prayers_category_rosary_title">జపమాల</string>
+    <string name="prayers_category_rosary_desc">మాల ప్రార్థన ద్వారా సువార్త రహస్యాలను ధ్యానించండి.</string>
+    <string name="prayers_category_jesus_title">యేసు ప్రార్థన</string>
+    <string name="prayers_category_jesus_desc">“ప్రభువైన యేసూ, నన్ను కరుణించుము” — హృదయ ప్రార్థన.</string>
+    <string name="prayers_category_paraloka_title">పరలోకం · నిత్య జీవము</string>
+    <string name="prayers_category_paraloka_desc">మరణం ముందు ఆశ — పరలోకం కొరకు లేఖనం మరియు ప్రార్థన.</string>
+    <string name="prayers_category_sramanikal_title">జ్ఞాపకార్థ నలభై రోజులు</string>
+    <string name="prayers_category_sramanikal_desc">పరమునకు వెళ్ళిన ప్రియుని కొరకు జ్ఞాపకం మరియు ఆశతో నలభై రోజుల ప్రయాణం.</string>
+
+    <string name="prayers_open_in_reader">సందర్భంలో చదవండి</string>
+    <string name="prayers_back">వెనుకకు</string>
+
+    <!-- Stations of the Cross -->
+    <string name="stations_title">సిలువ మార్గం</string>
+    <string name="stations_subtitle">సిలువ మార్గం — Via Crucis</string>
+    <string name="stations_versicle">క్రీస్తూ, మేము నిన్ను ఆరాధించుచున్నాము, నిన్ను స్తుతించుచున్నాము.</string>
+    <string name="stations_response">ఎందుకనగా నీ పరిశుద్ధ సిలువ ద్వారా లోకమును విమోచించితివి.</string>
+    <string name="stations_indicator">దశ %1$d / %2$d</string>
+    <string name="stations_previous">మునుపటి</string>
+    <string name="stations_next">తదుపరి</string>
+    <string name="stations_reflection_label">ధ్యానం</string>
+    <string name="stations_prayer_label">ప్రార్థన</string>
+    <string name="stations_scripture_label">లేఖనం</string>
+
+    <string name="station_01_title">యేసు మరణశిక్షకు తీర్పు పొందుతాడు</string>
+    <string name="station_02_title">యేసు తన సిలువను ఎత్తుకుంటాడు</string>
+    <string name="station_03_title">యేసు మొదటిసారి పడిపోతాడు</string>
+    <string name="station_04_title">యేసు తన తల్లిని కలుసుకుంటాడు</string>
+    <string name="station_05_title">కురేనే సీమోను సిలువ మోయుటకు సహాయం చేస్తాడు</string>
+    <string name="station_06_title">వెరోనికా యేసు ముఖమును తుడుచును</string>
+    <string name="station_07_title">యేసు రెండవసారి పడిపోతాడు</string>
+    <string name="station_08_title">యేసు యెరూషలేము స్త్రీలను కలుసుకుంటాడు</string>
+    <string name="station_09_title">యేసు మూడవసారి పడిపోతాడు</string>
+    <string name="station_10_title">యేసు వస్త్రములు తీసివేయబడును</string>
+    <string name="station_11_title">యేసు సిలువకు మేకులతో కొట్టబడును</string>
+    <string name="station_12_title">యేసు సిలువపై మరణించును</string>
+    <string name="station_13_title">యేసు సిలువ నుండి దింపబడును</string>
+    <string name="station_14_title">యేసు సమాధిలో ఉంచబడును</string>
+
+    <!-- The Rosary -->
+    <string name="rosary_title">జపమాల</string>
+    <string name="rosary_subtitle">మాల ప్రార్థన</string>
+    <string name="rosary_choose_mysteries">రహస్యాలను ఎంచుకోండి</string>
+    <string name="rosary_set_joyful">ఆనంద రహస్యాలు</string>
+    <string name="rosary_set_sorrowful">దుఃఖ రహస్యాలు</string>
+    <string name="rosary_set_glorious">మహిమ రహస్యాలు</string>
+    <string name="rosary_set_luminous">ప్రకాశ రహస్యాలు</string>
+    <string name="rosary_set_joyful_days">సోమ &amp; శని</string>
+    <string name="rosary_set_sorrowful_days">మంగళ &amp; శుక్ర</string>
+    <string name="rosary_set_glorious_days">బుధ &amp; ఆది</string>
+    <string name="rosary_set_luminous_days">గురు</string>
+    <string name="rosary_today_label">నేడు</string>
+    <string name="rosary_mystery_indicator">రహస్యం %1$d / %2$d</string>
+    <string name="rosary_fruit_label">రహస్య ఫలం</string>
+    <string name="rosary_previous">మునుపటి</string>
+    <string name="rosary_next">తదుపరి</string>
+
+    <string name="joyful_1_title">దేవదూత సందేశం</string>
+    <string name="joyful_2_title">మరియ ఎలీసబెతును దర్శించుట</string>
+    <string name="joyful_3_title">యేసు జననం</string>
+    <string name="joyful_4_title">ఆలయములో సమర్పణ</string>
+    <string name="joyful_5_title">ఆలయములో యేసును కనుగొనుట</string>
+    <string name="sorrowful_1_title">తోటలో వేదన</string>
+    <string name="sorrowful_2_title">స్తంభమునకు కొరడాదెబ్బలు</string>
+    <string name="sorrowful_3_title">ముళ్ళ కిరీటం</string>
+    <string name="sorrowful_4_title">సిలువ మోయుట</string>
+    <string name="sorrowful_5_title">సిలువ వేయుట</string>
+    <string name="glorious_1_title">పునరుత్థానం</string>
+    <string name="glorious_2_title">ఆరోహణం</string>
+    <string name="glorious_3_title">పరిశుద్ధాత్మ దిగివచ్చుట</string>
+    <string name="glorious_4_title">మరియ స్వర్గారోహణం</string>
+    <string name="glorious_5_title">మరియకు కిరీటధారణ</string>
+    <string name="luminous_1_title">యొర్దానులో బాప్తిస్మం</string>
+    <string name="luminous_2_title">కానా వివాహం</string>
+    <string name="luminous_3_title">రాజ్య ప్రకటన</string>
+    <string name="luminous_4_title">రూపాంతరం</string>
+    <string name="luminous_5_title">దివ్య సత్ప్రసాద స్థాపన</string>
+
+    <!-- The Jesus Prayer -->
+    <string name="jesus_prayer_title">యేసు ప్రార్థన</string>
+    <string name="jesus_prayer_subtitle">హృదయ ప్రార్థన</string>
+    <string name="jesus_prayer_text">ప్రభువైన యేసు క్రీస్తూ, దేవుని కుమారుడా, పాపినైన నన్ను కరుణించుము.</string>
+    <string name="jesus_prayer_breath_in">ప్రభువైన యేసు క్రీస్తూ, దేవుని కుమారుడా</string>
+    <string name="jesus_prayer_breath_out">పాపినైన నన్ను కరుణించుము</string>
+    <string name="jesus_prayer_breath_in_label">ఊపిరి పీల్చండి</string>
+    <string name="jesus_prayer_breath_out_label">ఊపిరి వదలండి</string>
+    <string name="jesus_prayer_begin">ప్రార్థన ప్రారంభించండి</string>
+    <string name="jesus_prayer_stop">విశ్రాంతి</string>
+    <string name="jesus_prayer_vocal_title">పెదవులతో</string>
+    <string name="jesus_prayer_mental_title">మనస్సులో</string>
+    <string name="jesus_prayer_heart_title">హృదయములో</string>
+
+    <!-- Paraloka -->
+    <string name="paraloka_title">పరలోకం · నిత్య జీవము</string>
+    <string name="paraloka_subtitle">ఆవల ఉన్న లోకం</string>
+    <string name="paraloka_scripture_heading">ఆశ యొక్క లేఖనం</string>
+    <string name="paraloka_prayers_heading">ఆశ ప్రార్థనలు</string>
+
+    <!-- Sramanikal -->
+    <string name="sramanikal_title">జ్ఞాపకార్థ నలభై రోజులు</string>
+    <string name="sramanikal_intro_title">నలభై రోజుల జ్ఞాపకం</string>
+    <string name="sramanikal_name_label">జ్ఞాపకం చేసుకుంటున్న వ్యక్తి పేరు</string>
+    <string name="sramanikal_begin">నలభై రోజులు ప్రారంభించండి</string>
+    <string name="sramanikal_day_indicator">రోజు %1$d / %2$d</string>
+    <string name="sramanikal_remembering">%1$s జ్ఞాపకార్థం</string>
+    <string name="sramanikal_prayer_label">సమర్పణ ప్రార్థన</string>
+    <string name="sramanikal_previous">మునుపటి</string>
+    <string name="sramanikal_next">తదుపరి</string>
+    <string name="sramanikal_end">ఈ జ్ఞాపకాన్ని ముగించండి</string>
+
+</resources>
