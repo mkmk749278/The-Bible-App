@@ -63,12 +63,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Only sign when a keystore is actually provided (CI release builds).
-            signingConfig = if (System.getenv("KEYSTORE_PATH") != null) {
-                signingConfigs.getByName("release")
-            } else {
-                null
-            }
+            // Sign only when a real keystore is provided (CI release builds): the path
+            // must be set, non-blank, AND point at a file that exists. Otherwise build
+            // an unsigned release rather than failing on a missing/garbage keystore, so
+            // the pipeline still produces an artifact and reports the cause clearly.
+            signingConfig = System.getenv("KEYSTORE_PATH")
+                ?.takeIf { it.isNotBlank() && file(it).exists() }
+                ?.let { signingConfigs.getByName("release") }
         }
     }
 
