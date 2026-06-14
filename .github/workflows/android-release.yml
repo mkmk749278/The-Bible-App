@@ -26,26 +26,58 @@ jobs:
       - name: Generate Gradle wrapper
         run: gradle wrapper --gradle-version 8.11.1
 
-      - name: Decode keystore from secret
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "$RUNNER_TEMP/release-keystore.jks"
-
-      - name: Build signed release APK
-        run: ./gradlew assembleRelease --no-daemon
+      # Decode the keystore and verify it is actually readable BEFORE the build, so a
+      # missing/garbage KEYSTORE_BASE64 secret produces a clear message here instead of
+      # a cryptic "Tag number over 30 is not supported" failure deep in packageRelease.
+      # Sets steps.keystore.outputs.signed = true|false.
+      - name: Decode & validate keystore
+        id: keystore
         env:
-          KEYSTORE_PATH: ${{ runner.temp }}/release-keystore.jks
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        run: |
+          set -euo pipefail
+          if [ -z "${KEYSTORE_BASE64}" ]; then
+            echo "::warning::KEYSTORE_BASE64 secret is not set — building an UNSIGNED release."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          ks="$RUNNER_TEMP/release-keystore.jks"
+          # printf (not echo) avoids mangling; base64 tolerates the trailing newline.
+          if ! printf '%s' "${KEYSTORE_BASE64}" | base64 -d > "$ks" 2>/dev/null; then
+            echo "::error::KEYSTORE_BASE64 is not valid base64. Recreate it from your keystore with: base64 -w0 release-keystore.jks  (Linux)  or  base64 -i release-keystore.jks | tr -d '\\n'  (macOS), then set it as the secret."
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          if keytool -list -keystore "$ks" -storepass "${KEYSTORE_PASSWORD:-}" >/dev/null 2>&1; then
+            echo "Keystore decoded and validated."
+            echo "signed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::The decoded keystore could not be read — KEYSTORE_BASE64 is corrupted or KEYSTORE_PASSWORD is wrong. Building an UNSIGNED release. Fix the secrets to produce a signed build."
+            rm -f "$ks"
+            echo "signed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build release APK + AAB
+        env:
+          # Only point Gradle at the keystore when it validated; otherwise the build
+          # is unsigned (Gradle treats a blank/missing path as "no signing").
+          KEYSTORE_PATH: ${{ steps.keystore.outputs.signed == 'true' && format('{0}/release-keystore.jks', runner.temp) || '' }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           BIBLE_BRAIN_API_KEY: ${{ secrets.BIBLE_BRAIN_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: ./gradlew assembleRelease bundleRelease --no-daemon
 
-      - name: Build signed release AAB
-        run: ./gradlew bundleRelease --no-daemon
-        env:
-          KEYSTORE_PATH: ${{ runner.temp }}/release-keystore.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
-          BIBLE_BRAIN_API_KEY: ${{ secrets.BIBLE_BRAIN_API_KEY }}
+      - name: Report signing status
+        run: |
+          if [ "${{ steps.keystore.outputs.signed }}" = "true" ]; then
+            echo "### ✅ Signed release built" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### ⚠️ UNSIGNED release built" >> "$GITHUB_STEP_SUMMARY"
+            echo "Set the \`KEYSTORE_BASE64\`, \`KEYSTORE_PASSWORD\`, \`KEY_ALIAS\`, and \`KEY_PASSWORD\` secrets to produce a signed build for distribution." >> "$GITHUB_STEP_SUMMARY"
+          fi
 
       - name: Upload release artifacts
         uses: actions/upload-artifact@v4
