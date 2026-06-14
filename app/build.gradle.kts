@@ -45,7 +45,14 @@ android {
     signingConfigs {
         create("release") {
             // All values supplied by GitHub Actions from GitHub Secrets at CI time.
-            storeFile = file(System.getenv("KEYSTORE_PATH") ?: "release-keystore.jks")
+            // This block is evaluated even when the release build type doesn't use it,
+            // so guard against a blank KEYSTORE_PATH: file("") throws "path may not be
+            // null or empty". A blank/unset path falls back to the default name (which
+            // the release build type then treats as "no keystore" → unsigned build).
+            val keystorePath = System.getenv("KEYSTORE_PATH")
+                ?.takeIf { it.isNotBlank() }
+                ?: "release-keystore.jks"
+            storeFile = file(keystorePath)
             storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
             keyAlias = System.getenv("KEY_ALIAS") ?: ""
             keyPassword = System.getenv("KEY_PASSWORD") ?: ""
