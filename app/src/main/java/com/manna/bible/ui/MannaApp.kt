@@ -54,6 +54,7 @@ import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.search.SearchScreen
+import com.manna.bible.ui.sermon.SermonHelperScreen
 import com.manna.bible.ui.setup.SetupHost
 
 /**
@@ -82,6 +83,7 @@ private object Routes {
     const val PRAYER = "prayer"
     const val FASTING = "fasting"
     const val CARD = "card"
+    const val SERMON = "sermon"
 }
 
 /** Calm motion (UX directive): 300ms fades only — no bounce, no flashy transitions. */
@@ -257,6 +259,9 @@ fun MannaApp(
                             onOpenCard = if (FeatureFlags.SCRIPTURE_CARD) {
                                 { navController.navigate(Routes.CARD) }
                             } else null,
+                            onOpenSermon = if (FeatureFlags.SERMON_HELPER) {
+                                { navController.navigate(Routes.SERMON) }
+                            } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
                     }
@@ -349,6 +354,13 @@ fun MannaApp(
                         ScriptureCardScreen(
                             onBack = { navController.popBackStack() }
                         )
+                    }
+                    if (FeatureFlags.SERMON_HELPER) {
+                        composable(Routes.SERMON) {
+                            SermonHelperScreen(
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
                     }
                 }
             }

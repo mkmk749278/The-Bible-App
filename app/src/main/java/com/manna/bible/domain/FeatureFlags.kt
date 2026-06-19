@@ -55,6 +55,13 @@ object FeatureFlags {
     /** Scripture Card Generator — share a verse as an image (Phase 2). */
     const val SCRIPTURE_CARD: Boolean = true
 
+    /**
+     * Village Pastor Sermon Helper — an offline library where a preacher writes,
+     * keeps, and revisits sermon notes (title · scripture reference · outline) on
+     * the device, no connectivity required (Phase 3).
+     */
+    const val SERMON_HELPER: Boolean = true
+
     /** Stealth / Persecution Mode (Phase 2). */
     const val STEALTH_MODE: Boolean = false
 
