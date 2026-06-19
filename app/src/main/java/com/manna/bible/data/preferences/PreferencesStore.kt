@@ -90,6 +90,28 @@ interface PreferencesStore {
     suspend fun setDailyReminderTime(value: String) {}
 
     /**
+     * Emits the reminder times as a comma-separated `HH:mm` list (e.g.
+     * "08:00,12:00,20:00") — the user's prayer-bell schedule. Defaults to the single
+     * legacy reminder time so existing users keep their one reminder.
+     */
+    val dailyReminderTimes: Flow<String>
+        get() = flowOf("07:00")
+
+    /** Persists the reminder times as a comma-separated `HH:mm` list. */
+    suspend fun setDailyReminderTimes(value: String) {}
+
+    /**
+     * Emits the comma-separated `HH:mm` list the scheduler last armed, so the
+     * coordinator can cancel alarms that have since been removed (even across a
+     * process restart). Defaults to empty.
+     */
+    val scheduledReminderTimes: Flow<String>
+        get() = flowOf("")
+
+    /** Records the comma-separated `HH:mm` list currently armed with the OS. */
+    suspend fun setScheduledReminderTimes(value: String) {}
+
+    /**
      * Emits the epoch day on which the 30-day grief journey began, or -1 when it has
      * not been started. The current day is derived from this and today's date.
      */
@@ -154,6 +176,8 @@ class DataStorePreferencesStore @Inject constructor(
         val SIMPLIFIED_MODE = booleanPreferencesKey("simplified_mode")
         val DAILY_REMINDER_ENABLED = booleanPreferencesKey("daily_reminder_enabled")
         val DAILY_REMINDER_TIME = stringPreferencesKey("daily_reminder_time")
+        val DAILY_REMINDER_TIMES = stringPreferencesKey("daily_reminder_times")
+        val SCHEDULED_REMINDER_TIMES = stringPreferencesKey("scheduled_reminder_times")
         val GRIEF_START_EPOCH_DAY = longPreferencesKey("grief_start_epoch_day")
         val FAST_START_MILLIS = longPreferencesKey("fast_start_millis")
         val FAST_PLAN_ID = stringPreferencesKey("fast_plan_id")
@@ -178,6 +202,15 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val dailyReminderTime: Flow<String> =
         dataStore.data.map { prefs -> prefs[Keys.DAILY_REMINDER_TIME] ?: "07:00" }
+
+    override val dailyReminderTimes: Flow<String> =
+        dataStore.data.map { prefs ->
+            // Fall back to the legacy single time so a pre-existing reminder survives.
+            prefs[Keys.DAILY_REMINDER_TIMES] ?: prefs[Keys.DAILY_REMINDER_TIME] ?: "07:00"
+        }
+
+    override val scheduledReminderTimes: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.SCHEDULED_REMINDER_TIMES] ?: "" }
 
     override val griefStartEpochDay: Flow<Long> =
         dataStore.data.map { prefs -> prefs[Keys.GRIEF_START_EPOCH_DAY] ?: -1L }
@@ -250,6 +283,14 @@ class DataStorePreferencesStore @Inject constructor(
 
     override suspend fun setDailyReminderTime(value: String) {
         dataStore.edit { prefs -> prefs[Keys.DAILY_REMINDER_TIME] = value }
+    }
+
+    override suspend fun setDailyReminderTimes(value: String) {
+        dataStore.edit { prefs -> prefs[Keys.DAILY_REMINDER_TIMES] = value }
+    }
+
+    override suspend fun setScheduledReminderTimes(value: String) {
+        dataStore.edit { prefs -> prefs[Keys.SCHEDULED_REMINDER_TIMES] = value }
     }
 
     override suspend fun setGriefStartEpochDay(value: Long) {

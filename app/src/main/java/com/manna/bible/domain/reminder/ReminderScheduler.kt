@@ -9,9 +9,9 @@ package com.manna.bible.domain.reminder
  */
 interface ReminderScheduler {
 
-    /** Schedules a daily reminder at [time], replacing any existing schedule. */
+    /** Schedules a daily reminder at [time] (idempotent — replaces the same time). */
     fun schedule(time: ReminderTime)
 
-    /** Cancels any scheduled daily reminder. */
-    fun cancel()
+    /** Cancels the daily reminder previously scheduled for [time]. */
+    fun cancel(time: ReminderTime)
 }

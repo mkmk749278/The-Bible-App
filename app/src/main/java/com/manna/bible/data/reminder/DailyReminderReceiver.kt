@@ -66,7 +66,8 @@ class DailyReminderReceiver : BroadcastReceiver() {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
                 if (preferencesStore.dailyReminderEnabled.first()) {
-                    scheduler.schedule(ReminderTime.parse(preferencesStore.dailyReminderTime.first()))
+                    ReminderTime.parseList(preferencesStore.dailyReminderTimes.first())
+                        .forEach { scheduler.schedule(it) }
                 }
             } finally {
                 pending.finish()
