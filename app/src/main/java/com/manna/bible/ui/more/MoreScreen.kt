@@ -2,10 +2,13 @@ package com.manna.bible.ui.more
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,13 +16,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
 
@@ -50,8 +59,10 @@ fun MoreScreen(
     onOpenGrief: (() -> Unit)? = null,
     onOpenFasting: (() -> Unit)? = null,
     onOpenCard: (() -> Unit)? = null,
-    onOpenAttribution: () -> Unit = {}
+    onOpenAttribution: () -> Unit = {},
+    viewModel: MoreViewModel = hiltViewModel()
 ) {
+    val settings by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -103,13 +114,7 @@ fun MoreScreen(
         ) {
             sections.forEach { section ->
                 item(key = "header_${section.title}") {
-                    Text(
-                        text = section.title,
-                        style = MaterialTheme.typography.titleSmall,
-                        color = MannaTheme.colors.gold,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
-                    )
+                    SectionHeader(section.title)
                 }
                 items(
                     items = section.entries,
@@ -118,6 +123,69 @@ fun MoreScreen(
                     EntryCard(label = entry.label, onClick = entry.onClick)
                 }
             }
+
+            // --- Settings (Simplified / Elder Mode) ------------------------------
+            item(key = "header_settings") {
+                SectionHeader(stringResource(R.string.more_section_settings))
+            }
+            item(key = "toggle_simplified_mode") {
+                SimplifiedModeToggle(
+                    enabled = settings.simplifiedMode,
+                    onToggle = viewModel::setSimplifiedMode
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.titleSmall,
+        color = MannaTheme.colors.gold,
+        fontWeight = FontWeight.Bold,
+        modifier = Modifier.padding(top = 12.dp, bottom = 2.dp)
+    )
+}
+
+/**
+ * The Simplified (Elder / Oral Bible) Mode switch: enlarges scripture text and
+ * controls and turns on continuous read-aloud. A 56dp minimum height keeps the
+ * row comfortably tappable for the elderly users it serves (Req 14.5, a11y).
+ */
+@Composable
+private fun SimplifiedModeToggle(enabled: Boolean, onToggle: (Boolean) -> Unit) {
+    val title = stringResource(R.string.more_simplified_mode)
+    val description = stringResource(R.string.more_simplified_mode_desc)
+    Surface(
+        color = MannaTheme.colors.card,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .sizeIn(minHeight = 56.dp)
+            .clickable { onToggle(!enabled) }
+            .semantics(mergeDescendants = true) {}
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MannaTheme.colors.ink,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MannaTheme.colors.soft
+                )
+            }
+            Switch(checked = enabled, onCheckedChange = onToggle)
         }
     }
 }
