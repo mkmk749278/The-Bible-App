@@ -1,0 +1,59 @@
+{
+    "translations": [
+        {
+            "id": "ENGWEBP",
+            "name": "World English Bible",
+            "languageCode": "en",
+            "canonType": "protestant_66",
+            "bundledContentVersion": 1,
+            "verseCount": 31103,
+            "checksum": "260760051b090ee9c67556773282547ab77107d75d508a7b5bc68faaa8b5b197",
+            "assetFile": "ENGWEBP.json.gz",
+            "isDeuterocanon": false
+        },
+        {
+            "id": "tam_irv",
+            "name": "Tamil Indian Revised Version (IRV)",
+            "languageCode": "ta",
+            "canonType": "protestant_66",
+            "bundledContentVersion": 1,
+            "verseCount": 31103,
+            "checksum": "4748d2d0107bb33b83e14fc4df9ab17c7bbcd8668def75054212607d7fa27714",
+            "assetFile": "tam_irv.json.gz",
+            "isDeuterocanon": false
+        },
+        {
+            "id": "HINIRV",
+            "name": "Hindi Indian Revised Version (IRV)",
+            "languageCode": "hi",
+            "canonType": "protestant_66",
+            "bundledContentVersion": 1,
+            "verseCount": 31104,
+            "checksum": "827bde0980c7d7afb0077096030e2ab3f08e1725163004a25e8ff37a85f78b2c",
+            "assetFile": "HINIRV.json.gz",
+            "isDeuterocanon": false
+        },
+        {
+            "id": "tel_irv",
+            "name": "Telugu Indian Revised Version (IRV)",
+            "languageCode": "te",
+            "canonType": "protestant_66",
+            "bundledContentVersion": 1,
+            "verseCount": 31004,
+            "checksum": "b9bea9e63153e1ce5e1ce507ab886586b50b6e579855ebadef76803efb191013",
+            "assetFile": "tel_irv.json.gz",
+            "isDeuterocanon": false
+        },
+        {
+            "id": "mal_irv",
+            "name": "Malayalam Indian Revised Version (IRV)",
+            "languageCode": "ml",
+            "canonType": "protestant_66",
+            "bundledContentVersion": 1,
+            "verseCount": 31102,
+            "checksum": "ab6d817dda56bb41463ba48cc0aadcd11ec4eb74b96618ac5394a602dfa7fad7",
+            "assetFile": "mal_irv.json.gz",
+            "isDeuterocanon": false
+        }
+    ]
+}

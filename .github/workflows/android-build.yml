@@ -30,18 +30,14 @@ jobs:
 
       - name: Lint
         run: ./gradlew lint --no-daemon
-        env:
-          BIBLE_BRAIN_API_KEY: ${{ secrets.BIBLE_BRAIN_API_KEY }}
 
       - name: Unit tests
         run: ./gradlew testDebugUnitTest --no-daemon
-        env:
-          BIBLE_BRAIN_API_KEY: ${{ secrets.BIBLE_BRAIN_API_KEY }}
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
         env:
-          BIBLE_BRAIN_API_KEY: ${{ secrets.BIBLE_BRAIN_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
 
       - name: Upload debug APK
         uses: actions/upload-artifact@v4

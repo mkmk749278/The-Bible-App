@@ -13,10 +13,14 @@ interface AttributionProvider {
 }
 
 /**
- * Default [AttributionProvider]. A translation is treated as public domain when it
- * is the bundled edition or its name identifies the World English Bible — the
- * public-domain text Manna ships (Req 12.2). Everything else is reported as
- * provided through the Free Use Bible API under its source license (Req 12.4).
+ * Default [AttributionProvider]. Public-domain status is asserted from the *text*,
+ * not from whether it is bundled: Manna ships the public-domain World English Bible
+ * **and** the Indian Revised Version family (Tamil/Hindi/Telugu/Malayalam), and the
+ * IRV editions are licensed (CC BY-SA), not public domain. So only translations the
+ * app positively recognizes as public domain (the WEB) are labeled
+ * [TranslationLicense.PUBLIC_DOMAIN] (Req 12.2); every other edition — bundled or
+ * downloaded — is reported as provided through the Free Use Bible API under its
+ * source license (Req 12.4), which keeps the attribution honest for share-alike texts.
  */
 class DefaultAttributionProvider @Inject constructor() : AttributionProvider {
 
@@ -31,7 +35,7 @@ class DefaultAttributionProvider @Inject constructor() : AttributionProvider {
     }
 
     private fun Translation.isPublicDomain(): Boolean =
-        isBundled || name.contains(WORLD_ENGLISH_BIBLE, ignoreCase = true)
+        name.contains(WORLD_ENGLISH_BIBLE, ignoreCase = true)
 
     private companion object {
         const val WORLD_ENGLISH_BIBLE = "World English Bible"

@@ -6,20 +6,27 @@ on:
   pull_request:
     branches: [main]
 
+# Lightweight structural validation that runs on every branch. The full Android
+# toolchain (lint + unit tests + APK) lives in android-build.yml, which runs on
+# pull requests to main. This job just guards the project skeleton so obvious
+# breakage is caught fast and cheap.
 jobs:
   lint-and-validate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Check HTML file exists
-        run: test -f index.html
+      - name: Validate Gradle project structure
+        run: |
+          set -e
+          test -f settings.gradle.kts
+          test -f build.gradle.kts
+          test -f app/build.gradle.kts
+          test -f gradle/libs.versions.toml
+          test -f app/src/main/AndroidManifest.xml
 
-      - name: Check JS file exists
-        run: test -f app.js
-
-      - name: Check CSS file exists
-        run: test -f style.css
-
-      - name: Validate no syntax errors in JS
-        run: node --check app.js
+      - name: Validate bundled Bible manifest is committed
+        run: |
+          set -e
+          test -f app/src/main/assets/bibles/manifest.json
+          python3 -c "import json,sys; d=json.load(open('app/src/main/assets/bibles/manifest.json')); assert d['translations'], 'no bundled translations'; print('bundled translations:', len(d['translations']))"
