@@ -53,6 +53,7 @@ import com.manna.bible.ui.prayers.sramanikal.SramanikalScreen
 import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
+import com.manna.bible.ui.church.ChurchModeScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.sermon.SermonHelperScreen
 import com.manna.bible.ui.setup.SetupHost
@@ -84,6 +85,7 @@ private object Routes {
     const val FASTING = "fasting"
     const val CARD = "card"
     const val SERMON = "sermon"
+    const val CHURCH = "church"
 }
 
 /** Calm motion (UX directive): 300ms fades only — no bounce, no flashy transitions. */
@@ -262,6 +264,9 @@ fun MannaApp(
                             onOpenSermon = if (FeatureFlags.SERMON_HELPER) {
                                 { navController.navigate(Routes.SERMON) }
                             } else null,
+                            onOpenChurch = if (FeatureFlags.CHURCH_MODE) {
+                                { navController.navigate(Routes.CHURCH) }
+                            } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
                     }
@@ -359,6 +364,14 @@ fun MannaApp(
                         composable(Routes.SERMON) {
                             SermonHelperScreen(
                                 onBack = { navController.popBackStack() }
+                            )
+                        }
+                    }
+                    if (FeatureFlags.CHURCH_MODE) {
+                        composable(Routes.CHURCH) {
+                            ChurchModeScreen(
+                                onBack = { navController.popBackStack() },
+                                onOpenVerse = { ref -> openInReader(ref, false) }
                             )
                         }
                     }
