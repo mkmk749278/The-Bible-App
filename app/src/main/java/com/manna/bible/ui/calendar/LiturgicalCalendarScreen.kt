@@ -378,6 +378,65 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
                     Text(stringResource(R.string.calendar_read_passage))
                 }
             }
+
+            selected.dailyVerse?.let { verse ->
+                Spacer(Modifier.height(18.dp))
+                VerseOfDaySection(verse = verse, onOpenVerse = onOpenVerse)
+            }
+        }
+    }
+}
+
+/**
+ * The verse of the day for the selected date — the same deterministic verse the rest
+ * of the app shows — with its text, plus actions to read it in context or share it.
+ */
+@Composable
+private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -> Unit) {
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val shareTitle = stringResource(R.string.calendar_verse_share)
+    Column {
+        Text(
+            text = stringResource(R.string.calendar_verse_header),
+            style = MaterialTheme.typography.labelLarge,
+            fontWeight = FontWeight.Bold,
+            color = MannaTheme.colors.gold
+        )
+        Spacer(Modifier.height(8.dp))
+        Text(
+            text = verse.text,
+            style = MaterialTheme.typography.bodyLarge,
+            color = MannaTheme.colors.ink,
+            lineHeight = 26.sp
+        )
+        Spacer(Modifier.height(4.dp))
+        Text(
+            text = verse.reference,
+            style = MaterialTheme.typography.labelMedium,
+            color = MannaTheme.colors.soft
+        )
+        Spacer(Modifier.height(4.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            TextButton(
+                onClick = { onOpenVerse(verse.osisRef) },
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+            ) {
+                Text(stringResource(R.string.calendar_verse_open))
+            }
+            Spacer(Modifier.width(16.dp))
+            TextButton(
+                onClick = {
+                    val message = "“${verse.text}”\n— ${verse.reference}"
+                    val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(android.content.Intent.EXTRA_TEXT, message)
+                    }
+                    context.startActivity(android.content.Intent.createChooser(intent, shareTitle))
+                },
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+            ) {
+                Text(stringResource(R.string.calendar_verse_share))
+            }
         }
     }
 }
