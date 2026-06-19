@@ -115,38 +115,51 @@ fun ReminderSettingsScreen(
                 )
             }
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Column {
+            Text(
+                text = stringResource(R.string.reminder_times_label),
+                style = MaterialTheme.typography.titleMedium,
+                color = MannaTheme.colors.ink
+            )
+
+            val removeDescription = stringResource(R.string.reminder_remove_time)
+            state.times.forEach { time ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
-                        text = stringResource(R.string.reminder_time_label),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MannaTheme.colors.ink
-                    )
-                    Text(
-                        text = state.time.format(),
+                        text = time.format(),
                         style = MaterialTheme.typography.headlineSmall,
-                        color = MannaTheme.colors.gold,
+                        color = if (state.enabled) MannaTheme.colors.gold else MannaTheme.colors.muted,
                         fontWeight = FontWeight.Bold
                     )
-                }
-                Button(
-                    enabled = state.enabled,
-                    onClick = {
-                        TimePickerDialog(
-                            context,
-                            { _, hour, minute -> viewModel.setTime(hour, minute) },
-                            state.time.hour,
-                            state.time.minute,
-                            false
-                        ).show()
+                    if (state.times.size > 1) {
+                        IconButton(
+                            onClick = { viewModel.removeTime(time) },
+                            modifier = Modifier
+                                .size(MinTouchTarget)
+                                .semantics { contentDescription = removeDescription }
+                        ) {
+                            Text(text = "✕", fontSize = 18.sp, color = MannaTheme.colors.soft)
+                        }
                     }
-                ) {
-                    Text(stringResource(R.string.reminder_change_time))
                 }
+            }
+
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                    TimePickerDialog(
+                        context,
+                        { _, hour, minute -> viewModel.addTime(hour, minute) },
+                        7,
+                        0,
+                        false
+                    ).show()
+                }
+            ) {
+                Text(stringResource(R.string.reminder_add_time))
             }
 
             Text(

@@ -17,9 +17,39 @@ data class ReminderTime(val hour: Int, val minute: Int) {
     /** Serializes to `HH:mm` (e.g. "07:05"). */
     fun format(): String = "%02d:%02d".format(hour, minute)
 
+    /** Minutes since midnight (0..1439) — a stable id for this time of day. */
+    val minuteOfDay: Int get() = hour * 60 + minute
+
     companion object {
         /** Default reminder time (07:00) used until the user picks one. */
         val DEFAULT = ReminderTime(7, 0)
+
+        /**
+         * Parses a comma-separated `HH:mm` list into distinct times, sorted by time of
+         * day. Blank/malformed entries are skipped; an empty input yields no times.
+         */
+        fun parseList(value: String?): List<ReminderTime> {
+            if (value.isNullOrBlank()) return emptyList()
+            return value.split(",")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .mapNotNull { entry ->
+                    val parts = entry.split(":")
+                    val hour = parts.getOrNull(0)?.toIntOrNull()
+                    val minute = parts.getOrNull(1)?.toIntOrNull()
+                    if (parts.size == 2 && hour in 0..23 && minute in 0..59) {
+                        ReminderTime(hour!!, minute!!)
+                    } else {
+                        null
+                    }
+                }
+                .distinct()
+                .sortedBy { it.minuteOfDay }
+        }
+
+        /** Serializes times to a comma-separated `HH:mm` list, sorted by time of day. */
+        fun formatList(times: List<ReminderTime>): String =
+            times.distinct().sortedBy { it.minuteOfDay }.joinToString(",") { it.format() }
 
         /**
          * Parses an `HH:mm` string into a [ReminderTime], or returns [DEFAULT] when

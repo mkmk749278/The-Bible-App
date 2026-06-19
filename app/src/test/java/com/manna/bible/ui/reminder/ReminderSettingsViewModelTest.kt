@@ -39,23 +39,35 @@ class ReminderSettingsViewModelTest {
     }
 
     @Test
-    @DisplayName("persists the enabled flag and the chosen time")
+    @DisplayName("persists the enabled flag and add/remove of multiple times")
     fun persistsSettings() = runTest {
         val store = FakePreferencesStore()
         val vm = ReminderSettingsViewModel(store)
 
         vm.uiState.test {
+            // Initial state matches the default (off, single 07:00) so no duplicate emit.
             assertEquals(ReminderSettingsUiState(), awaitItem())
 
             vm.setEnabled(true)
             advanceUntilIdle()
             assertTrue(awaitItem().enabled)
 
-            vm.setTime(8, 30)
+            // Add a second and third prayer-bell time.
+            vm.addTime(12, 0)
             advanceUntilIdle()
-            val state = awaitItem()
-            assertEquals(ReminderTime(8, 30), state.time)
-            assertTrue(state.enabled)
+            assertEquals(listOf(ReminderTime(7, 0), ReminderTime(12, 0)), awaitItem().times)
+
+            vm.addTime(20, 0)
+            advanceUntilIdle()
+            assertEquals(
+                listOf(ReminderTime(7, 0), ReminderTime(12, 0), ReminderTime(20, 0)),
+                awaitItem().times
+            )
+
+            // Remove the morning one.
+            vm.removeTime(ReminderTime(7, 0))
+            advanceUntilIdle()
+            assertEquals(listOf(ReminderTime(12, 0), ReminderTime(20, 0)), awaitItem().times)
 
             vm.setEnabled(false)
             advanceUntilIdle()
@@ -67,7 +79,7 @@ class ReminderSettingsViewModelTest {
 
     private class FakePreferencesStore : PreferencesStore {
         private val enabled = MutableStateFlow(false)
-        private val time = MutableStateFlow("07:00")
+        private val times = MutableStateFlow("07:00")
 
         override val setupState: Flow<SetupState> = MutableStateFlow(
             SetupState(
@@ -83,10 +95,10 @@ class ReminderSettingsViewModelTest {
         )
         override val lastReadPosition: Flow<String?> = MutableStateFlow(null)
         override val dailyReminderEnabled: Flow<Boolean> = enabled
-        override val dailyReminderTime: Flow<String> = time
+        override val dailyReminderTimes: Flow<String> = times
 
         override suspend fun setDailyReminderEnabled(value: Boolean) { enabled.value = value }
-        override suspend fun setDailyReminderTime(value: String) { time.value = value }
+        override suspend fun setDailyReminderTimes(value: String) { times.value = value }
 
         override suspend fun saveSetup(state: SetupState) {}
         override suspend fun setSetupCompleted(value: Boolean) {}

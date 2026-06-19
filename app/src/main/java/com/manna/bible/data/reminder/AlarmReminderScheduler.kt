@@ -39,27 +39,32 @@ class AlarmReminderScheduler @Inject constructor(
             AlarmManager.RTC_WAKEUP,
             triggerAt,
             AlarmManager.INTERVAL_DAY,
-            pendingIntent()
+            pendingIntent(time)
         )
     }
 
-    override fun cancel() {
-        alarmManager.cancel(pendingIntent())
+    override fun cancel(time: ReminderTime) {
+        alarmManager.cancel(pendingIntent(time))
     }
 
-    private fun pendingIntent(): PendingIntent {
+    /**
+     * A distinct [PendingIntent] per time of day, so several reminders coexist. The
+     * request code is the minute-of-day (stable across restarts), and [FLAG_NO_CREATE]
+     * is not used so cancel can always reconstruct the same intent.
+     */
+    private fun pendingIntent(time: ReminderTime): PendingIntent {
         val intent = Intent(context, DailyReminderReceiver::class.java).apply {
             action = DailyReminderReceiver.ACTION_FIRE
         }
         return PendingIntent.getBroadcast(
             context,
-            REQUEST_CODE,
+            REQUEST_CODE_BASE + time.minuteOfDay,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
     }
 
     private companion object {
-        const val REQUEST_CODE = 1001
+        const val REQUEST_CODE_BASE = 1000
     }
 }

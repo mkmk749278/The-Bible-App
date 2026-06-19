@@ -34,6 +34,24 @@ class ReminderTimeTest {
     }
 
     @Test
+    @DisplayName("minuteOfDay is a stable id; parseList/formatList sort, dedupe and clean")
+    fun listHelpers() {
+        assertEquals(0, ReminderTime(0, 0).minuteOfDay)
+        assertEquals(740, ReminderTime(12, 20).minuteOfDay)
+
+        // Unsorted, duplicated, and malformed entries -> sorted, distinct, valid only.
+        assertEquals(
+            listOf(ReminderTime(8, 0), ReminderTime(12, 0), ReminderTime(20, 0)),
+            ReminderTime.parseList("20:00, 08:00 ,12:00,08:00,bad,25:00")
+        )
+        assertEquals(emptyList<ReminderTime>(), ReminderTime.parseList(null))
+        assertEquals(emptyList<ReminderTime>(), ReminderTime.parseList(""))
+
+        assertEquals("08:00,12:00,20:00",
+            ReminderTime.formatList(listOf(ReminderTime(20, 0), ReminderTime(8, 0), ReminderTime(12, 0))))
+    }
+
+    @Test
     @DisplayName("next trigger is today when the time is still ahead")
     fun triggerLaterToday() {
         val zone = ZoneId.of("UTC")

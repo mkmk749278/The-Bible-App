@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -33,12 +34,25 @@ class ReminderCoordinator @Inject constructor(
         scope.launch {
             combine(
                 preferencesStore.dailyReminderEnabled,
-                preferencesStore.dailyReminderTime
-            ) { enabled, time -> enabled to time }
+                preferencesStore.dailyReminderTimes
+            ) { enabled, csv -> if (enabled) ReminderTime.parseList(csv) else emptyList() }
                 .distinctUntilChanged()
-                .collect { (enabled, time) ->
-                    if (enabled) scheduler.schedule(ReminderTime.parse(time)) else scheduler.cancel()
-                }
+                .collect { desired -> sync(desired) }
         }
+    }
+
+    /**
+     * Brings the OS alarms in line with [desired]: cancels any time that was armed
+     * before but is no longer wanted (read from the persisted "scheduled" list so it
+     * works across restarts), (re)schedules every desired time (idempotent), then
+     * records the new armed set. [scheduledReminderTimes] is read one-shot — not part
+     * of the observed combine — so persisting it here doesn't re-trigger the loop.
+     */
+    private suspend fun sync(desired: List<ReminderTime>) {
+        val previouslyArmed = ReminderTime.parseList(preferencesStore.scheduledReminderTimes.first())
+        val wanted = desired.toSet()
+        previouslyArmed.filterNot { it in wanted }.forEach { scheduler.cancel(it) }
+        desired.forEach { scheduler.schedule(it) }
+        preferencesStore.setScheduledReminderTimes(ReminderTime.formatList(desired))
     }
 }
