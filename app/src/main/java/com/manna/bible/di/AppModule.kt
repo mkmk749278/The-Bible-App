@@ -9,9 +9,11 @@ import com.manna.bible.data.local.ExplanationDao
 import com.manna.bible.data.local.MIGRATION_2_3
 import com.manna.bible.data.local.MIGRATION_3_4
 import com.manna.bible.data.local.MIGRATION_4_5
+import com.manna.bible.data.local.MIGRATION_5_6
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
 import com.manna.bible.data.local.PrayerDao
+import com.manna.bible.data.local.SermonDao
 import com.manna.bible.data.local.TranslationDao
 import com.manna.bible.data.remote.GeminiApi
 import com.manna.bible.data.remote.HelloAoApi
@@ -73,7 +75,7 @@ object AppModule {
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
             .fallbackToDestructiveMigration()
             .build()
 
@@ -100,6 +102,10 @@ object AppModule {
     @Provides
     fun provideExplanationDao(database: MannaDatabase): ExplanationDao =
         database.explanationDao()
+
+    @Provides
+    fun provideSermonDao(database: MannaDatabase): SermonDao =
+        database.sermonDao()
 
     // --- Free Use Bible API (helloao) networking -----------------------------
 

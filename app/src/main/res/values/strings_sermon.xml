@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Village Pastor Sermon Helper (Phase 3) -->
+    <string name="sermon_title">Sermon Helper</string>
+    <string name="sermon_tool_entry">Sermon Helper</string>
+    <string name="sermon_new">New sermon</string>
+    <string name="sermon_edit">Edit sermon</string>
+    <string name="sermon_empty">No sermons yet. Tap + to prepare your first one.</string>
+    <string name="sermon_field_title">Title</string>
+    <string name="sermon_field_reference">Scripture (e.g. John 3:16)</string>
+    <string name="sermon_field_notes">Outline &amp; notes</string>
+    <string name="sermon_save">Save</string>
+    <string name="sermon_delete">Delete</string>
+    <string name="sermon_back">Back</string>
+    <string name="sermon_close">Close</string>
+</resources>

@@ -110,3 +110,23 @@ val MIGRATION_4_5: Migration = object : Migration(4, 5) {
         )
     }
 }
+
+/**
+ * v5 -> v6: adds the [SermonNoteEntity] `sermon_notes` table (Village Pastor Sermon
+ * Helper, Phase 3). Purely additive — existing data is untouched. The DDL mirrors
+ * exactly what Room generates for the entity (an autoGenerate `Long` primary key and
+ * the non-null text/timestamp columns) so Room's runtime schema validation succeeds.
+ */
+val MIGRATION_5_6: Migration = object : Migration(5, 6) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE IF NOT EXISTS `sermon_notes` (" +
+                "`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                "`title` TEXT NOT NULL, " +
+                "`reference` TEXT NOT NULL, " +
+                "`content` TEXT NOT NULL, " +
+                "`createdAt` INTEGER NOT NULL, " +
+                "`updatedAt` INTEGER NOT NULL)"
+        )
+    }
+}
