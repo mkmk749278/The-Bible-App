@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- The AICore (on-device Gemini Nano) library declares minSdk 31. Manna ships to
+         API 26; the Nano engine is gated at runtime (Build.VERSION + AICore availability)
+         and falls back to the cloud engine, so it is safe to override the floor here. -->
+    <uses-sdk tools:overrideLibrary="com.google.ai.edge.aicore" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />

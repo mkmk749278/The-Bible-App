@@ -25,8 +25,13 @@ object FeatureFlags {
      */
     const val NARRATED_AUDIO: Boolean = false
 
-    /** On-device Gemini Nano AI; requires Android 16+ (Phase 3). */
-    const val GEMINI_NANO_AI: Boolean = false
+    /**
+     * On-device Gemini Nano AI via the AICore Prompt API (Phase 3). When on, the
+     * "Explain this passage" engine prefers offline on-device generation on capable
+     * devices (Android 14+ with AICore) and falls back to the cloud Gemini engine.
+     * Safe to leave on across the device range: unsupported devices fall back.
+     */
+    const val GEMINI_NANO_AI: Boolean = true
 
     /**
      * "Explain this passage" — tap a verse for a plain, pastoral explanation

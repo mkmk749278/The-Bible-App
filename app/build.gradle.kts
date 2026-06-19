@@ -156,6 +156,11 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
+    // On-device Gemini Nano (AICore Prompt API) for offline "Explain this passage".
+    // minSdk 31; gated at runtime + via tools:overrideLibrary so the app still ships
+    // to API 26. Experimental artifact — pinned and used behind FeatureFlags.GEMINI_NANO_AI.
+    implementation(libs.aicore)
+
     // Unit testing (JUnit 5 + Turbine + MockK) — runs in GitHub Actions CI.
     testImplementation(libs.junit.jupiter.api)
     testImplementation(libs.junit.jupiter.params)
