@@ -11,9 +11,13 @@ import com.manna.bible.domain.calendar.LiturgicalColor
 import com.manna.bible.domain.calendar.LiturgicalSeason
 import com.manna.bible.domain.calendar.ReadingKind
 import com.manna.bible.domain.canon.CanonEngine
+import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.Denomination
+import com.manna.bible.domain.repository.BibleContentRepository
+import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.ShareReferenceFormatter
+import com.manna.bible.domain.translation.Translation
 import com.manna.bible.domain.usecase.ReadingRef
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,6 +25,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -53,6 +58,13 @@ data class MonthEvent(
     val osisRef: String?
 )
 
+/** The verse of the day for the selected date (reused across the app), with its text. */
+data class CalendarDailyVerse(
+    val reference: String,
+    val text: String,
+    val osisRef: String
+)
+
 /** The currently selected day, expanded for the detail card. */
 data class SelectedDay(
     val date: LocalDate,
@@ -61,7 +73,8 @@ data class SelectedDay(
     val isFast: Boolean,
     val feastId: String?,
     val osisRef: String?,
-    val readings: List<ReadingRow> = emptyList()
+    val readings: List<ReadingRow> = emptyList(),
+    val dailyVerse: CalendarDailyVerse? = null
 )
 
 /**
@@ -98,6 +111,9 @@ class LiturgicalCalendarViewModel @Inject constructor(
     private val lectionary: LectionaryReadingsProvider,
     private val referenceFormatter: ShareReferenceFormatter,
     private val canonEngine: CanonEngine,
+    private val dailyVerseProvider: DailyVerseProvider,
+    private val bibleContentRepository: BibleContentRepository,
+    private val translationRepository: TranslationRepository,
     preferencesStore: PreferencesStore
 ) : ViewModel() {
 
@@ -110,14 +126,20 @@ class LiturgicalCalendarViewModel @Inject constructor(
     private data class CalContext(
         val denomination: Denomination,
         val language: String,
-        val profile: CanonProfile
+        val profile: CanonProfile,
+        val translationId: String?
     )
 
     private val context = preferencesStore.setupState
         .map { setup ->
             val denomination = setup.denomination ?: Denomination.PROTESTANT_OTHER
             val language = setup.bibleLanguage ?: DEFAULT_LANGUAGE
-            CalContext(denomination, language, canonEngine.profileFor(denomination, language))
+            CalContext(
+                denomination = denomination,
+                language = language,
+                profile = canonEngine.profileFor(denomination, language),
+                translationId = setup.bibleTranslationId
+            )
         }
         .distinctUntilChanged()
 
@@ -152,7 +174,7 @@ class LiturgicalCalendarViewModel @Inject constructor(
         selectedDate.value = ym.atDay(1)
     }
 
-    private fun build(
+    private suspend fun build(
         ctx: CalContext,
         ym: YearMonth,
         selected: LocalDate
@@ -183,6 +205,7 @@ class LiturgicalCalendarViewModel @Inject constructor(
             ?.verseRefs?.firstOrNull()?.format()
         val readings = lectionary.readingsFor(selected, ctx.denomination)
             .map { formatReading(ctx, it) }
+        val dailyVerse = resolveDailyVerse(ctx, selected)
 
         return LiturgicalCalendarUiState(
             year = ym.year,
@@ -197,11 +220,40 @@ class LiturgicalCalendarViewModel @Inject constructor(
                 isFast = selectedDay.isFast,
                 feastId = selectedDay.feastId,
                 osisRef = osisRef,
-                readings = readings
+                readings = readings,
+                dailyVerse = dailyVerse
             ),
             today = today,
             isLoading = false
         )
+    }
+
+    /**
+     * The verse of the day for [date] (the same deterministic selection the rest of
+     * the app uses), resolved to text in the active translation. Returns null when no
+     * translation content is available, so the card simply omits the verse offline.
+     */
+    private suspend fun resolveDailyVerse(ctx: CalContext, date: LocalDate): CalendarDailyVerse? {
+        val ref = dailyVerseProvider.verseForDate(date)
+        val translation = resolveActiveTranslation(ctx.translationId) ?: return null
+        val content = runCatching {
+            bibleContentRepository.chapter(translation.id, ref.osisId, ref.chapter)
+        }.getOrNull()
+        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text ?: return null
+        val reference = referenceFormatter.formatReference(
+            ctx.profile, ctx.language, ref.osisId, ref.chapter, ref.verse
+        )
+        return CalendarDailyVerse(reference = reference, text = text, osisRef = ref.format())
+    }
+
+    /** Picks the persisted translation, else the first downloaded/bundled one available. */
+    private suspend fun resolveActiveTranslation(persistedId: String?): Translation? {
+        val catalog = runCatching { translationRepository.catalog().first() }.getOrDefault(emptyList())
+        if (catalog.isEmpty()) return null
+        if (!persistedId.isNullOrBlank()) {
+            catalog.firstOrNull { it.id == persistedId }?.let { return it }
+        }
+        return catalog.firstOrNull { it.isDownloaded } ?: catalog.firstOrNull()
     }
 
     private fun formatReading(ctx: CalContext, reading: LectionaryReading): ReadingRow {

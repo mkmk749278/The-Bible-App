@@ -14,6 +14,9 @@
     <string name="calendar_fast_label">Fast day</string>
     <string name="calendar_read_passage">Read the passage</string>
     <string name="calendar_readings_header">Readings</string>
+    <string name="calendar_verse_header">Verse of the day</string>
+    <string name="calendar_verse_open">Read in context</string>
+    <string name="calendar_verse_share">Share</string>
     <string name="calendar_events_header">Feasts this month</string>
     <string name="calendar_events_none">No feast days this month.</string>
 

@@ -5,6 +5,10 @@ import com.manna.bible.domain.calendar.DefaultJesusEventsProvider
 import com.manna.bible.domain.calendar.DefaultLectionaryReadingsProvider
 import com.manna.bible.domain.calendar.DefaultLiturgicalCalendarProvider
 import com.manna.bible.domain.canon.CanonEngine
+import com.manna.bible.domain.daily.DefaultDailyVerseProvider
+import io.mockk.every
+import io.mockk.mockk
+import kotlinx.coroutines.flow.flowOf
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.CanonType
 import com.manna.bible.domain.model.Denomination
@@ -49,6 +53,13 @@ class LiturgicalCalendarViewModelTest {
             lectionary = DefaultLectionaryReadingsProvider(DefaultJesusEventsProvider()),
             referenceFormatter = ShareReferenceFormatter(DefaultBookNameProvider()),
             canonEngine = FakeCanonEngine,
+            dailyVerseProvider = DefaultDailyVerseProvider(),
+            // No catalog content in tests, so the daily verse resolves to null and the
+            // existing grid/selection assertions are unaffected.
+            bibleContentRepository = mockk(relaxed = true),
+            translationRepository = mockk {
+                every { catalog() } returns flowOf(emptyList())
+            },
             preferencesStore = FakePreferencesStore(denomination)
         )
 

@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -6,6 +8,19 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
+
+// Build-time secrets: read from the environment (CI injects them from GitHub
+// Secrets) first, then fall back to local.properties for local development — so a
+// developer can set GEMINI_API_KEY in local.properties (which is .gitignore'd) and
+// the cloud "Explain" engine works in local debug builds, matching the docs.
+val localProperties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
+fun buildSecret(name: String): String =
+    System.getenv(name)?.takeIf { it.isNotBlank() }
+        ?: localProperties.getProperty(name)?.takeIf { it.isNotBlank() }
+        ?: ""
 
 android {
     namespace = "com.manna.bible"
@@ -18,19 +33,19 @@ android {
         applicationId = "com.manna.bible"
         minSdk = 26
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
 
-        // Gemini API key for the cloud "Explain this passage" engine. Injected from a
-        // GitHub Secret (GEMINI_API_KEY) at CI time, or local.properties for dev.
-        // Blank by default -> Explain shows a graceful "add a key" state.
+        // Gemini API key for the cloud "Explain this passage" engine. From the GitHub
+        // Secret (GEMINI_API_KEY) at CI time, or local.properties for dev. Blank by
+        // default -> Explain falls back to on-device Nano / shows an "add a key" state.
         buildConfigField(
             "String",
             "GEMINI_API_KEY",
-            "\"${System.getenv("GEMINI_API_KEY") ?: ""}\""
+            "\"${buildSecret("GEMINI_API_KEY")}\""
         )
     }
 
