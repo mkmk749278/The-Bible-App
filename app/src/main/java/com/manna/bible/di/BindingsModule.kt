@@ -35,6 +35,8 @@ import com.manna.bible.domain.calendar.LectionaryReadingsProvider
 import com.manna.bible.domain.calendar.LiturgicalCalendarProvider
 import com.manna.bible.data.explain.DefaultExplanationRepository
 import com.manna.bible.data.explain.GeminiExplanationEngine
+import com.manna.bible.data.explain.GeminiNanoExplanationEngine
+import com.manna.bible.data.explain.HybridExplanationEngine
 import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRepository
 import com.manna.bible.domain.canon.CanonEngine
@@ -77,6 +79,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Named
 import javax.inject.Singleton
 
 /**
@@ -230,9 +233,19 @@ abstract class BindingsModule {
     ): LectionaryReadingsProvider
 
     // --- Explain this passage ------------------------------------------------
+    // On-device Gemini Nano (offline) is preferred, the cloud Gemini Flash is the
+    // fallback; HybridExplanationEngine orchestrates the two.
 
     @Binds
-    abstract fun bindExplanationEngine(impl: GeminiExplanationEngine): ExplanationEngine
+    @Named("nanoEngine")
+    abstract fun bindNanoExplanationEngine(impl: GeminiNanoExplanationEngine): ExplanationEngine
+
+    @Binds
+    @Named("cloudEngine")
+    abstract fun bindCloudExplanationEngine(impl: GeminiExplanationEngine): ExplanationEngine
+
+    @Binds
+    abstract fun bindExplanationEngine(impl: HybridExplanationEngine): ExplanationEngine
 
     @Binds
     abstract fun bindExplanationRepository(
