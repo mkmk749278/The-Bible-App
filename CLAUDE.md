@@ -39,19 +39,19 @@ The Bible App/
 │   │   │   │   ├── domain/            # Use cases, domain models
 │   │   │   │   ├── ui/                # Compose screens, components, themes
 │   │   │   │   ├── ai/                # Gemini Nano integration (ML Kit GenAI)
-│   │   │   │   ├── audio/             # ExoPlayer, TTS, Bible Brain audio
+│   │   │   │   ├── audio/             # ExoPlayer (Media3), TTS, narrated audio
 │   │   │   │   ├── widget/            # Glance home screen widgets
 │   │   │   │   └── di/                # Hilt modules
 │   │   │   ├── res/
 │   │   │   └── AndroidManifest.xml
 │   │   ├── test/                      # Unit tests
 │   │   └── androidTest/               # Instrumented tests
-├── web/                               # PWA (Next.js / Vite + React) — future
+├── buildSrc/                          # Custom Gradle tasks (prepareBundledBibles)
 ├── .github/
 │   └── workflows/
-│       ├── android-build.yml          # CI: build debug APK on every PR
-│       ├── android-release.yml        # CD: build signed release APK + AAB
-│       └── lint.yml                   # Lint and static analysis
+│       ├── ci.yml                     # Lightweight structural validation (all branches)
+│       ├── android-build.yml          # CI: lint + unit tests + debug APK on every PR
+│       └── android-release.yml        # CD: build signed release APK + AAB
 ├── gradle/
 ├── build.gradle.kts                   # Root build file
 ├── settings.gradle.kts
@@ -75,10 +75,10 @@ The Bible App/
 | State          | ViewModel + StateFlow + DataStore (preferences)   |
 | AI             | **ML Kit GenAI Prompt API** (Gemini Nano)          |
 | Audio          | **ExoPlayer** (Media3) + Android TTS               |
-| Bible data     | **Bible Brain API** (Digital Bible Platform)        |
+| Bible data     | **Free Use Bible API** (bible.helloao.org) — key-less, MIT |
 | Widgets        | **Glance** (Jetpack Compose for widgets)           |
 | Image loading  | **Coil** (Compose-native)                          |
-| Networking     | **Retrofit** + OkHttp (for Bible Brain API)        |
+| Networking     | **Retrofit** + OkHttp (for the Free Use Bible API) |
 | Serialization  | **Kotlinx Serialization** (JSON)                   |
 | Testing        | JUnit 5, Turbine (Flow testing), Compose Test      |
 | Min SDK        | **26** (Android 8.0) — covers 95%+ of India        |
@@ -99,7 +99,7 @@ The Bible App/
 
 | Service        | Technology                                       |
 |----------------|--------------------------------------------------|
-| Bible content  | **Bible Brain API** (bible.cloud) — 2000+ translations |
+| Bible content  | **Free Use Bible API** (bible.helloao.org) — key-less, MIT, 1000+ translations |
 | Auth (opt-in)  | Firebase Auth — Google Sign-In + Phone Auth       |
 | Sync (opt-in)  | Firebase Firestore (encrypted user data sync)     |
 | Analytics      | Firebase Analytics (privacy-first, no PII)        |
@@ -124,7 +124,7 @@ The Bible App/
 ├─────────────────────────────────────────────┤
 │  Data Layer (Repositories + Data Sources)    │
 │  - Room DAOs for local Bible + user data     │
-│  - Retrofit services for Bible Brain API     │
+│  - Retrofit services for the Free Use Bible API│
 │  - DataStore for preferences                 │
 │  - ML Kit wrapper for Gemini Nano            │
 └─────────────────────────────────────────────┘
@@ -146,7 +146,7 @@ The Bible App/
 ### Core Entities (Room)
 
 ```kotlin
-// Bible content (pre-populated from Bible Brain API downloads)
+// Bible content (bundled offline assets + Free Use Bible API downloads)
 @Entity Translation(id, name, languageCode, scriptDirection, isDownloaded, sizeBytes)
 @Entity Book(id, translationId, name, abbreviation, testament, orderIndex)
 @Entity Chapter(id, bookId, number)
@@ -233,7 +233,7 @@ All secrets are stored in **GitHub Secrets** (Settings → Secrets and Variables
 | `KEYSTORE_PASSWORD`           | Keystore password                                    | Plain text         |
 | `KEY_ALIAS`                   | Key alias within the keystore                        | Plain text         |
 | `KEY_PASSWORD`                | Key password (often same as keystore password)       | Plain text         |
-| `BIBLE_BRAIN_API_KEY`         | API key for Bible Brain / Digital Bible Platform     | Plain text         |
+| `GEMINI_API_KEY`              | API key for the cloud "Explain this passage" engine  | Plain text         |
 | `FIREBASE_GOOGLE_SERVICES`    | `google-services.json` contents, base64-encoded      | Base64 string      |
 | `PLAY_STORE_SERVICE_ACCOUNT`  | Google Play service account JSON for AAB upload       | Base64 JSON        |
 
@@ -286,22 +286,24 @@ android {
 
 #### API keys in the app:
 
-Bible Brain API key and other runtime secrets are injected via `BuildConfig`:
+The Free Use Bible API is **key-less**, so the only runtime secret is the optional
+Gemini key for the cloud "Explain this passage" engine, injected via `BuildConfig`:
 
 ```kotlin
 // In app/build.gradle.kts
 android {
     defaultConfig {
-        buildConfigField("String", "BIBLE_BRAIN_API_KEY",
-            "\"${System.getenv("BIBLE_BRAIN_API_KEY") ?: ""}\"")
+        buildConfigField("String", "GEMINI_API_KEY",
+            "\"${System.getenv("GEMINI_API_KEY") ?: ""}\"")
     }
 }
 ```
 
-For local development, set these in `local.properties` (which is `.gitignore`d):
+For local development, set this in `local.properties` (which is `.gitignore`d). When
+unset, Explain simply shows a graceful "add a key" state:
 
 ```properties
-BIBLE_BRAIN_API_KEY=your_key_here
+GEMINI_API_KEY=your_key_here
 ```
 
 ---
@@ -322,7 +324,7 @@ hotfix/*      — Emergency production fixes (branch from main, merge to both ma
 Use **Conventional Commits**:
 
 ```
-feat: add Pastor Mode 5-step flow
+feat: add Explain this passage flow
 fix: audio player not resuming after phone call
 docs: update CLAUDE.md with widget guidelines
 refactor: extract verse formatting to shared component
@@ -496,7 +498,7 @@ These are **non-negotiable**:
 
 Use **Semantic Versioning**: `MAJOR.MINOR.PATCH`
 
-- `1.0.0` — Phase 1 launch (Bible reader + audio + daily verse + Pastor Mode)
+- `1.0.0` — Phase 1 launch (Bible reader + audio + daily verse + Explain this passage)
 - `1.1.0` — New feature (e.g., add search)
 - `1.0.1` — Bug fix release
 
@@ -618,15 +620,16 @@ export KEY_PASSWORD=yourkeypassword
 - [x] Dual language setup (UI lang ≠ Bible lang)
 - [x] Bible text rendering (Compose, serif scripture — system serif ≈ Noto Serif)
 - [x] Highlights, bookmarks, notes
-- [x] Audio read-aloud (on-device TTS) — *ExoPlayer + Bible Brain narrated audio still TODO*
+- [x] Audio read-aloud (on-device TTS + ExoPlayer/Media3 narrated audio with TTS fallback)
+- [x] Bundled offline Bibles (English WEB + Tamil/Hindi/Telugu/Malayalam IRV) via `prepareBundledBibles`
 - [x] Daily verse of the day + daily reminder notification
 - [x] Jesus Events Calendar
-- [x] Pastor Mode (5-step flow)
-- [ ] Home screen widget (Glance) — *needs device/build verification*
+- [x] Explain this passage (tap a verse → pastoral explanation) — replaced the retired Pastor Mode
+- [x] Home screen widget (Glance)
 - [x] Onboarding flow (denomination + dual-language setup)
 - [x] Search (text + topical)
 - [x] Offline download manager
-- [x] Home experience + bottom navigation (Home · Listen · Search · Library)
+- [x] Bottom navigation (Read · Calendar · Prayers · More) — the reader *is* the Read tab
 - [x] Light-first theme per UX Master Design Directive
 
 ### Phase 2 — Soul Depth (Months 4–6)

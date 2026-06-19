@@ -24,14 +24,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
 
-        // Bible Brain API key is injected from a GitHub Secret (BIBLE_BRAIN_API_KEY)
-        // at CI time, or from local.properties for local dev. Never hardcoded.
-        buildConfigField(
-            "String",
-            "BIBLE_BRAIN_API_KEY",
-            "\"${System.getenv("BIBLE_BRAIN_API_KEY") ?: ""}\""
-        )
-
         // Gemini API key for the cloud "Explain this passage" engine. Injected from a
         // GitHub Secret (GEMINI_API_KEY) at CI time, or local.properties for dev.
         // Blank by default -> Explain shows a graceful "add a key" state.
@@ -114,6 +106,18 @@ android {
         // Don't fail the build on those intentional gaps.
         disable += "MissingTranslation"
     }
+}
+
+/**
+ * Regenerates the committed offline Bible assets under `src/main/assets/bibles/`
+ * from the Free Use Bible API. Developer/CI tool only — the assets are committed,
+ * so it is NOT a dependency of `assembleDebug` and normal builds never hit the
+ * network. Run manually: `./gradlew :app:prepareBundledBibles`.
+ */
+tasks.register<com.manna.bible.build.PrepareBundledBiblesTask>("prepareBundledBibles") {
+    group = "manna"
+    description = "Downloads the bundled offline Bibles into src/main/assets/bibles/."
+    outputDir.set(layout.projectDirectory.dir("src/main/assets/bibles"))
 }
 
 dependencies {

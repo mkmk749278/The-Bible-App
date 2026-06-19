@@ -37,11 +37,21 @@ class AttributionProviderTest {
     }
 
     @Test
-    @DisplayName("bundled edition is public domain (Req 12.2)")
-    fun bundledIsPublicDomain() {
-        val attribution = provider.attributionFor(translation(name = "Some Edition", isBundled = true))
-        assertEquals("Some Edition", attribution.translationName)
+    @DisplayName("the bundled World English Bible is public domain (Req 12.2)")
+    fun bundledWebIsPublicDomain() {
+        val attribution = provider.attributionFor(translation(name = "World English Bible", isBundled = true))
+        assertEquals("World English Bible", attribution.translationName)
         assertEquals(TranslationLicense.PUBLIC_DOMAIN, attribution.license)
+    }
+
+    @Test
+    @DisplayName("a bundled but licensed edition (e.g. IRV) is source-provided, not public domain (Req 12.4)")
+    fun bundledLicensedEditionIsSourceProvided() {
+        val attribution = provider.attributionFor(
+            translation(id = "tam_irv", name = "Tamil Indian Revised Version (IRV)", isBundled = true)
+        )
+        assertEquals("Tamil Indian Revised Version (IRV)", attribution.translationName)
+        assertEquals(TranslationLicense.SOURCE_PROVIDED, attribution.license)
     }
 
     @Test
