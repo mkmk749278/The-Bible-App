@@ -42,7 +42,19 @@ enum class ExplanationUnavailableReason {
 /** The outcome of an explanation request. */
 sealed interface ExplanationResult {
     data class Success(val text: String) : ExplanationResult
-    data class Unavailable(val reason: ExplanationUnavailableReason) : ExplanationResult
+
+    /**
+     * No explanation was produced.
+     *
+     * @property reason the coarse cause shown to the user.
+     * @property detail an optional engine-level diagnostic (e.g. "Cloud HTTP 403:
+     *   API key not authorized") surfaced under the message to help configure the
+     *   feature. Null for the ordinary, expected cases.
+     */
+    data class Unavailable(
+        val reason: ExplanationUnavailableReason,
+        val detail: String? = null
+    ) : ExplanationResult
 }
 
 /**

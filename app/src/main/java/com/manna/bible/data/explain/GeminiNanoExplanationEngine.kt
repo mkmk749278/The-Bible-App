@@ -57,7 +57,10 @@ class GeminiNanoExplanationEngine @Inject constructor(
             val response = model().generateContent(ExplanationPrompt.build(request))
             val text = response.text?.trim()
             if (text.isNullOrBlank()) {
-                ExplanationResult.Unavailable(ExplanationUnavailableReason.ERROR)
+                ExplanationResult.Unavailable(
+                    ExplanationUnavailableReason.ERROR,
+                    detail = "On-device model returned an empty response."
+                )
             } else {
                 ExplanationResult.Success(text)
             }
@@ -69,7 +72,10 @@ class GeminiNanoExplanationEngine @Inject constructor(
             // re-initializes cleanly.
             runCatching { model?.close() }
             model = null
-            ExplanationResult.Unavailable(ExplanationUnavailableReason.ERROR)
+            ExplanationResult.Unavailable(
+                ExplanationUnavailableReason.ERROR,
+                detail = "On-device (Nano): ${e.javaClass.simpleName}: ${e.message}"
+            )
         }
     }
 
