@@ -66,6 +66,13 @@ object FeatureFlags {
     const val STEALTH_MODE: Boolean = false
 
     /**
+     * Church Mode — a guided, denomination-aware order of worship (the Holy Mass /
+     * Holy Communion) that the user can follow step by step, chosen from the tradition
+     * picked at setup (Phase 3).
+     */
+    const val CHURCH_MODE: Boolean = true
+
+    /**
      * Prayers tab — a grouped hub of guided devotional practices rooted in Indian
      * Christian tradition: the Stations of the Cross, the Rosary (Japamala), the
      * Jesus Prayer, and Paraloka (eternal-life) Scripture. Surfaces as a primary tab

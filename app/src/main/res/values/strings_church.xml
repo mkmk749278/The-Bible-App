@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Church Mode — guided order of worship (Phase 3) -->
+    <string name="church_title">Order of Worship</string>
+    <string name="church_entry">Order of worship</string>
+    <string name="church_back">Back</string>
+    <string name="church_role_presider">Priest</string>
+    <string name="church_role_people">People</string>
+    <string name="church_role_all">All</string>
+    <string name="church_role_reader">Reader</string>
+    <string name="church_needs_official">Prayer proper to today — follow your parish book / Missal.</string>
+    <string name="church_open_reading">Read in context</string>
+    <string name="church_source">Source</string>
+    <string name="church_unavailable">A full order of worship for your tradition is being prepared. Here are the orders available now:</string>
+</resources>

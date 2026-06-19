@@ -65,6 +65,8 @@ import com.manna.bible.domain.topical.TopicalIndex
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.lectionary.LectionaryProvider
+import com.manna.bible.domain.liturgy.DefaultLiturgyProvider
+import com.manna.bible.domain.liturgy.LiturgyProvider
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
@@ -115,6 +117,9 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindLectionaryProvider(impl: DefaultLectionaryProvider): LectionaryProvider
+
+    @Binds
+    abstract fun bindLiturgyProvider(impl: DefaultLiturgyProvider): LiturgyProvider
 
     // --- preferences ---------------------------------------------------------
 

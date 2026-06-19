@@ -60,6 +60,7 @@ fun MoreScreen(
     onOpenFasting: (() -> Unit)? = null,
     onOpenCard: (() -> Unit)? = null,
     onOpenSermon: (() -> Unit)? = null,
+    onOpenChurch: (() -> Unit)? = null,
     onOpenAttribution: () -> Unit = {},
     viewModel: MoreViewModel = hiltViewModel()
 ) {
@@ -85,6 +86,7 @@ fun MoreScreen(
             MoreSection(
                 stringResource(R.string.more_section_pray),
                 listOfNotNull(
+                    onOpenChurch?.let { MoreEntry(stringResource(R.string.church_entry), it) },
                     onOpenPrayer?.let { MoreEntry(stringResource(R.string.prayer_tool_entry), it) },
                     onOpenCrisis?.let { MoreEntry(stringResource(R.string.crisis_tool_entry), it) },
                     onOpenGrief?.let { MoreEntry(stringResource(R.string.grief_tool_entry), it) }
