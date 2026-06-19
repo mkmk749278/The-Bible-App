@@ -484,8 +484,14 @@ class ReaderViewModel @Inject constructor(
 
     /** Begins reading the current chapter's verses aloud in the Bible language (Req 9.1, 9.5). */
     private fun startAudio() {
-        val verses = _uiState.value.verses
+        val state = _uiState.value
+        val verses = state.verses
         if (verses.isEmpty()) return
+        // Simplified / Elder Mode reads aloud at a gentler pace, unless the user has
+        // already chosen their own speed this session (Req 14.5).
+        if (state.simplifiedMode && state.ttsSpeed == TtsReader.DEFAULT_SPEED) {
+            ttsReader.setSpeed(SIMPLIFIED_TTS_SPEED)
+        }
         ttsReader.play(
             verses.map { TtsVerse(it.verse, it.text) },
             bibleLanguageTag
@@ -714,5 +720,9 @@ class ReaderViewModel @Inject constructor(
         const val DEFAULT_UI_LANGUAGE = "en"
         // Manna gold (0xFFC9952A) — kept in sync with the design system highlight color.
         const val DEFAULT_HIGHLIGHT_COLOR_ARGB = 0xFFC9952A.toInt()
+        // Gentler read-aloud pace for Simplified / Elder Mode (Req 14.5). Applied the
+        // first time audio starts in Simplified Mode, and only while the speed is still
+        // at the default — so a user who picks their own speed is never overridden.
+        const val SIMPLIFIED_TTS_SPEED = 0.8f
     }
 }
