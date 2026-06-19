@@ -70,7 +70,10 @@ data class ReaderVerse(
 sealed interface ExplainStatus {
     data object Loading : ExplainStatus
     data class Ready(val text: String) : ExplainStatus
-    data class Unavailable(val reason: ExplanationUnavailableReason) : ExplainStatus
+    data class Unavailable(
+        val reason: ExplanationUnavailableReason,
+        val detail: String? = null
+    ) : ExplainStatus
 }
 
 /** State of the Explain bottom sheet for one verse, or null when closed. */
@@ -597,7 +600,7 @@ class ReaderViewModel @Inject constructor(
             )
             val status = when (result) {
                 is ExplanationResult.Success -> ExplainStatus.Ready(result.text)
-                is ExplanationResult.Unavailable -> ExplainStatus.Unavailable(result.reason)
+                is ExplanationResult.Unavailable -> ExplainStatus.Unavailable(result.reason, result.detail)
             }
             val current = _uiState.value.explain
             if (current != null && current.verse == verse && current.depth == depth) {

@@ -10,6 +10,7 @@ import com.manna.bible.domain.explain.ExplanationPrompt
 import com.manna.bible.domain.explain.ExplanationRequest
 import com.manna.bible.domain.explain.ExplanationResult
 import com.manna.bible.domain.explain.ExplanationUnavailableReason
+import retrofit2.HttpException
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Named
@@ -51,16 +52,33 @@ class GeminiExplanationEngine @Inject constructor(
             val text = response.candidates.firstOrNull()
                 ?.content?.parts?.firstOrNull()?.text?.trim()
             if (text.isNullOrBlank()) {
-                ExplanationResult.Unavailable(ExplanationUnavailableReason.ERROR)
+                ExplanationResult.Unavailable(
+                    ExplanationUnavailableReason.ERROR,
+                    detail = "Cloud returned an empty response (model $MODEL)."
+                )
             } else {
                 ExplanationResult.Success(text)
             }
+        } catch (e: HttpException) {
+            // The most useful signal for a mis-scoped key: HTTP status + the API's reason
+            // (e.g. 403 = Generative Language API not enabled / key restricted; 400 = bad key).
+            val body = runCatching { e.response()?.errorBody()?.string() }.getOrNull()
+            ExplanationResult.Unavailable(
+                ExplanationUnavailableReason.ERROR,
+                detail = "Cloud HTTP ${e.code()}${body?.let { ": " + it.take(300) }.orEmpty()}"
+            )
         } catch (e: IOException) {
-            ExplanationResult.Unavailable(ExplanationUnavailableReason.OFFLINE)
+            ExplanationResult.Unavailable(
+                ExplanationUnavailableReason.OFFLINE,
+                detail = "Network: ${e.javaClass.simpleName}: ${e.message}"
+            )
         } catch (e: kotlinx.coroutines.CancellationException) {
             throw e
         } catch (e: Exception) {
-            ExplanationResult.Unavailable(ExplanationUnavailableReason.ERROR)
+            ExplanationResult.Unavailable(
+                ExplanationUnavailableReason.ERROR,
+                detail = "Cloud: ${e.javaClass.simpleName}: ${e.message}"
+            )
         }
     }
 

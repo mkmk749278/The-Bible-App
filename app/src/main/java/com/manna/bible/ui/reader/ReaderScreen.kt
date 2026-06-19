@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -1057,6 +1058,18 @@ private fun ExplainSheet(
                         text = message,
                         style = androidx.compose.material3.MaterialTheme.typography.bodyMedium
                     )
+                    // A muted, selectable diagnostic so a mis-scoped key or unsupported
+                    // device can be identified without a logcat. Only shown when present.
+                    status.detail?.let { detail ->
+                        Spacer(Modifier.height(8.dp))
+                        SelectionContainer {
+                            Text(
+                                text = stringResource(R.string.explain_diagnostic, detail),
+                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                                color = MannaTheme.colors.muted
+                            )
+                        }
+                    }
                 }
             }
 
