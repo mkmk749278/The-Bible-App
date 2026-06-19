@@ -33,7 +33,9 @@ import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -393,8 +395,7 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
  */
 @Composable
 private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -> Unit) {
-    val context = androidx.compose.ui.platform.LocalContext.current
-    val shareTitle = stringResource(R.string.calendar_verse_share)
+    var showCard by remember { mutableStateOf(false) }
     Column {
         Text(
             text = stringResource(R.string.calendar_verse_header),
@@ -425,19 +426,20 @@ private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -
             }
             Spacer(Modifier.width(16.dp))
             TextButton(
-                onClick = {
-                    val message = "“${verse.text}”\n— ${verse.reference}"
-                    val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(android.content.Intent.EXTRA_TEXT, message)
-                    }
-                    context.startActivity(android.content.Intent.createChooser(intent, shareTitle))
-                },
+                onClick = { showCard = true },
                 contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
             ) {
                 Text(stringResource(R.string.calendar_verse_share))
             }
         }
+    }
+
+    if (showCard) {
+        com.manna.bible.ui.card.VerseCardSheet(
+            verseText = verse.text,
+            reference = verse.reference,
+            onDismiss = { showCard = false }
+        )
     }
 }
 
