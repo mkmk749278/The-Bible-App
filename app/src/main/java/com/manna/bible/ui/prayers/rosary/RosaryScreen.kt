@@ -31,6 +31,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -240,6 +243,78 @@ fun RosaryScreen(
                         ) { Text(stringResource(R.string.rosary_next)) }
                     }
                 }
+            }
+
+            // The prayers themselves — tap a title to read the words, in the app's
+            // language where available (falling back to English otherwise).
+            PrayersSection()
+        }
+    }
+}
+
+/** The ordered prayers of the Rosary, each (title, body) as string resources. */
+private val RosaryPrayers: List<Pair<Int, Int>> = listOf(
+    R.string.rosary_prayer_sign_title to R.string.rosary_prayer_sign,
+    R.string.rosary_prayer_creed_title to R.string.rosary_prayer_creed,
+    R.string.rosary_prayer_our_father_title to R.string.rosary_prayer_our_father,
+    R.string.rosary_prayer_hail_mary_title to R.string.rosary_prayer_hail_mary,
+    R.string.rosary_prayer_glory_be_title to R.string.rosary_prayer_glory_be,
+    R.string.rosary_prayer_fatima_title to R.string.rosary_prayer_fatima,
+    R.string.rosary_prayer_hail_holy_queen_title to R.string.rosary_prayer_hail_holy_queen
+)
+
+@Composable
+private fun PrayersSection() {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.rosary_prayers_title),
+            style = MaterialTheme.typography.labelMedium,
+            color = MannaTheme.colors.muted,
+            fontWeight = FontWeight.Bold
+        )
+        RosaryPrayers.forEach { (titleRes, textRes) ->
+            PrayerItem(titleRes = titleRes, textRes = textRes)
+        }
+    }
+}
+
+@Composable
+private fun PrayerItem(titleRes: Int, textRes: Int) {
+    var expanded by remember { mutableStateOf(false) }
+    Surface(
+        color = MannaTheme.colors.surface,
+        shape = RoundedCornerShape(12.dp),
+        modifier = Modifier.fillMaxWidth().clickable { expanded = !expanded }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = stringResource(titleRes),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MannaTheme.colors.ink,
+                    fontWeight = FontWeight.SemiBold
+                )
+                Text(
+                    text = if (expanded) "–" else "+",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MannaTheme.colors.gold,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            if (expanded) {
+                Text(
+                    text = stringResource(textRes),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MannaTheme.colors.soft,
+                    lineHeight = 24.sp
+                )
             }
         }
     }
