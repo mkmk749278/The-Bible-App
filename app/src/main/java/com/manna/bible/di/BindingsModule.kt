@@ -7,6 +7,7 @@ import com.manna.bible.data.TranslationLocalDataSource
 import com.manna.bible.data.TranslationRemoteDataSource
 import com.manna.bible.data.canon.AssetCanonDefinitionDataSource
 import com.manna.bible.data.canon.CanonDefinitionDataSource
+import com.manna.bible.data.download.AndroidDownloadForegroundController
 import com.manna.bible.data.download.DefaultDownloadManager
 import com.manna.bible.data.local.RoomAnnotationLocalDataSource
 import com.manna.bible.data.local.RoomTranslationLocalDataSource
@@ -64,6 +65,7 @@ import com.manna.bible.domain.daily.DefaultDailyVerseProvider
 import com.manna.bible.domain.canon.DefaultCanonEngine
 import com.manna.bible.domain.topical.DefaultTopicalIndex
 import com.manna.bible.domain.topical.TopicalIndex
+import com.manna.bible.domain.download.DownloadForegroundController
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.lectionary.LectionaryProvider
@@ -210,6 +212,12 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindChapterAudioSource(impl: HelloAoChapterAudioSource): ChapterAudioSource
+
+    @Binds
+    @Singleton
+    abstract fun bindDownloadForegroundController(
+        impl: AndroidDownloadForegroundController
+    ): DownloadForegroundController
 
     @Binds
     @Singleton
