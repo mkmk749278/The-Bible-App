@@ -51,6 +51,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.devotion.MysterySet
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.util.stringResourceIn
 import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
@@ -171,6 +172,7 @@ fun RosaryScreen(
             MysterySetSelector(
                 selected = state.set,
                 todaysSet = state.todaysSet,
+                bibleLanguage = state.bibleLanguage,
                 onSelect = viewModel::selectSet
             )
 
@@ -188,7 +190,7 @@ fun RosaryScreen(
                         fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = stringResource(mysteryTitleRes(current.id)),
+                        text = stringResourceIn(state.bibleLanguage, mysteryTitleRes(current.id)),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MannaTheme.colors.ink,
                         fontWeight = FontWeight.SemiBold
@@ -200,7 +202,7 @@ fun RosaryScreen(
                             color = MannaTheme.colors.muted
                         )
                         Text(
-                            text = stringResource(mysteryFruitRes(current.id)),
+                            text = stringResourceIn(state.bibleLanguage, mysteryFruitRes(current.id)),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MannaTheme.colors.lavender,
                             fontWeight = FontWeight.Medium
@@ -245,9 +247,9 @@ fun RosaryScreen(
                 }
             }
 
-            // The prayers themselves — tap a title to read the words, in the app's
-            // language where available (falling back to English otherwise).
-            PrayersSection()
+            // The prayers themselves — tap a title to read the words, in the user's
+            // Bible language (falling back to English where a translation is missing).
+            PrayersSection(bibleLanguage = state.bibleLanguage)
         }
     }
 }
@@ -264,22 +266,22 @@ private val RosaryPrayers: List<Pair<Int, Int>> = listOf(
 )
 
 @Composable
-private fun PrayersSection() {
+private fun PrayersSection(bibleLanguage: String) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
-            text = stringResource(R.string.rosary_prayers_title),
+            text = stringResourceIn(bibleLanguage, R.string.rosary_prayers_title),
             style = MaterialTheme.typography.labelMedium,
             color = MannaTheme.colors.muted,
             fontWeight = FontWeight.Bold
         )
         RosaryPrayers.forEach { (titleRes, textRes) ->
-            PrayerItem(titleRes = titleRes, textRes = textRes)
+            PrayerItem(titleRes = titleRes, textRes = textRes, bibleLanguage = bibleLanguage)
         }
     }
 }
 
 @Composable
-private fun PrayerItem(titleRes: Int, textRes: Int) {
+private fun PrayerItem(titleRes: Int, textRes: Int, bibleLanguage: String) {
     var expanded by remember { mutableStateOf(false) }
     Surface(
         color = MannaTheme.colors.surface,
@@ -296,7 +298,7 @@ private fun PrayerItem(titleRes: Int, textRes: Int) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = stringResource(titleRes),
+                    text = stringResourceIn(bibleLanguage, titleRes),
                     style = MaterialTheme.typography.titleSmall,
                     color = MannaTheme.colors.ink,
                     fontWeight = FontWeight.SemiBold
@@ -310,7 +312,7 @@ private fun PrayerItem(titleRes: Int, textRes: Int) {
             }
             if (expanded) {
                 Text(
-                    text = stringResource(textRes),
+                    text = stringResourceIn(bibleLanguage, textRes),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MannaTheme.colors.soft,
                     lineHeight = 24.sp
@@ -325,6 +327,7 @@ private fun PrayerItem(titleRes: Int, textRes: Int) {
 private fun MysterySetSelector(
     selected: MysterySet,
     todaysSet: MysterySet,
+    bibleLanguage: String,
     onSelect: (MysterySet) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -341,7 +344,7 @@ private fun MysterySetSelector(
                         modifier = Modifier.weight(1f),
                         label = {
                             Column {
-                                Text(stringResource(setNameRes(set)))
+                                Text(stringResourceIn(bibleLanguage, setNameRes(set)))
                                 Text(
                                     text = if (isToday) {
                                         stringResource(R.string.rosary_today_label)

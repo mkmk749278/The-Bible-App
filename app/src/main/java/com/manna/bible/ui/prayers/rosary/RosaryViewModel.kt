@@ -2,6 +2,7 @@ package com.manna.bible.ui.prayers.rosary
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.devotion.MysterySet
 import com.manna.bible.domain.devotion.RosaryProvider
 import com.manna.bible.domain.usecase.ResolveVerseTextUseCase
@@ -9,6 +10,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -37,6 +39,8 @@ data class MysteryUi(
  * @property mysteries The five mysteries of [set] with resolved scripture.
  * @property currentIndex Zero-based index of the mystery being shown.
  * @property beadCount Hail Marys counted in the current decade (0..[DECADE_BEADS]).
+ * @property bibleLanguage BCP-47 tag of the user's Bible language; the prayers and
+ *   mystery names are shown in this language, not the app/system UI locale.
  */
 data class RosaryUiState(
     val isLoading: Boolean = true,
@@ -44,7 +48,8 @@ data class RosaryUiState(
     val todaysSet: MysterySet = MysterySet.JOYFUL,
     val mysteries: List<MysteryUi> = emptyList(),
     val currentIndex: Int = 0,
-    val beadCount: Int = 0
+    val beadCount: Int = 0,
+    val bibleLanguage: String = "en"
 ) {
     val current: MysteryUi? get() = mysteries.getOrNull(currentIndex)
     val total: Int get() = mysteries.size
@@ -66,22 +71,34 @@ data class RosaryUiState(
 @HiltViewModel
 class RosaryViewModel @Inject constructor(
     private val rosaryProvider: RosaryProvider,
-    private val resolveVerseText: ResolveVerseTextUseCase
+    private val resolveVerseText: ResolveVerseTextUseCase,
+    private val preferencesStore: PreferencesStore
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(RosaryUiState())
     val uiState: StateFlow<RosaryUiState> = _uiState.asStateFlow()
 
     init {
+        observeBibleLanguage()
         val today = rosaryProvider.setForDay(LocalDate.now().dayOfWeek.value)
-        _uiState.value = _uiState.value.copy(todaysSet = today)
+        _uiState.update { it.copy(todaysSet = today) }
         selectSet(today)
+    }
+
+    /** Keeps the Bible language current so the prayers render in the user's scripture language. */
+    private fun observeBibleLanguage() {
+        viewModelScope.launch {
+            preferencesStore.setupState.collect { setup ->
+                val language = setup.bibleLanguage ?: "en"
+                _uiState.update { it.copy(bibleLanguage = language) }
+            }
+        }
     }
 
     /** Loads [set]'s mysteries, resolving their scripture, and resets to the first decade. */
     fun selectSet(set: MysterySet) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, set = set)
+            _uiState.update { it.copy(isLoading = true, set = set) }
             val mysteries = rosaryProvider.mysteries(set)
             val resolved = resolveVerseText(mysteries.map { it.scripture })
             val byRef = resolved.associateBy { it.osisRef }
@@ -95,41 +112,38 @@ class RosaryViewModel @Inject constructor(
                     osisRef = match?.osisRef ?: mystery.scripture.format()
                 )
             }
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                mysteries = ui,
-                currentIndex = 0,
-                beadCount = 0
-            )
+            _uiState.update {
+                it.copy(isLoading = false, mysteries = ui, currentIndex = 0, beadCount = 0)
+            }
         }
     }
 
     /** Moves to the next mystery, starting its decade fresh. */
     fun next() {
-        val state = _uiState.value
-        if (state.canGoNext) {
-            _uiState.value = state.copy(currentIndex = state.currentIndex + 1, beadCount = 0)
+        _uiState.update { state ->
+            if (state.canGoNext) state.copy(currentIndex = state.currentIndex + 1, beadCount = 0)
+            else state
         }
     }
 
     /** Moves to the previous mystery, starting its decade fresh. */
     fun previous() {
-        val state = _uiState.value
-        if (state.canGoPrevious) {
-            _uiState.value = state.copy(currentIndex = state.currentIndex - 1, beadCount = 0)
+        _uiState.update { state ->
+            if (state.canGoPrevious) state.copy(currentIndex = state.currentIndex - 1, beadCount = 0)
+            else state
         }
     }
 
     /** Counts one Hail Mary, up to the ten beads of the decade. */
     fun tapBead() {
-        val state = _uiState.value
-        if (state.beadCount < DECADE_BEADS) {
-            _uiState.value = state.copy(beadCount = state.beadCount + 1)
+        _uiState.update { state ->
+            if (state.beadCount < DECADE_BEADS) state.copy(beadCount = state.beadCount + 1)
+            else state
         }
     }
 
     /** Clears the current decade's bead count. */
     fun resetBeads() {
-        _uiState.value = _uiState.value.copy(beadCount = 0)
+        _uiState.update { it.copy(beadCount = 0) }
     }
 }
