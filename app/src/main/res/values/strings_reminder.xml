@@ -17,4 +17,11 @@
     <string name="reminder_channel_description">A gentle daily reminder to read your verse of the day.</string>
     <string name="reminder_notification_title">Manna · Daily bread</string>
     <string name="reminder_notification_text">Your verse of the day is ready.</string>
+
+    <!-- Background download notification -->
+    <string name="download_channel_name">Bible downloads</string>
+    <string name="download_channel_description">Shows progress while a Bible translation is downloading.</string>
+    <string name="download_notification_title">Downloading Bible</string>
+    <string name="download_notification_preparing">Preparing download…</string>
+    <string name="download_notification_progress">%1$d of %2$d chapters</string>
 </resources>

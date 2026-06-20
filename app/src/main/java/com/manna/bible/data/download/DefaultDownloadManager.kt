@@ -8,6 +8,7 @@ import com.manna.bible.data.local.TranslationDao
 import com.manna.bible.data.local.VerseEntity
 import com.manna.bible.data.remote.HelloAoRemoteDataSource
 import com.manna.bible.data.remote.RemoteBook
+import com.manna.bible.domain.download.DownloadForegroundController
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.download.DownloadOutcome
 import com.manna.bible.domain.download.DownloadProgress
@@ -59,6 +60,7 @@ class DefaultDownloadManager @Inject constructor(
     private val translationDao: TranslationDao,
     private val pending: PendingDownloadRepository,
     private val connectivity: ConnectivityChecker,
+    private val foregroundController: DownloadForegroundController,
     @DownloadScope private val scope: CoroutineScope
 ) : DownloadManager {
 
@@ -83,6 +85,10 @@ class DefaultDownloadManager @Inject constructor(
 
         // Clear any stale cancel request from a previous attempt before starting.
         cancelled.remove(translationId)
+
+        // Keep the work alive (and visible) while the app is backgrounded by promoting it
+        // to a foreground service. Never lets a notification failure break the download.
+        foregroundController.ensureRunning()
 
         // Run on the app-lifetime [scope] so leaving the screen or backgrounding the
         // app does NOT cancel and discard the in-flight download. A second call for

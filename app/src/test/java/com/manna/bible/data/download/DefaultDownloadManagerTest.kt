@@ -233,7 +233,12 @@ class DefaultDownloadManagerTest {
         translations: FakeTranslationDao = FakeTranslationDao(),
         pending: FakePending = FakePending(),
         connectivity: FakeConnectivity = FakeConnectivity(online = true)
-    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity, scope)
+    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity, NoopForeground, scope)
+
+    /** Foreground promotion is an Android concern; the JVM tests don't exercise it. */
+    private object NoopForeground : com.manna.bible.domain.download.DownloadForegroundController {
+        override fun ensureRunning() {}
+    }
 
     // --- offline (Req 5.6) ---------------------------------------------------
 
@@ -425,6 +430,7 @@ class DefaultDownloadManagerTest {
             translationDao = translations,
             pending = FakePending(),
             connectivity = FakeConnectivity(online = true),
+            foregroundController = NoopForeground,
             scope = backgroundScope
         )
 
