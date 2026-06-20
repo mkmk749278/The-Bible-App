@@ -53,11 +53,3 @@ interface TtsReader {
         const val DEFAULT_SPEED = 1.0f
     }
 }
-
-/**
- * Seam for future human-narrated audio (Faith Comes By Hearing / Bible Brain),
- * intentionally unimplemented in this feature (Requirement 9.8). Declared so the
- * reader's audio source can later be swapped from TTS to narrated playback without
- * reworking the UI contract.
- */
-interface NarratedAudioProvider
