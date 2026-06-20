@@ -72,6 +72,28 @@
     <string name="rosary_previous">पिछला</string>
     <string name="rosary_next">अगला</string>
 
+    <!--
+      The prayers of the Rosary, in Hindi. Texts sourced verbatim from Hindi Catholic
+      prayer resources (praylingo.com, dioceseofjhansi.com, catholic-television.com).
+      The Our Father is given in the traditional Rosary form (without the doxology).
+    -->
+    <string name="rosary_prayers_title">प्रार्थनाएँ</string>
+    <string name="rosary_prayer_sign_title">क्रूस का चिन्ह</string>
+    <string name="rosary_prayer_creed_title">प्रेरितों का धर्मसार</string>
+    <string name="rosary_prayer_our_father_title">हे हमारे पिता</string>
+    <string name="rosary_prayer_hail_mary_title">प्रणाम मरिया</string>
+    <string name="rosary_prayer_glory_be_title">पिता की महिमा</string>
+    <string name="rosary_prayer_fatima_title">फातिमा प्रार्थना</string>
+    <string name="rosary_prayer_hail_holy_queen_title">पवित्र रानी की जय</string>
+
+    <string name="rosary_prayer_sign">पिता, पुत्र और पवित्र आत्मा के नाम में। आमेन।</string>
+    <string name="rosary_prayer_creed">हम स्वर्ग और पृथ्वी के सृष्टिकर्ता, सर्वशक्तिमान पिता परमेश्वर में विश्वास करते हैं और उस के एकलौते पुत्र हमारे प्रभु, येसु ख्रीस्त पर, जो पवित्र आत्मा के द्वारा गर्भ में आये और कुँवारी मरियम से जन्मे, पोंतुस पिलातुस के शासन काल में क्रूस पर चढाये गए, मर गए, दफनाये गए और अधोलोक में उतरे। तीसरे दिन मृतकों में से जी उठे, स्वर्ग गए, सर्वशक्तिमान पिता परमेश्वर के दाहिने विराजमान हैं। वहां से जीवितों और मृतकों के न्याय करने फिर आएंगे। हम पवित्र आत्मा, पवित्र कैथोलिक कलीसिया, धर्मियों की सहभागिता, पापों की क्षमा, शरीर के पुनरूत्थान और अनंत जीवन में विश्वास करते हैं। आमेन।</string>
+    <string name="rosary_prayer_our_father">हे हमारे स्वर्गबासी पिता, तेरा नाम पवित्र माना जाए, तेरा राज्य आए, तेरी इच्छा जैसे स्वर्ग मे पूरी होती है, वैसे ही पृथ्वी पर पूरी हो, हमारे रोज़ की रोटी आज हमें दे, और जैसे हम अपने रिणियों को क्षमा करते हैं तैसे हमारी रिणों को क्षमा कर, और हमें परीक्षा में मत डाल, परन्तु दुष्ट से बचा। आमेन।</string>
+    <string name="rosary_prayer_hail_mary">प्रणाम मरिया कृपा पूर्ण, प्रभु तेरे साथ है। धन्य है तू स्त्रियों में, और धन्य है तेरे गर्भ का फल येसु। हे संत मरिया, परमेश्वर की माँ, प्रार्थना कर हम पापियों के लिए, अब और हमारे मरने के समय। आमेन।</string>
+    <string name="rosary_prayer_glory_be">पिता, पुत्र और पवित्र आत्मा की बढाई होवें। जैसे वह आदि में थी, अब है और अनंत काल तक। आमेन।</string>
+    <string name="rosary_prayer_fatima">हे मेरे येसु, मेरे पापों को क्षमा कीजिए, नरक की अग्नि से हमें बचाईये, सारी आत्माओं का, विशेषकर जिन्हें आपकी कृपा की अत्यन्त आवश्यकता है, उन्हें स्वर्ग में ले जाईये।</string>
+    <string name="rosary_prayer_hail_holy_queen">पवित्र रानी की जय हो, दया की माँ हमारा जीवन, हमारी मिठास और हमारी आशा। हम तुझे पुकारते हैं, हव्वा की नम्र निर्वासित की हुई सन्तान: तुझे हम अपनी आहें, विलाप और इस आँसू की घाटी में अपनी चिल्लाहट को भेजते हैं। अब मुड़, सबसे कृपालु अधिवक्ता, तेरी दया की आँखें हमारी ओर लगे, और इस बन्धुवाई के पश्चात्, हमें अपने गर्भ के धन्य फल, यीशु को दिखा। हे दयाशील, हे प्यारी, हे मिठास से भरी हुई कुवाँरी मरियम! आमीन।</string>
+
     <string name="joyful_1_title">मंगलवार्ता</string>
     <string name="joyful_2_title">मरियम का एलीशिबा से मिलना</string>
     <string name="joyful_3_title">यीशु का जन्म</string>

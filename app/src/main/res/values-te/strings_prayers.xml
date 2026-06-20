@@ -71,10 +71,8 @@
     <string name="rosary_next">తదుపరి</string>
 
     <!--
-      The prayers of the Rosary. Telugu texts sourced from Telugu Catholic prayer
-      resources (praylingo.com, ministrants.com). The Fatima prayer and the Hail Holy
-      Queen are intentionally omitted here so they fall back to the reviewed English
-      text until their Telugu wording is verified by a native speaker.
+      The prayers of the Rosary, in Telugu. Texts sourced verbatim from Telugu Catholic
+      prayer resources (praylingo.com, ministrants.com, and a Telugu parish prayer page).
     -->
     <string name="rosary_prayers_title">ప్రార్థనలు</string>
     <string name="rosary_prayer_sign_title">సిలువ గుర్తు</string>
@@ -82,12 +80,16 @@
     <string name="rosary_prayer_our_father_title">పరలోకమందున్న మా తండ్రి</string>
     <string name="rosary_prayer_hail_mary_title">మంగళవార్త జపము</string>
     <string name="rosary_prayer_glory_be_title">పితకు మహిమ</string>
+    <string name="rosary_prayer_fatima_title">ఫాతిమా ప్రార్థన</string>
+    <string name="rosary_prayer_hail_holy_queen_title">కృపారసముగల మాత</string>
 
     <string name="rosary_prayer_sign">పిత, పుత్ర, పవిత్రాత్మ నామమున, ఆమెన్.</string>
     <string name="rosary_prayer_creed">ఆకాశమును భూమిని సృష్టించిన, సర్వశక్తిగల తండ్రియైన దేవునిలో, మరియు ఆయన అద్వితీయ కుమారుడు, మన ప్రభువైన యేసు క్రీస్తులో నేను విశ్వసించుచున్నాను. ఆయన పరిశుద్ధాత్మ ద్వారా జన్మించి, కన్య మరియకు పుట్టెను; పొంతి పిలాతు కింద శ్రమపడి, సిలువ వేయబడి, మరణించి, సమాధి చేయబడెను. మూడవ రోజు మృతులలోనుండి లేచెను; పరలోకానికి ఆరోహణుడై, సర్వశక్తిగల తండ్రియైన దేవుని కుడిపార్శ్వమున కూర్చుండెను; అక్కడనుండి సజీవులకును మృతులకును తీర్పు తీర్చుటకు ఆయన వచ్చును. పరిశుద్ధాత్మలో, పరిశుద్ధమైన సార్వత్రిక సంఘములో, పరిశుద్ధుల సహవాసములో, పాపక్షమాపణలో, శరీర పునరుత్థానములో, నిత్యజీవములో నేను విశ్వసించుచున్నాను. ఆమెన్.</string>
     <string name="rosary_prayer_our_father">పరలోకమందున్న మా తండ్రీ, నీ నామము పరిశుద్ధపరచబడుగాక; నీ రాజ్యము వచ్చుగాక; నీ చిత్తము పరలోకమందు నెరవేరుచున్నట్లు భూమియందును నెరవేరునుగాక. మా అనుదినాహారము నేడు మాకు దయచేయుము. మా ఋణస్థులను మేము క్షమించియున్న ప్రకారము మా ఋణములు క్షమించుము. మమ్మును శోధనలోనికి తేక దుష్టునినుండి మమ్మును తప్పించుము. ఆమెన్.</string>
     <string name="rosary_prayer_hail_mary">దేవర వరప్రసాదముచేత నిండిన మరియమ్మా! వందనము. ఏలినవారు మీతో ఉన్నారు. స్త్రీలలో ఆశీర్వదింపబడినవారు మీరే; మీ గర్భఫలమగు యేసు ఆశీర్వదింపబడినవారు. పరిశుద్ధ మరియమ్మా, సర్వేశ్వరుని మాతా, పాపాత్ములమైయుండెడు మా కొరకు ఇప్పుడును, మా మరణ సమయమందును ప్రార్థించుము. ఆమెన్.</string>
     <string name="rosary_prayer_glory_be">పితకు, పుత్రునకు, పవిత్రాత్మకు మహిమ కలుగునుగాక; ఆదిలోవలె ఇప్పుడును, ఎల్లప్పుడును కలుగునుగాక. ఆమెన్.</string>
+    <string name="rosary_prayer_fatima">ఓ నా యేసువా! మా పాపాలు మన్నించండి. మమ్ము నరకాగ్నినుండి కాపాడండి. ఆత్మలన్నింటినీ, ముఖ్యముగా మీ కృప అత్యవసరమైన వాటిని మోక్షమునకు తీసుకొని పొండి. ఆమెన్.</string>
+    <string name="rosary_prayer_hail_holy_queen">కృపారసముగల మాతవై యుండెడు రాజ్ఞీ! వందనము మా జీవమా! మా మధురమా! మా శరణమా! వందనము పరదేశులమై యుండెడు మేము ఏవ యొక్క బిడ్డలము మిమ్ము చూచి మొరపెట్టుచున్నాము ఈ కన్నీటి కనుమయందు ప్రలాపించి యేడ్చేడు మేము మిమ్ము చూచి నిట్టూర్పు విడుచుచున్నాము అందువలన మా కొరకు మనవి చేసెడు తల్లీ! మీ దయారసముగల కన్నులను మా మీదకు త్రిప్పనవదరించండి. ఇదిగాక ఈ పరదేశము గడచిన తరువాత ఆశీర్వదింపబడిన మీ గర్భఫలమగు యేసునాధుని ప్రత్యక్షమైన దర్శనమును మాకివ్వ నవదరించండి. కృపగల తల్లీ! దయారసముగల తల్లీ! ఓ మధురమైన కన్యమరియమ్మా! ఆమెన్.</string>
 
     <string name="joyful_1_title">దేవదూత సందేశం</string>
     <string name="joyful_2_title">మరియ ఎలీసబెతును దర్శించుట</string>
