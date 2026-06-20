@@ -24,4 +24,11 @@
     <string name="download_notification_title">Downloading Bible</string>
     <string name="download_notification_preparing">Preparing download…</string>
     <string name="download_notification_progress">%1$d of %2$d chapters</string>
+
+    <!-- Background audio playback notification -->
+    <string name="media_channel_name">Audio playback</string>
+    <string name="media_channel_description">Keeps read-aloud and narrated audio playing in the background.</string>
+    <string name="media_notification_title">Manna · Playing</string>
+    <string name="media_notification_text">Reading scripture aloud</string>
+    <string name="media_notification_stop">Stop</string>
 </resources>
