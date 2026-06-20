@@ -2,6 +2,7 @@ package com.manna.bible.ui.util
 
 import android.content.Context
 import android.content.res.Configuration
+import androidx.annotation.ArrayRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -41,3 +42,8 @@ fun rememberLocalizedContext(languageTag: String): Context {
 @Composable
 fun stringResourceIn(languageTag: String, @StringRes id: Int): String =
     rememberLocalizedContext(languageTag).getString(id)
+
+/** Resolves a string-array [id] in [languageTag] (the Bible language). */
+@Composable
+fun stringArrayResourceIn(languageTag: String, @ArrayRes id: Int): Array<String> =
+    rememberLocalizedContext(languageTag).resources.getStringArray(id)

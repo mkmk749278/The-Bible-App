@@ -30,7 +30,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -42,6 +41,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringArrayResourceIn
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -64,7 +66,8 @@ fun SramanikalScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.prayers_back)
-    val reflections = stringArrayResource(R.array.sramanikal_reflections)
+    val bibleLanguage = rememberBibleLanguage()
+    val reflections = stringArrayResourceIn(bibleLanguage, R.array.sramanikal_reflections)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -99,6 +102,7 @@ fun SramanikalScreen(
                 modifier = Modifier.padding(padding),
                 state = state,
                 reflection = reflections.getOrNull(state.viewedDay - 1),
+                bibleLanguage = bibleLanguage,
                 onPrevious = viewModel::previous,
                 onNext = viewModel::next,
                 onOpenVerse = onOpenVerse,
@@ -150,6 +154,7 @@ private fun ActiveDay(
     modifier: Modifier,
     state: SramanikalUiState,
     reflection: String?,
+    bibleLanguage: String,
     onPrevious: () -> Unit,
     onNext: () -> Unit,
     onOpenVerse: (String) -> Unit,
@@ -223,7 +228,7 @@ private fun ActiveDay(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = stringResource(R.string.paraloka_prayer_commendation_text),
+                text = stringResourceIn(bibleLanguage, R.string.paraloka_prayer_commendation_text),
                 style = MaterialTheme.typography.bodyLarge,
                 color = MannaTheme.colors.soft,
                 lineHeight = 26.sp

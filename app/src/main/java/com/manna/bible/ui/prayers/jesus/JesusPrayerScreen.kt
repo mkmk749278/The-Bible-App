@@ -51,6 +51,8 @@ import com.manna.bible.R
 import com.manna.bible.domain.devotion.PrayerDepth
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -84,6 +86,7 @@ fun JesusPrayerScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.prayers_back)
+    val bibleLanguage = rememberBibleLanguage()
     var breathing by remember { mutableStateOf(false) }
 
     Scaffold(
@@ -112,7 +115,7 @@ fun JesusPrayerScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             Text(
-                text = stringResource(R.string.jesus_prayer_text),
+                text = stringResourceIn(bibleLanguage, R.string.jesus_prayer_text),
                 fontFamily = ScriptureFontFamily,
                 style = MaterialTheme.typography.headlineSmall,
                 color = MannaTheme.colors.ink,
@@ -126,7 +129,7 @@ fun JesusPrayerScreen(
             )
 
             if (breathing) {
-                BreathingGuide()
+                BreathingGuide(bibleLanguage = bibleLanguage)
                 TextButton(
                     onClick = { breathing = false },
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -168,7 +171,7 @@ fun JesusPrayerScreen(
  * exhale phrase, pacing the prayer to the breath over an 8-second cycle.
  */
 @Composable
-private fun BreathingGuide() {
+private fun BreathingGuide(bibleLanguage: String) {
     val transition = rememberInfiniteTransition(label = "breath")
     val progress by transition.animateFloat(
         initialValue = 0f,
@@ -217,7 +220,8 @@ private fun BreathingGuide() {
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = stringResource(
+            text = stringResourceIn(
+                bibleLanguage,
                 if (inhaling) R.string.jesus_prayer_breath_in
                 else R.string.jesus_prayer_breath_out
             ),

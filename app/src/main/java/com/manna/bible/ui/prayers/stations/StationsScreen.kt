@@ -36,6 +36,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -80,6 +82,7 @@ fun StationsScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.prayers_back)
+    val bibleLanguage = rememberBibleLanguage()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -133,7 +136,7 @@ fun StationsScreen(
                 )
                 StationTitles.getOrNull(current.number - 1)?.let { titleRes ->
                     Text(
-                        text = stringResource(titleRes),
+                        text = stringResourceIn(bibleLanguage, titleRes),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MannaTheme.colors.ink,
                         fontWeight = FontWeight.SemiBold
@@ -143,13 +146,13 @@ fun StationsScreen(
                 // Versicle & response.
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
-                        text = stringResource(R.string.stations_versicle),
+                        text = stringResourceIn(bibleLanguage, R.string.stations_versicle),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MannaTheme.colors.soft,
                         fontWeight = FontWeight.Medium
                     )
                     Text(
-                        text = stringResource(R.string.stations_response),
+                        text = stringResourceIn(bibleLanguage, R.string.stations_response),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MannaTheme.colors.gold
                     )
@@ -167,13 +170,13 @@ fun StationsScreen(
                 StationReflections.getOrNull(current.number - 1)?.let { reflectionRes ->
                     LabelledProse(
                         label = stringResource(R.string.stations_reflection_label),
-                        body = stringResource(reflectionRes)
+                        body = stringResourceIn(bibleLanguage, reflectionRes)
                     )
                 }
                 StationPrayers.getOrNull(current.number - 1)?.let { prayerRes ->
                     LabelledProse(
                         label = stringResource(R.string.stations_prayer_label),
-                        body = stringResource(prayerRes)
+                        body = stringResourceIn(bibleLanguage, prayerRes)
                     )
                 }
 
