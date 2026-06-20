@@ -365,7 +365,7 @@ class ReaderViewModel @Inject constructor(
     /** Opens an explicit book+chapter (e.g. from the picker, Req 3.6). */
     fun openChapter(osisId: String, chapter: Int) {
         stopAudio()
-        viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = 1) }
+        viewModelScope.launch { loadChapter(osisId, chapter, targetVerse = 1, autoPlay = true) }
     }
 
     /**
@@ -381,14 +381,17 @@ class ReaderViewModel @Inject constructor(
     /** Advances to the next chapter in canon order, if one exists (Req 3.1). */
     fun nextChapter() {
         stopAudio()
-        viewModelScope.launch { loadNextChapter() }
+        viewModelScope.launch { loadNextChapter(autoPlay = true) }
     }
 
     /**
      * Loads the next canon-ordered chapter in place, returning false at the canon's
      * end. Used both by manual navigation and continuous-play advance (Req 3.1, 9.7).
+     *
+     * [autoPlay] requests Simplified-Mode auto-read on arrival; the continuous-play
+     * path leaves it false because it starts audio itself after advancing.
      */
-    private suspend fun loadNextChapter(): Boolean {
+    private suspend fun loadNextChapter(autoPlay: Boolean = false): Boolean {
         val state = _uiState.value
         val profile = state.profile ?: return false
         val osisId = state.osisId ?: return false
@@ -397,7 +400,7 @@ class ReaderViewModel @Inject constructor(
             ReadingRef(osisId, state.chapter),
             state.books
         ) ?: return false
-        loadChapter(next.osisId, next.chapter, targetVerse = 1)
+        loadChapter(next.osisId, next.chapter, targetVerse = 1, autoPlay = autoPlay)
         return true
     }
 
@@ -412,7 +415,9 @@ class ReaderViewModel @Inject constructor(
             ReadingRef(osisId, state.chapter),
             state.books
         ) ?: return
-        viewModelScope.launch { loadChapter(previous.osisId, previous.chapter, targetVerse = 1) }
+        viewModelScope.launch {
+            loadChapter(previous.osisId, previous.chapter, targetVerse = 1, autoPlay = true)
+        }
     }
 
     /** Requests a scroll to [verse] within the current chapter (Req 10.4). */
@@ -626,7 +631,8 @@ class ReaderViewModel @Inject constructor(
         osisId: String,
         chapter: Int,
         targetVerse: Int,
-        highlight: Boolean = false
+        highlight: Boolean = false,
+        autoPlay: Boolean = false
     ) {
         val state = _uiState.value
         val translationId = state.activeTranslationId ?: return
@@ -685,6 +691,14 @@ class ReaderViewModel @Inject constructor(
         )
 
         saveReadingPositionUseCase(ReadingRef(osisId, chapter, targetVerse))
+
+        // Simplified / Elder Mode is audio-first: when the reader opens a chapter by
+        // navigation (next/previous/picker), begin reading it aloud automatically so a
+        // listening user never has to find the play button (Req 14.5). The continuous-
+        // play and targeted-jump paths pass autoPlay = false and manage audio themselves.
+        if (autoPlay && _uiState.value.simplifiedMode && _uiState.value.verses.isNotEmpty()) {
+            startAudio()
+        }
     }
 
     /** Recomputes annotation flags on the currently rendered verses. */
