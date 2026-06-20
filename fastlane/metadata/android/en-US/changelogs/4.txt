@@ -1,0 +1,3 @@
+• Privacy hardening for the Play release: your notes, prayers and highlights are
+  never copied to cloud backup
+• Explicit HTTPS-only network policy

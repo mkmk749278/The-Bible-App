@@ -3,6 +3,13 @@
 All notable changes to Manna are documented here. Versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.2] — 2026-06-20
+
+### Changed
+- Privacy hardening for the first Google Play release: user notes, prayers and
+  highlights are excluded from Android cloud backup (`allowBackup=false`), and the app
+  declares an explicit HTTPS‑only network policy.
+
 ## [0.2.1] — 2026-06-20
 
 ### Added
