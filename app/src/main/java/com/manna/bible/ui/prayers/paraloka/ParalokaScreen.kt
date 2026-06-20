@@ -34,6 +34,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -111,6 +113,7 @@ fun ParalokaScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.prayers_back)
+    val bibleLanguage = rememberBibleLanguage()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -149,10 +152,10 @@ fun ParalokaScreen(
             items(state.passages, key = { it.id }) { passage ->
                 if (passage.verseText != null && passage.reference != null) {
                     PassageCard(
-                        theme = stringResource(passageThemeRes(passage.id)),
+                        theme = stringResourceIn(bibleLanguage, passageThemeRes(passage.id)),
                         text = passage.verseText,
                         reference = passage.reference,
-                        reflection = stringResource(passageReflectionRes(passage.id)),
+                        reflection = stringResourceIn(bibleLanguage, passageReflectionRes(passage.id)),
                         onClick = { passage.osisRef?.let(onOpenVerse) }
                     )
                 }
@@ -162,8 +165,8 @@ fun ParalokaScreen(
             }
             items(state.prayers, key = { it.id }) { prayer ->
                 PrayerCard(
-                    title = stringResource(prayerTitleRes(prayer.id)),
-                    text = stringResource(prayerTextRes(prayer.id)),
+                    title = stringResourceIn(bibleLanguage, prayerTitleRes(prayer.id)),
+                    text = stringResourceIn(bibleLanguage, prayerTextRes(prayer.id)),
                     reference = prayer.reference,
                     onClick = { prayer.osisRef?.let(onOpenVerse) }
                 )
