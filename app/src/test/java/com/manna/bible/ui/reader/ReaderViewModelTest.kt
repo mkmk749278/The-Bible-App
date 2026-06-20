@@ -266,6 +266,46 @@ class ReaderViewModelTest {
     }
 
     @Test
+    @DisplayName("Simplified Mode auto-reads a chapter opened by navigation (Req 14.5)")
+    fun simplifiedModeAutoPlaysOnNavigation() = runTest {
+        val tts = FakeTtsReader()
+        val prefs = FakePreferencesStore(simplifiedMode = true)
+        val vm = viewModel(prefs = prefs, ttsReader = tts)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            // The restored initial chapter is not auto-read — only navigation triggers it.
+            assertFalse(expectMostRecentItem().isAudioPlaying)
+
+            vm.nextChapter()
+            advanceUntilIdle()
+
+            val state = expectMostRecentItem()
+            assertEquals(2, state.chapter)
+            assertTrue(state.isAudioPlaying)
+            assertEquals(listOf("Thus the heavens"), tts.lastVerses.map { it.text })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("with Simplified Mode off, navigation does not start audio (Req 14.5)")
+    fun normalModeDoesNotAutoPlay() = runTest {
+        val tts = FakeTtsReader()
+        val vm = viewModel(ttsReader = tts)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            vm.nextChapter()
+            advanceUntilIdle()
+            val state = expectMostRecentItem()
+            assertEquals(2, state.chapter)
+            assertFalse(state.isAudioPlaying)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     @DisplayName("an RTL Bible language renders the reader right-to-left (Req 14.4)")
     fun rtlLanguageSetsRtlState() = runTest {
         val vm = viewModel(prefs = FakePreferencesStore(bibleLanguage = "ur"))
@@ -359,9 +399,11 @@ class ReaderViewModelTest {
         lastRead: String? = null,
         denomination: Denomination = Denomination.PROTESTANT_OTHER,
         continuousPlay: Boolean = false,
-        bibleLanguage: String = "en"
+        bibleLanguage: String = "en",
+        simplifiedMode: Boolean = false
     ) : PreferencesStore {
         private val continuousPlayFlow = MutableStateFlow(continuousPlay)
+        private val simplifiedModeFlow = MutableStateFlow(simplifiedMode)
         private val state = MutableStateFlow(
             SetupState(
                 denomination = denomination,
@@ -383,6 +425,7 @@ class ReaderViewModelTest {
         override val setupState: Flow<SetupState> = state
         override val lastReadPosition: Flow<String?> = lastReadFlow
         override val continuousPlay: Flow<Boolean> = continuousPlayFlow
+        override val simplifiedMode: Flow<Boolean> = simplifiedModeFlow
 
         override suspend fun saveSetup(state: SetupState) { this.state.value = state }
         override suspend fun setSetupCompleted(value: Boolean) {}

@@ -79,6 +79,12 @@ import com.manna.bible.ui.theme.ScriptureFontFamily
 
 private val MinTouchTarget = 48.dp
 
+/** Larger touch target for Simplified / Elder Mode — easier to hit (Req 14.5). */
+private val SimplifiedTouchTarget = 56.dp
+
+/** The touch target to use given whether Simplified Mode is on. */
+private fun touchTarget(simplified: Boolean) = if (simplified) SimplifiedTouchTarget else MinTouchTarget
+
 /**
  * The offline `Reader_Screen` (Requirements 2, 3, 6, 8, 11.1).
  *
@@ -146,6 +152,7 @@ fun ReaderScreen(
             ReaderTopBar(
                 bookName = state.bookName,
                 displayedChapterNumber = state.displayedChapterNumber,
+                simplified = state.simplifiedMode,
                 onOpenPicker = { showPicker = true },
                 showMenu = showMenu,
                 onMenuToggle = { showMenu = it },
@@ -250,6 +257,7 @@ fun ReaderScreen(
 private fun ReaderTopBar(
     bookName: String,
     displayedChapterNumber: Int,
+    simplified: Boolean = false,
     onOpenPicker: () -> Unit,
     showMenu: Boolean,
     onMenuToggle: (Boolean) -> Unit,
@@ -265,13 +273,14 @@ private fun ReaderTopBar(
     }
     val pickerDescription = stringResource(R.string.reader_open_picker)
     val moreDescription = stringResource(R.string.reader_more_options)
+    val target = touchTarget(simplified)
     TopAppBar(
         title = {
             Text(
                 text = heading,
                 fontWeight = FontWeight.SemiBold,
                 modifier = Modifier
-                    .defaultMinSize(minHeight = MinTouchTarget)
+                    .defaultMinSize(minHeight = target)
                     .clickable(onClick = onOpenPicker)
                     .semantics { contentDescription = heading }
             )
@@ -280,20 +289,20 @@ private fun ReaderTopBar(
             IconButton(
                 onClick = onOpenPicker,
                 modifier = Modifier
-                    .size(MinTouchTarget)
+                    .size(target)
                     .semantics { contentDescription = pickerDescription }
             ) {
-                Text(text = "\u2630", fontSize = 20.sp)
+                Text(text = "\u2630", fontSize = if (simplified) 24.sp else 20.sp)
             }
         },
         actions = {
             IconButton(
                 onClick = { onMenuToggle(true) },
                 modifier = Modifier
-                    .size(MinTouchTarget)
+                    .size(target)
                     .semantics { contentDescription = moreDescription }
             ) {
-                Text(text = "\u22EE", fontSize = 22.sp)
+                Text(text = "\u22EE", fontSize = if (simplified) 26.sp else 22.sp)
             }
             DropdownMenu(expanded = showMenu, onDismissRequest = { onMenuToggle(false) }) {
                 if (onOpenCrisis != null) {
@@ -348,6 +357,7 @@ private fun ReaderBottomBar(
                 isActive = state.isAudioActive,
                 speed = state.ttsSpeed,
                 continuousPlay = state.continuousPlay,
+                simplified = state.simplifiedMode,
                 onPlayPause = onAudioPlayPause,
                 onStop = onAudioStop,
                 onCycleSpeed = onCycleSpeed,
@@ -444,11 +454,14 @@ private fun AudioMiniPlayer(
     isActive: Boolean,
     speed: Float,
     continuousPlay: Boolean,
+    simplified: Boolean = false,
     onPlayPause: () -> Unit,
     onStop: () -> Unit,
     onCycleSpeed: () -> Unit,
     onToggleContinuous: () -> Unit
 ) {
+    // Simplified / Elder Mode gives the listening controls larger, easier targets.
+    val target = touchTarget(simplified)
     val playPauseLabel = if (isPlaying) {
         stringResource(R.string.reader_audio_pause)
     } else if (isActive) {
@@ -472,7 +485,7 @@ private fun AudioMiniPlayer(
         // Prominent circular play/pause — the primary control of the mini player.
         Box(
             modifier = Modifier
-                .size(48.dp)
+                .size(target)
                 .clip(CircleShape)
                 .background(MannaTheme.colors.gold)
                 .clickable(onClick = onPlayPause)
@@ -481,7 +494,7 @@ private fun AudioMiniPlayer(
         ) {
             Text(
                 text = if (isPlaying) "⏸" else "▶",
-                fontSize = 20.sp,
+                fontSize = if (simplified) 24.sp else 20.sp,
                 color = MannaTheme.colors.bg
             )
         }
@@ -498,7 +511,7 @@ private fun AudioMiniPlayer(
         TextButton(
             onClick = onCycleSpeed,
             modifier = Modifier
-                .defaultMinSize(minHeight = MinTouchTarget)
+                .defaultMinSize(minHeight = target)
                 .semantics { contentDescription = speedLabel }
         ) {
             Text(
@@ -511,7 +524,7 @@ private fun AudioMiniPlayer(
         TextButton(
             onClick = onToggleContinuous,
             modifier = Modifier
-                .defaultMinSize(minHeight = MinTouchTarget)
+                .defaultMinSize(minHeight = target)
                 .semantics { contentDescription = continuousLabel }
         ) {
             Text(
@@ -525,10 +538,10 @@ private fun AudioMiniPlayer(
             IconButton(
                 onClick = onStop,
                 modifier = Modifier
-                    .size(MinTouchTarget)
+                    .size(target)
                     .semantics { contentDescription = stopLabel }
             ) {
-                Text(text = "■", fontSize = 18.sp, color = MannaTheme.colors.soft)
+                Text(text = "■", fontSize = if (simplified) 22.sp else 18.sp, color = MannaTheme.colors.soft)
             }
         }
     }
@@ -677,7 +690,7 @@ private fun VerseRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .defaultMinSize(minHeight = MinTouchTarget)
+            .defaultMinSize(minHeight = touchTarget(enlarged))
             .clip(RoundedCornerShape(8.dp))
             .then(if (rowBackground != null) Modifier.background(rowBackground) else Modifier)
             .clickable(onClick = onClick)
