@@ -1,6 +1,7 @@
 package com.manna.bible
 
 import com.manna.bible.data.bundled.BundledBibleSeeder
+import com.manna.bible.domain.audio.AudioForegroundController
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.repository.TranslationRepository
 import kotlinx.coroutines.CoroutineScope
@@ -26,7 +27,8 @@ import javax.inject.Singleton
 class MannaInitializer @Inject constructor(
     private val seeder: BundledBibleSeeder,
     private val translationRepository: TranslationRepository,
-    private val downloadManager: DownloadManager
+    private val downloadManager: DownloadManager,
+    private val audioForegroundController: AudioForegroundController
 ) {
 
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -36,5 +38,7 @@ class MannaInitializer @Inject constructor(
         scope.launch { runCatching { seeder.seed() } }
         scope.launch { runCatching { translationRepository.refreshCatalog() } }
         scope.launch { runCatching { downloadManager.retryPending() } }
+        // Watch playback so audio keeps running when the app is backgrounded.
+        runCatching { audioForegroundController.start() }
     }
 }
