@@ -1,0 +1,5 @@
+• Narrated chapter audio (streamed) with automatic text-to-speech fallback
+• Elder / Simplified Mode in the reader: auto read-aloud + large controls
+• The Rosary (Japamala) now shows full prayers in Telugu, Hindi, Tamil & Malayalam
+• Multiple daily prayer-bell reminder times
+• Share the day's verse as an image card
