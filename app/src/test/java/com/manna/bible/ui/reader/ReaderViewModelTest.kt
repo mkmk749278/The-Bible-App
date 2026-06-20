@@ -12,6 +12,8 @@ import com.manna.bible.domain.model.Highlight
 import com.manna.bible.domain.model.Note
 import com.manna.bible.domain.model.NumberingScheme
 import com.manna.bible.domain.model.SetupState
+import com.manna.bible.domain.audio.ChapterAudioSource
+import com.manna.bible.domain.audio.NarratedAudioPlayer
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.audio.TtsState
 import com.manna.bible.domain.audio.TtsStatus
@@ -82,6 +84,8 @@ class ReaderViewModelTest {
         prefs: FakePreferencesStore = FakePreferencesStore(),
         annotations: FakeAnnotationRepository = FakeAnnotationRepository(),
         ttsReader: FakeTtsReader = FakeTtsReader(),
+        narratedPlayer: FakeNarratedAudioPlayer = FakeNarratedAudioPlayer(),
+        chapterAudioSource: ChapterAudioSource = FakeChapterAudioSource(),
         explanationRepository: com.manna.bible.domain.explain.ExplanationRepository =
             FakeExplanationRepository()
     ): ReaderViewModel {
@@ -99,6 +103,8 @@ class ReaderViewModelTest {
             translationRepository = FakeTranslationRepository(),
             downloadManager = FakeDownloadManager(),
             ttsReader = ttsReader,
+            narratedPlayer = narratedPlayer,
+            chapterAudioSource = chapterAudioSource,
             explanationRepository = explanationRepository
         )
     }
@@ -261,6 +267,60 @@ class ReaderViewModelTest {
             val state = expectMostRecentItem()
             assertEquals(2, state.chapter)
             assertEquals(listOf("Thus the heavens"), tts.lastVerses.map { it.text })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("narrated audio streams when a track exists, instead of TTS (Req 9.8)")
+    fun narratedAudioStreamsWhenAvailable() = runTest {
+        val tts = FakeTtsReader()
+        val narrated = FakeNarratedAudioPlayer()
+        val vm = viewModel(
+            ttsReader = tts,
+            narratedPlayer = narrated,
+            chapterAudioSource = FakeChapterAudioSource(url = "https://audio.example/gen1.mp3")
+        )
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            vm.onAudioPlayPause()
+            advanceUntilIdle()
+
+            // The chapter streamed via the narrated player; TTS was not used.
+            assertEquals("https://audio.example/gen1.mp3", narrated.lastUrl)
+            assertTrue(tts.lastVerses.isEmpty())
+            val state = expectMostRecentItem()
+            assertTrue(state.isAudioPlaying)
+            // Narrated audio has no per-verse timing, so no verse is highlighted.
+            assertEquals(null, state.audioVerse)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("a narrated stream failure falls back to on-device TTS (Req 9.8)")
+    fun narratedFailureFallsBackToTts() = runTest {
+        val tts = FakeTtsReader()
+        val narrated = FakeNarratedAudioPlayer()
+        val vm = viewModel(
+            ttsReader = tts,
+            narratedPlayer = narrated,
+            chapterAudioSource = FakeChapterAudioSource(url = "https://audio.example/gen1.mp3")
+        )
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            vm.onAudioPlayPause()
+            advanceUntilIdle()
+            assertEquals("https://audio.example/gen1.mp3", narrated.lastUrl)
+
+            narrated.failStream()
+            advanceUntilIdle()
+
+            // The reader fell back to TTS for the same chapter.
+            assertEquals(listOf("In the beginning", "And the earth"), tts.lastVerses.map { it.text })
+            assertTrue(expectMostRecentItem().isAudioPlaying)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -554,6 +614,40 @@ class ReaderViewModelTest {
         fun completeChapter() {
             _state.value = TtsState(status = TtsStatus.IDLE, currentVerse = null)
             _completions.tryEmit(Unit)
+        }
+    }
+
+    /** Chapter audio source that returns a fixed URL (or null = no narrated audio). */
+    private class FakeChapterAudioSource(private val url: String? = null) : ChapterAudioSource {
+        override suspend fun audioUrl(translationId: String, osisId: String, chapter: Int): String? = url
+    }
+
+    /** In-memory [NarratedAudioPlayer] that records the streamed URL and drives state directly. */
+    private class FakeNarratedAudioPlayer : NarratedAudioPlayer {
+        private val _state = MutableStateFlow(TtsState())
+        override val state: StateFlow<TtsState> get() = _state
+        private val _completions = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        override val completionEvents: Flow<Unit> = _completions.asSharedFlow()
+        private val _errors = MutableSharedFlow<Unit>(extraBufferCapacity = 1)
+        override val errorEvents: Flow<Unit> = _errors.asSharedFlow()
+
+        var lastUrl: String? = null
+            private set
+
+        override fun play(url: String, speed: Float) {
+            lastUrl = url
+            _state.value = TtsState(status = TtsStatus.PLAYING, speed = speed)
+        }
+
+        override fun pause() { _state.value = _state.value.copy(status = TtsStatus.PAUSED) }
+        override fun resume() { _state.value = _state.value.copy(status = TtsStatus.PLAYING) }
+        override fun stop() { _state.value = TtsState(status = TtsStatus.IDLE) }
+        override fun setSpeed(speed: Float) { _state.value = _state.value.copy(speed = speed) }
+
+        /** Simulates a stream failure that should make the reader fall back to TTS. */
+        fun failStream() {
+            _state.value = TtsState(status = TtsStatus.IDLE)
+            _errors.tryEmit(Unit)
         }
     }
 }

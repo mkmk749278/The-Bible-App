@@ -20,10 +20,12 @@ object FeatureFlags {
 
     /**
      * Human-narrated chapter audio (streamed) instead of on-device TTS (Phase 1,
-     * Req 9.8). Off until the ExoPlayer playback path is wired and device-verified;
-     * the [com.manna.bible.domain.audio.ChapterAudioSource] data seam is in place.
+     * Req 9.8). Wired through Media3 ExoPlayer ([com.manna.bible.domain.audio
+     * .NarratedAudioPlayer]); when online and a narrated track exists for the chapter
+     * it streams that, otherwise it falls back to on-device TTS — and any stream error
+     * falls back too, so a listener always hears something.
      */
-    const val NARRATED_AUDIO: Boolean = false
+    const val NARRATED_AUDIO: Boolean = true
 
     /**
      * On-device Gemini Nano AI via the AICore Prompt API (Phase 3). When on, the

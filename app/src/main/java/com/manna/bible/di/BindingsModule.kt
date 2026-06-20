@@ -21,11 +21,13 @@ import com.manna.bible.data.repository.DefaultPrayerRepository
 import com.manna.bible.data.repository.DefaultSermonRepository
 import com.manna.bible.data.repository.DefaultTranslationRepository
 import com.manna.bible.audio.AndroidSpeechEngine
+import com.manna.bible.data.audio.DefaultNarratedAudioPlayer
 import com.manna.bible.data.audio.HelloAoChapterAudioSource
 import com.manna.bible.domain.attribution.AttributionProvider
 import com.manna.bible.domain.audio.ChapterAudioSource
 import com.manna.bible.domain.attribution.DefaultAttributionProvider
 import com.manna.bible.domain.audio.DefaultTtsReader
+import com.manna.bible.domain.audio.NarratedAudioPlayer
 import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.calendar.DefaultJesusEventsProvider
@@ -208,6 +210,10 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindChapterAudioSource(impl: HelloAoChapterAudioSource): ChapterAudioSource
+
+    @Binds
+    @Singleton
+    abstract fun bindNarratedAudioPlayer(impl: DefaultNarratedAudioPlayer): NarratedAudioPlayer
 
     // --- attribution ---------------------------------------------------------
 

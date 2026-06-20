@@ -171,6 +171,9 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.okhttp.logging)
 
+    // Media3 (ExoPlayer) — streams human-narrated chapter audio (Req 9.8).
+    implementation(libs.androidx.media3.exoplayer)
+
     // On-device Gemini Nano (AICore Prompt API) for offline "Explain this passage".
     // minSdk 31; gated at runtime + via tools:overrideLibrary so the app still ships
     // to API 26. Experimental artifact — pinned and used behind FeatureFlags.GEMINI_NANO_AI.

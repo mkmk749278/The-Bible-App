@@ -22,6 +22,7 @@ kotlinxCoroutines = "1.9.0"
 retrofit = "2.11.0"
 okhttp = "4.12.0"
 retrofitKotlinxConverter = "1.0.0"
+media3 = "1.4.1"
 aicore = "0.0.1-exp02"
 junit5 = "5.11.3"
 turbine = "1.2.0"
@@ -58,6 +59,7 @@ retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = 
 retrofit-kotlinx-converter = { group = "com.jakewharton.retrofit", name = "retrofit2-kotlinx-serialization-converter", version.ref = "retrofitKotlinxConverter" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
 aicore = { group = "com.google.ai.edge.aicore", name = "aicore", version.ref = "aicore" }
 junit-jupiter-api = { group = "org.junit.jupiter", name = "junit-jupiter-api", version.ref = "junit5" }
 junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engine", version.ref = "junit5" }

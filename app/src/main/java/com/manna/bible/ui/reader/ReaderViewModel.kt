@@ -3,6 +3,9 @@ package com.manna.bible.ui.reader
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
+import com.manna.bible.domain.FeatureFlags
+import com.manna.bible.domain.audio.ChapterAudioSource
+import com.manna.bible.domain.audio.NarratedAudioPlayer
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.audio.TtsStatus
 import com.manna.bible.domain.audio.TtsVerse
@@ -173,11 +176,18 @@ class ReaderViewModel @Inject constructor(
     private val translationRepository: TranslationRepository,
     private val downloadManager: DownloadManager,
     private val ttsReader: TtsReader,
+    private val narratedPlayer: NarratedAudioPlayer,
+    private val chapterAudioSource: ChapterAudioSource,
     private val explanationRepository: ExplanationRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReaderUiState())
     val uiState: StateFlow<ReaderUiState> = _uiState.asStateFlow()
+
+    // True while the narrated (ExoPlayer) engine is the active audio source rather than
+    // on-device TTS. Determines which engine's state mirrors into the audio bar and
+    // which engine the play/pause/stop/speed controls dispatch to.
+    private var narratedActive = false
 
     // Latest canon-visible annotation snapshots, used to flag verses in the reader.
     private var highlights: List<Highlight> = emptyList()
@@ -217,15 +227,33 @@ class ReaderViewModel @Inject constructor(
      * the next chapter and keeps reading when continuous play is enabled (Req 9.7).
      */
     private fun observeAudio() {
+        // On-device TTS mirrors into the audio bar only while it is the active engine.
         viewModelScope.launch {
             ttsReader.state.collect { tts ->
-                _uiState.value = _uiState.value.copy(
-                    isAudioPlaying = tts.status == TtsStatus.PLAYING,
-                    isAudioPaused = tts.status == TtsStatus.PAUSED,
-                    audioVerse = tts.currentVerse,
-                    ttsSpeed = tts.speed,
-                    audioVoiceUnavailable = tts.voiceUnavailable
-                )
+                if (!narratedActive) {
+                    _uiState.value = _uiState.value.copy(
+                        isAudioPlaying = tts.status == TtsStatus.PLAYING,
+                        isAudioPaused = tts.status == TtsStatus.PAUSED,
+                        audioVerse = tts.currentVerse,
+                        ttsSpeed = tts.speed,
+                        audioVoiceUnavailable = tts.voiceUnavailable
+                    )
+                }
+            }
+        }
+        // Narrated (ExoPlayer) audio mirrors into the same bar while it is active; there
+        // is no per-verse timing, so no verse is highlighted during narrated playback.
+        viewModelScope.launch {
+            narratedPlayer.state.collect { narrated ->
+                if (narratedActive) {
+                    _uiState.value = _uiState.value.copy(
+                        isAudioPlaying = narrated.status == TtsStatus.PLAYING,
+                        isAudioPaused = narrated.status == TtsStatus.PAUSED,
+                        audioVerse = null,
+                        ttsSpeed = narrated.speed,
+                        audioVoiceUnavailable = false
+                    )
+                }
             }
         }
         viewModelScope.launch {
@@ -238,12 +266,31 @@ class ReaderViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(simplifiedMode = enabled)
             }
         }
+        // Either engine's natural chapter end advances continuous play.
         viewModelScope.launch {
-            ttsReader.completionEvents.collect {
-                if (_uiState.value.continuousPlay && loadNextChapter()) {
-                    startAudio()
+            ttsReader.completionEvents.collect { onChapterAudioComplete() }
+        }
+        viewModelScope.launch {
+            narratedPlayer.completionEvents.collect { onChapterAudioComplete() }
+        }
+        // A narrated stream that fails (offline, bad URL, decode error) falls back to
+        // on-device TTS for the current chapter, so a listener always hears something.
+        viewModelScope.launch {
+            narratedPlayer.errorEvents.collect {
+                val state = _uiState.value
+                narratedActive = false
+                narratedPlayer.stop()
+                if (state.verses.isNotEmpty()) {
+                    playTts(state)
                 }
             }
+        }
+    }
+
+    /** Advances to the next chapter and keeps reading when continuous play is on (Req 9.7). */
+    private suspend fun onChapterAudioComplete() {
+        if (_uiState.value.continuousPlay && loadNextChapter()) {
+            startAudio()
         }
     }
 
@@ -469,20 +516,22 @@ class ReaderViewModel @Inject constructor(
     fun onAudioPlayPause() {
         val state = _uiState.value
         when {
-            state.isAudioPlaying -> ttsReader.pause()
-            state.isAudioPaused -> ttsReader.resume()
+            state.isAudioPlaying -> if (narratedActive) narratedPlayer.pause() else ttsReader.pause()
+            state.isAudioPaused -> if (narratedActive) narratedPlayer.resume() else ttsReader.resume()
             else -> startAudio()
         }
     }
 
-    /** Stops read-aloud and clears the spoken-verse indicator (Req 9.3). */
+    /** Stops read-aloud (either engine) and clears the spoken-verse indicator (Req 9.3). */
     fun stopAudio() {
         ttsReader.stop()
+        narratedPlayer.stop()
+        narratedActive = false
     }
 
-    /** Sets the read-aloud speed; the engine clamps to 0.5x..2.0x (Req 9.4). */
+    /** Sets the read-aloud speed on the active engine; clamped to 0.5x..2.0x (Req 9.4). */
     fun setAudioSpeed(speed: Float) {
-        ttsReader.setSpeed(speed)
+        if (narratedActive) narratedPlayer.setSpeed(speed) else ttsReader.setSpeed(speed)
     }
 
     /** Persists the continuous-play preference used at chapter end (Req 9.7). */
@@ -490,21 +539,54 @@ class ReaderViewModel @Inject constructor(
         viewModelScope.launch { preferencesStore.setContinuousPlay(enabled) }
     }
 
-    /** Begins reading the current chapter's verses aloud in the Bible language (Req 9.1, 9.5). */
+    /**
+     * Begins playing the current chapter (Req 9.1). When narrated audio is enabled and a
+     * streamed track is available for this chapter, it plays through ExoPlayer; otherwise
+     * it falls back to on-device TTS in the Bible language (Req 9.5, 9.8).
+     */
     private fun startAudio() {
         val state = _uiState.value
-        val verses = state.verses
-        if (verses.isEmpty()) return
+        if (state.verses.isEmpty()) return
+        val translationId = state.activeTranslationId
+        val osisId = state.osisId
+        viewModelScope.launch {
+            val narratedUrl = if (FeatureFlags.NARRATED_AUDIO && translationId != null && osisId != null) {
+                runCatching { chapterAudioSource.audioUrl(translationId, osisId, state.chapter) }.getOrNull()
+            } else {
+                null
+            }
+            if (narratedUrl != null) {
+                ttsReader.stop()
+                narratedActive = true
+                narratedPlayer.play(narratedUrl, audioStartSpeed(state))
+            } else {
+                narratedPlayer.stop()
+                narratedActive = false
+                playTts(state)
+            }
+        }
+    }
+
+    /** Plays the current chapter's verses on the on-device TTS engine (Req 9.1, 9.5). */
+    private fun playTts(state: ReaderUiState) {
         // Simplified / Elder Mode reads aloud at a gentler pace, unless the user has
         // already chosen their own speed this session (Req 14.5).
         if (state.simplifiedMode && state.ttsSpeed == TtsReader.DEFAULT_SPEED) {
             ttsReader.setSpeed(SIMPLIFIED_TTS_SPEED)
         }
         ttsReader.play(
-            verses.map { TtsVerse(it.verse, it.text) },
+            state.verses.map { TtsVerse(it.verse, it.text) },
             bibleLanguageTag
         )
     }
+
+    /** The speed to start narrated audio at — the gentler Elder-Mode pace by default. */
+    private fun audioStartSpeed(state: ReaderUiState): Float =
+        if (state.simplifiedMode && state.ttsSpeed == TtsReader.DEFAULT_SPEED) {
+            SIMPLIFIED_TTS_SPEED
+        } else {
+            state.ttsSpeed
+        }
 
     // --- annotation interactions (Req 8.1, 8.2, 8.4) -------------------------
 
