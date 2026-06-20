@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manna talks only to a small, fixed set of HTTPS hosts and never over cleartext.
+  This is the platform default for targetSdk >= 28, declared explicitly here so the
+  intent is auditable (and visible to Play review).
+
+    - bible.helloao.org              Free Use Bible API (text + narrated audio links)
+    - generativelanguage.googleapis.com  optional "Explain this passage" cloud engine
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>
