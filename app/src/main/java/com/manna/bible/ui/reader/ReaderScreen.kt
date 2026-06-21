@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -215,6 +216,7 @@ fun ReaderScreen(
                         .map { PickerBook(it.osisId, it.name, it.chapterCount) }
                 }
             },
+            enlarged = state.simplifiedMode,
             onDismiss = { showPicker = false },
             onSelect = { osisId, chapter ->
                 showPicker = false
@@ -844,11 +846,14 @@ private data class PickerBook(
 @Composable
 private fun BookChapterPicker(
     books: List<PickerBook>,
+    enlarged: Boolean,
     onDismiss: () -> Unit,
     onSelect: (osisId: String, chapter: Int) -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var selectedBook by remember { mutableStateOf<PickerBook?>(null) }
+    val itemFontSize = if (enlarged) 22.sp else 16.sp
+    val target = touchTarget(enlarged)
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
         val book = selectedBook
@@ -861,15 +866,15 @@ private fun BookChapterPicker(
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp)
+                    .fillMaxHeight(0.7f)
             ) {
                 items(items = books, key = { it.osisId }) { entry ->
                     Text(
                         text = entry.name,
-                        fontSize = 16.sp,
+                        fontSize = itemFontSize,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .defaultMinSize(minHeight = MinTouchTarget)
+                            .defaultMinSize(minHeight = target)
                             .clickable { selectedBook = entry }
                             .padding(horizontal = 24.dp, vertical = 14.dp)
                     )
@@ -882,10 +887,10 @@ private fun BookChapterPicker(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 8.dp)
             )
             LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 56.dp),
+                columns = GridCells.Adaptive(minSize = target),
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(420.dp)
+                    .fillMaxHeight(0.7f)
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -894,14 +899,14 @@ private fun BookChapterPicker(
                     Surface(
                         tonalElevation = 2.dp,
                         modifier = Modifier
-                            .size(MinTouchTarget)
+                            .size(target)
                             .clickable { onSelect(book.osisId, chapter) }
                             .semantics {
                                 contentDescription = "Chapter $chapter"
                             }
                     ) {
                         Box(contentAlignment = Alignment.Center) {
-                            Text(text = chapter.toString(), fontSize = 16.sp)
+                            Text(text = chapter.toString(), fontSize = itemFontSize)
                         }
                     }
                 }
