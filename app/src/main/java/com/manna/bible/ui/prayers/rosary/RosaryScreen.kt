@@ -43,6 +43,7 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -283,10 +284,15 @@ private fun PrayersSection(bibleLanguage: String) {
 @Composable
 private fun PrayerItem(titleRes: Int, textRes: Int, bibleLanguage: String) {
     var expanded by remember { mutableStateOf(false) }
+    val stateLabel =
+        if (expanded) stringResource(R.string.a11y_expanded) else stringResource(R.string.a11y_collapsed)
     Surface(
         color = MannaTheme.colors.surface,
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().clickable { expanded = !expanded }
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { expanded = !expanded }
+            .semantics { stateDescription = stateLabel }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(16.dp),
@@ -398,6 +404,7 @@ private fun BeadCounter(
                             Bead(
                                 filled = beadIndex < count,
                                 isNext = beadIndex == count,
+                                position = beadIndex + 1,
                                 onTap = {
                                     haptics.performHapticFeedback(HapticFeedbackType.LongPress)
                                     onTapBead()
@@ -420,16 +427,22 @@ private fun BeadCounter(
 }
 
 @Composable
-private fun Bead(filled: Boolean, isNext: Boolean, onTap: () -> Unit) {
+private fun Bead(filled: Boolean, isNext: Boolean, position: Int, onTap: () -> Unit) {
     val scale by animateFloatAsState(
         targetValue = if (filled) 1f else if (isNext) 1.08f else 0.92f,
-        animationSpec = tween(durationMillis = 200),
+        animationSpec = tween(durationMillis = 250),
         label = "bead-scale"
     )
     val color = when {
         filled -> MannaTheme.colors.gold
         isNext -> MannaTheme.colors.goldDim
         else -> MannaTheme.colors.border
+    }
+    // A bead carries no text, so TalkBack needs an explicit, stateful label.
+    val description = when {
+        filled -> stringResource(R.string.rosary_bead_prayed, position)
+        isNext -> stringResource(R.string.rosary_bead_next, position)
+        else -> stringResource(R.string.rosary_bead_empty, position)
     }
     Box(
         modifier = Modifier
@@ -438,6 +451,7 @@ private fun Bead(filled: Boolean, isNext: Boolean, onTap: () -> Unit) {
             .clip(CircleShape)
             .background(color)
             .clickable(onClick = onTap)
+            .semantics { contentDescription = description }
     )
 }
 

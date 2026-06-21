@@ -314,4 +314,14 @@
         <item>The Lord bless you and keep you; the Lord make His face shine upon you and give you peace. Go now in that peace.</item>
     </string-array>
 
+    <!-- Accessibility (TalkBack) content descriptions. Resources are global, so these
+         shared a11y strings live here and are used across the prayer/search/sermon screens. -->
+    <string name="a11y_open_in_reader">Open %1$s in the reader</string>
+    <string name="a11y_expanded">Expanded</string>
+    <string name="a11y_collapsed">Collapsed</string>
+    <string name="rosary_bead_prayed">Bead %1$d, prayed</string>
+    <string name="rosary_bead_next">Bead %1$d, tap to mark as prayed</string>
+    <string name="rosary_bead_empty">Bead %1$d, not yet prayed</string>
+    <string name="sermon_edit_cd">Edit sermon: %1$s</string>
+
 </resources>

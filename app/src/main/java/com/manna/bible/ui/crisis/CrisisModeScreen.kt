@@ -158,12 +158,14 @@ fun CrisisModeScreen(
 
 @Composable
 private fun ComfortCard(verse: ComfortVerse, onClick: () -> Unit) {
+    val description = stringResource(R.string.a11y_open_in_reader, verse.reference)
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(14.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
+            .semantics { contentDescription = description }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(18.dp),

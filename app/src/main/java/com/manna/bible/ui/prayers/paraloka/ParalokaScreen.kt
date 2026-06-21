@@ -250,10 +250,14 @@ private fun PrayerCard(
     reference: String?,
     onClick: () -> Unit
 ) {
+    val description = reference?.let { stringResource(R.string.a11y_open_in_reader, it) } ?: title
     Surface(
         color = MannaTheme.colors.surface,
         shape = RoundedCornerShape(14.dp),
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = description }
     ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(18.dp),
