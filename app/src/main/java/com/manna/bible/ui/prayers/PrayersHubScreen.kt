@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -162,7 +163,9 @@ private fun CategoryCard(category: PrayerCategory) {
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
-                    .background(category.accent.copy(alpha = 0.16f)),
+                    .background(category.accent.copy(alpha = 0.16f))
+                    // Decorative glyph — keep TalkBack from announcing the raw symbol.
+                    .clearAndSetSemantics {},
                 contentAlignment = Alignment.Center
             ) {
                 Text(text = category.glyph, fontSize = 24.sp, color = category.accent)

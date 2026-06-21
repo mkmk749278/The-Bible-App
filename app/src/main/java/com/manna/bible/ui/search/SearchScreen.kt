@@ -171,11 +171,14 @@ private fun TopicsBrowse(
 
 @Composable
 private fun ResultRow(result: SearchResult, onClick: () -> Unit) {
+    // The snippet is visually truncated to two lines, so give TalkBack the full text.
+    val description = "${result.reference}. ${result.snippet}"
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = MinTouchTarget)
             .clickable(onClick = onClick)
+            .semantics { contentDescription = description }
             .padding(horizontal = 20.dp, vertical = 12.dp)
     ) {
         Text(

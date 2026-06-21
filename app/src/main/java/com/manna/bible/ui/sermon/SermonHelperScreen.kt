@@ -139,10 +139,14 @@ private fun SermonList(
 
 @Composable
 private fun SermonCard(sermon: SermonNote, onClick: () -> Unit) {
+    val description = stringResource(R.string.sermon_edit_cd, sermon.title)
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(12.dp),
-        modifier = Modifier.fillMaxWidth().clickable(onClick = onClick)
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = description }
     ) {
         Column(modifier = Modifier.padding(horizontal = 18.dp, vertical = 14.dp)) {
             Text(
