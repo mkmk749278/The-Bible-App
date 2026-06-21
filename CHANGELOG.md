@@ -3,6 +3,24 @@
 All notable changes to Manna are documented here. Versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [0.2.3] — 2026-06-21
+
+### Added
+- **Audio keeps playing in the background** — read-aloud and narrated audio now
+  continue with the app backgrounded or the screen off, via a media-playback
+  foreground service with a notification (Play / Pause / Stop).
+- **Audio focus** — playback pauses for a phone call or another app's audio and
+  resumes when it ends, so Manna never talks over a call.
+- **Bible downloads run in the background** — a download keeps going when the app is
+  backgrounded, with an "x of y chapters" progress notification.
+
+### Changed
+- **All Prayers-hub prayers now appear in your Bible language** — the Rosary
+  (Japamala), Stations of the Cross, the Jesus Prayer, Paraloka and the Sramanikal
+  40-day observance show their recited prayers and meditations in the Bible language
+  you chose, not the app's interface language (falling back to English where a
+  translation isn't available yet).
+
 ## [0.2.2] — 2026-06-20
 
 ### Changed

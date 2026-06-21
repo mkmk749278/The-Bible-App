@@ -1,0 +1,5 @@
+• Prayers (Rosary, Stations, Jesus Prayer, Paraloka, Sramanikal) now appear in
+  your chosen Bible language, not just the app language
+• Read-aloud & narrated audio keep playing when the app is in the background
+• Audio pauses for calls and resumes afterwards; Play/Pause/Stop from the notification
+• Bible downloads continue in the background with a progress notification

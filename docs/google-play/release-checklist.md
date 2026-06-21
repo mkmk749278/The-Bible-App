@@ -48,10 +48,16 @@ Copy is version-controlled under `fastlane/metadata/android/en-US/`:
   opt into the Designed-for-Families programme.
 - **Ads:** declare **No ads**.
 - **Government app:** No.
-- **Foreground service:** the app currently declares **no** foreground service (audio
-  plays only while the app is in the foreground). If/when background playback + a
-  `mediaPlayback` foreground service is added, declare it here. *(Tracked as a future
-  enhancement — see "Known follow-ups".)*
+- **Foreground services:** the app declares **two** foreground services — declare both
+  here (Play Console → App content → Foreground services):
+  - **`mediaPlayback`** (`MediaPlaybackService`) — keeps read-aloud / narrated audio
+    playing when the app is backgrounded; the user starts audio and controls it from a
+    notification (Play / Pause / Stop). Use case: media playback.
+  - **`dataSync`** (`DownloadForegroundService`) — keeps a user-initiated Bible
+    translation download running in the background with a progress notification. Use
+    case: downloading user-requested content.
+  Both are started only from a user action (tapping play / download) while the app is in
+  the foreground, and stop themselves when the work finishes.
 
 ## 4. Upload the build
 
@@ -96,8 +102,11 @@ enable:
 
 ## Known follow-ups (not Play blockers)
 
-- **Background audio + lock-screen controls:** add a Media3 `MediaSessionService` with a
-  `mediaPlayback` foreground service so narrated/TTS audio continues with the screen off.
-  Declare the foreground service in Play Console at that time.
+- **Rich lock-screen media template:** background audio + audio focus + notification
+  Play/Pause/Stop already ship. A Media3 `MediaSession` would add the full lock-screen
+  media UI (album art + seek bar). The current foreground service is already declared.
+- **Force-stop survival for downloads:** background downloads run via a foreground
+  service today; WorkManager would additionally survive a user force-stop and add
+  automatic retry with backoff.
 - **Localized store listings** for Tamil/Hindi/Telugu/Malayalam (add
   `fastlane/metadata/android/<locale>/`).
