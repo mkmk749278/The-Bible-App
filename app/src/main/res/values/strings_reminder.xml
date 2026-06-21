@@ -30,5 +30,7 @@
     <string name="media_channel_description">Keeps read-aloud and narrated audio playing in the background.</string>
     <string name="media_notification_title">Manna · Playing</string>
     <string name="media_notification_text">Reading scripture aloud</string>
+    <string name="media_notification_play">Play</string>
+    <string name="media_notification_pause">Pause</string>
     <string name="media_notification_stop">Stop</string>
 </resources>
