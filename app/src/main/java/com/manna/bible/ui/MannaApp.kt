@@ -18,6 +18,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,7 +26,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import com.manna.bible.ui.util.SimplifiedScale
+import com.manna.bible.ui.util.rememberSimplifiedMode
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -155,6 +159,11 @@ fun MannaApp(
                 .value?.destination?.route
             val showBottomBar = Tabs.any { it.route == currentRoute }
 
+            // Elder Mode: enlarge text across every screen. The reader manages its own
+            // enlargement, so it reverts to this base density below.
+            val simplified = rememberSimplifiedMode()
+            val baseDensity = LocalDensity.current
+
             Scaffold(
                 bottomBar = {
                     if (showBottomBar) {
@@ -171,6 +180,7 @@ fun MannaApp(
                     }
                 }
             ) { padding ->
+              SimplifiedScale(simplified) {
                 NavHost(
                     navController = navController,
                     startDestination = startDestination,
@@ -192,19 +202,23 @@ fun MannaApp(
 
                     // --- Read tab (the reader) -----------------------------------
                     composable(Routes.READ) {
-                        ReaderScreen(
-                            onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
-                            onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
-                            onOpenSearch = { navController.navigate(Routes.SEARCH) },
-                            onOpenDaily = { navController.navigate(Routes.DAILY) },
-                            onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
-                                { navController.navigate(Routes.CRISIS) }
-                            } else null,
-                            pendingScrollRef = pendingRef,
-                            onScrollRefConsumed = { pendingRef = null },
-                            autoPlayAudio = pendingAutoplay,
-                            onAutoPlayConsumed = { pendingAutoplay = false }
-                        )
+                        // The reader sizes its own text (Elder Mode enlarges it there),
+                        // so revert to the base density rather than double-scaling.
+                        CompositionLocalProvider(LocalDensity provides baseDensity) {
+                            ReaderScreen(
+                                onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
+                                onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
+                                onOpenSearch = { navController.navigate(Routes.SEARCH) },
+                                onOpenDaily = { navController.navigate(Routes.DAILY) },
+                                onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
+                                    { navController.navigate(Routes.CRISIS) }
+                                } else null,
+                                pendingScrollRef = pendingRef,
+                                onScrollRefConsumed = { pendingRef = null },
+                                autoPlayAudio = pendingAutoplay,
+                                onAutoPlayConsumed = { pendingAutoplay = false }
+                            )
+                        }
                     }
 
                     // --- Calendar tab --------------------------------------------
@@ -376,6 +390,7 @@ fun MannaApp(
                         }
                     }
                 }
+              }
             }
         }
     }
