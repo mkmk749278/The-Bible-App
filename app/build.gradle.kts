@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
+    alias(libs.plugins.play.publisher)
 }
 
 // Build-time secrets: read from the environment (CI injects them from GitHub
@@ -121,6 +122,25 @@ android {
         // Don't fail the build on those intentional gaps.
         disable += "MissingTranslation"
     }
+}
+
+// Gradle Play Publisher (com.github.triplet.play) — uploads the signed AAB to the
+// Google Play Console (CD). Credentials are NOT configured here; the plugin reads the
+// service-account JSON from the ANDROID_PUBLISHER_CREDENTIALS environment variable,
+// which CI populates from the PLAY_STORE_SERVICE_ACCOUNT secret. Locally, publish
+// tasks are simply unusable without that env var, while assemble/bundle stay unaffected.
+//
+// Defaults are deliberately safe: pushes to the `internal` testing track as a DRAFT,
+// so a release is never auto-promoted to production. The app must already exist in the
+// Play Console (created once via the web UI) AND have had at least one AAB uploaded
+// manually — the Play Developer API cannot create a brand-new app listing.
+play {
+    track.set("internal")
+    defaultToAppBundles.set(true)
+    releaseStatus.set(com.github.triplet.gradle.androidpublisher.ReleaseStatus.DRAFT)
+    // Listing text/graphics stay managed manually (or via fastlane) for now, so the
+    // publisher only touches the binary + release notes, never overwrites the listing.
+    resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.IGNORE)
 }
 
 /**
