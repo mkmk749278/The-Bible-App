@@ -1,0 +1,3 @@
+• New build for closed testing on Google Play
+• Same offline Bible, read-aloud audio, prayers, and daily verse
+• Tamil, Hindi, Telugu and Malayalam supported
