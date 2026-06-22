@@ -1,0 +1,4 @@
+• Refreshed store presence — Manna now leads with its meaning, "Daily Bread
+  from Heaven" (Exodus 16), reflecting the full companion app it has become
+• Localized store listings for Tamil, Hindi, Telugu and Malayalam
+• Polish and under-the-hood maintenance
