@@ -58,9 +58,14 @@ import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
 import com.manna.bible.ui.church.ChurchModeScreen
+import com.manna.bible.ui.library.LibraryScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.sermon.SermonHelperScreen
+import com.manna.bible.ui.settings.AppSettingsScreen
+import com.manna.bible.ui.settings.DenominationSettingsScreen
 import com.manna.bible.ui.setup.SetupHost
+import com.manna.bible.ui.stealth.StealthLockScreen
+import com.manna.bible.ui.stealth.StealthSettingsScreen
 
 /**
  * Navigation routes. There are three primary tabs (Read · Calendar · More); the
@@ -90,6 +95,10 @@ private object Routes {
     const val CARD = "card"
     const val SERMON = "sermon"
     const val CHURCH = "church"
+    const val LIBRARY = "library"
+    const val SETTINGS = "settings"
+    const val DENOMINATION = "denomination"
+    const val STEALTH = "stealth"
 }
 
 /** Calm motion (UX directive): 300ms fades only — no bounce, no flashy transitions. */
@@ -139,6 +148,11 @@ fun MannaApp(
             Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 CircularProgressIndicator()
             }
+        }
+
+        GateState.Locked -> {
+            // Stealth Mode: a disguised lock stands in front of the app until the PIN is entered.
+            StealthLockScreen(onUnlock = gateViewModel::unlock)
         }
 
         GateState.NeedsSetup, GateState.Ready -> {
@@ -254,6 +268,8 @@ fun MannaApp(
                     // --- More tab ------------------------------------------------
                     composable(Routes.MORE) {
                         MoreScreen(
+                            onOpenLibrary = { navController.navigate(Routes.LIBRARY) },
+                            onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                             onOpenTranslations = { navController.navigate(Routes.CATALOG) },
                             onOpenDaily = { navController.navigate(Routes.DAILY) },
                             onOpenCalendar = null, // Calendar is a primary tab now.
@@ -386,6 +402,42 @@ fun MannaApp(
                             ChurchModeScreen(
                                 onBack = { navController.popBackStack() },
                                 onOpenVerse = { ref -> openInReader(ref, false) }
+                            )
+                        }
+                    }
+
+                    // --- Library (saved highlights / bookmarks / notes) ----------
+                    composable(Routes.LIBRARY) {
+                        LibraryScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenVerse = { ref -> openInReader(ref, false) }
+                        )
+                    }
+
+                    // --- Settings ------------------------------------------------
+                    composable(Routes.SETTINGS) {
+                        AppSettingsScreen(
+                            onBack = { navController.popBackStack() },
+                            onOpenDenomination = { navController.navigate(Routes.DENOMINATION) },
+                            onOpenStealth = if (FeatureFlags.STEALTH_MODE) {
+                                { navController.navigate(Routes.STEALTH) }
+                            } else null
+                        )
+                    }
+                    composable(Routes.DENOMINATION) {
+                        DenominationSettingsScreen(
+                            onReRunSetup = {
+                                navController.navigate(Routes.SETUP) {
+                                    popUpTo(Routes.READ) { inclusive = false }
+                                }
+                            },
+                            onBack = { navController.popBackStack() }
+                        )
+                    }
+                    if (FeatureFlags.STEALTH_MODE) {
+                        composable(Routes.STEALTH) {
+                            StealthSettingsScreen(
+                                onBack = { navController.popBackStack() }
                             )
                         }
                     }

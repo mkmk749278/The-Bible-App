@@ -50,6 +50,8 @@ private data class MoreSection(val title: String, val entries: List<MoreEntry>)
 @Composable
 fun MoreScreen(
     modifier: Modifier = Modifier,
+    onOpenLibrary: (() -> Unit)? = null,
+    onOpenSettings: (() -> Unit)? = null,
     onOpenTranslations: () -> Unit = {},
     onOpenDaily: (() -> Unit)? = null,
     onOpenCalendar: (() -> Unit)? = null,
@@ -74,6 +76,12 @@ fun MoreScreen(
         }
     ) { padding ->
         val sections = listOf(
+            MoreSection(
+                stringResource(R.string.more_section_library),
+                listOfNotNull(
+                    onOpenLibrary?.let { MoreEntry(stringResource(R.string.more_library_entry), it) },
+                )
+            ),
             MoreSection(
                 stringResource(R.string.more_section_bible),
                 listOfNotNull(
@@ -131,6 +139,14 @@ fun MoreScreen(
             // --- Settings (Simplified / Elder Mode) ------------------------------
             item(key = "header_settings") {
                 SectionHeader(stringResource(R.string.more_section_settings))
+            }
+            if (onOpenSettings != null) {
+                item(key = "entry_all_settings") {
+                    EntryCard(
+                        label = stringResource(R.string.more_settings_entry),
+                        onClick = onOpenSettings
+                    )
+                }
             }
             item(key = "toggle_simplified_mode") {
                 SimplifiedModeToggle(

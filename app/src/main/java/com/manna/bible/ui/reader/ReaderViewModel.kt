@@ -266,6 +266,11 @@ class ReaderViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(simplifiedMode = enabled)
             }
         }
+        // Seed the read-aloud engine with the user's persisted preferred speed
+        // (Settings → Audio), so playback starts at their chosen pace.
+        viewModelScope.launch {
+            preferencesStore.ttsSpeed.collect { speed -> ttsReader.setSpeed(speed) }
+        }
         // Either engine's natural chapter end advances continuous play.
         viewModelScope.launch {
             ttsReader.completionEvents.collect { onChapterAudioComplete() }
@@ -529,9 +534,13 @@ class ReaderViewModel @Inject constructor(
         narratedActive = false
     }
 
-    /** Sets the read-aloud speed on the active engine; clamped to 0.5x..2.0x (Req 9.4). */
+    /**
+     * Sets the read-aloud speed on the active engine (clamped to 0.5x..2.0x, Req 9.4)
+     * and persists it as the user's preferred speed so it carries across sessions.
+     */
     fun setAudioSpeed(speed: Float) {
         if (narratedActive) narratedPlayer.setSpeed(speed) else ttsReader.setSpeed(speed)
+        viewModelScope.launch { preferencesStore.setTtsSpeed(speed) }
     }
 
     /** Persists the continuous-play preference used at chapter end (Req 9.7). */
