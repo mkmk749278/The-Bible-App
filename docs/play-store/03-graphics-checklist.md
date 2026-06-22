@@ -29,8 +29,9 @@ graphics minimal; Play rejects feature graphics that are mostly text.
 - **Size:** 1024 × 500 px
 - **Format:** PNG or JPEG, no alpha
 - **Content:** calm hero banner — soft cream→gold light, the wordmark
-  "Manna (மன்னா)" small, tagline "Offline Audio Bible." Leave generous
-  whitespace. Avoid neon, gradients-gone-wild, or busy collage. This shows at the
+  "Manna" with the tagline "Daily Bread from Heaven" and a small subtitle
+  ("Bible · Prayers · Daily Verse · Offline"). Leave generous whitespace.
+  Avoid neon, gradients-gone-wild, or busy collage. This shows at the
   top of the listing and in promos.
 
 ### 3. Phone screenshots — **2 to 8** (at least 2 required)

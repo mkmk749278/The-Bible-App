@@ -16,7 +16,7 @@ Do these in order. Anything marked **(repo)** has a source file you can copy fro
 
 1. Go to <https://play.google.com/console> → **Create app**.
 2. Fill in:
-   - **App name:** `Manna — Offline Audio Bible` **(repo:** `fastlane/.../title.txt`**)**
+   - **App name:** `Manna: Daily Bread from Heaven` **(repo:** `fastlane/.../title.txt`**)**
    - **Default language:** English (United States) – `en-US`
    - **App or game:** App
    - **Free or paid:** Free
