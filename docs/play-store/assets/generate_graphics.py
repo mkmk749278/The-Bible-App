@@ -108,11 +108,12 @@ def make_feature(w=1024, h=500, out="feature-graphic-1024x500.png"):
     bbox = d.textbbox((tx, 150), "Manna", font=f_title)
     # gold rule under the wordmark
     d.rectangle([tx + 4, bbox[3] + 18, bbox[2], bbox[3] + 24], fill=GOLD_DEEP)
-    # tagline
-    f_tag = fit("Offline Audio Bible", SERIF, 42, max_w)
-    d.text((tx + 4, bbox[3] + 40), "Offline Audio Bible", font=f_tag, fill=GOLD_DEEP)
+    # tagline — "Manna" means daily bread from heaven (Exodus 16)
+    tag = "Daily Bread from Heaven"
+    f_tag = fit(tag, SERIF, 42, max_w)
+    d.text((tx + 4, bbox[3] + 40), tag, font=f_tag, fill=GOLD_DEEP)
     # quiet subtitle
-    sub = "Read or listen · Works offline · No ads, ever"
+    sub = "Bible · Prayers · Daily Verse · Offline"
     f_sub = fit(sub, SANS, 26, max_w)
     d.text((tx + 6, bbox[3] + 104), sub, font=f_sub, fill=(106, 120, 132))
 
