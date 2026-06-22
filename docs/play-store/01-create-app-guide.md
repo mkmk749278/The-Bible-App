@@ -140,15 +140,19 @@ others) and roll out (you can stage to a small %).
 
 ## 6. Host the privacy policy
 
-Play requires a **publicly reachable URL**. Easiest options:
+Play requires a **publicly reachable URL**. A ready-to-serve, brand-styled page
+lives at **(repo)** [`docs/privacy-policy.html`](../privacy-policy.html).
 
-- **GitHub Pages / raw:** enable Pages on this repo, or use the raw URL of
-  `PRIVACY_POLICY.md`. Raw markdown renders as plain text — acceptable, but a
-  rendered HTML page is nicer.
-- **GitHub Gist** rendered page, or any static host.
+**Enable GitHub Pages (one time):**
+1. Repo → **Settings → Pages**.
+2. **Source:** Deploy from a branch → Branch **`main`**, folder **`/docs`** → Save.
+3. After it builds, your policy is live at:
+   `https://mkmk749278.github.io/The-Bible-App/privacy-policy.html`
 
-Whatever URL you choose, paste it into **Policy → App content → Privacy policy**
-*and* into the store listing if prompted. Keep the `Last updated` date current.
+Paste that URL into **Policy → App content → Privacy policy** (and into the store
+listing if prompted). Keep the `Last updated` date in sync with
+`PRIVACY_POLICY.md`. If you prefer not to use Pages, any static host or a rendered
+Gist works too.
 
 ---
 

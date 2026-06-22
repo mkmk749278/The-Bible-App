@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacy Policy — Manna (Bible App)</title>
+  <meta name="description" content="Manna is privacy-first: no account, no tracking, no ads. Your spiritual data stays on your device." />
+  <style>
+    :root {
+      --bg: #FAF7EF; --surface: #FFFFFF; --ink: #1F2D3D;
+      --soft: #4A5A6A; --muted: #6B7884; --gold: #8A671C;
+      --sage: #3F7A5C; --border: #E7E0D0;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #080C14; --surface: #0E141F; --ink: #EDE3C8;
+        --soft: #C3CAD3; --muted: #8A95A1; --gold: #C9952A;
+        --sage: #6FB28C; --border: #1C2533;
+      }
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--bg); color: var(--ink);
+      font-family: -apple-system, "Segoe UI", Inter, Roboto, sans-serif;
+      line-height: 1.65; -webkit-font-smoothing: antialiased;
+    }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 48px 24px 80px; }
+    header { border-bottom: 2px solid var(--border); padding-bottom: 20px; margin-bottom: 8px; }
+    h1 { font-size: 1.9rem; margin: 0 0 6px; letter-spacing: -0.01em; }
+    h2 { font-size: 1.25rem; margin: 36px 0 10px; color: var(--gold); }
+    h3 { font-size: 1.02rem; margin: 22px 0 6px; color: var(--sage); }
+    .meta { color: var(--muted); font-size: 0.9rem; }
+    .meta a { color: var(--sage); }
+    a { color: var(--gold); }
+    ul { padding-left: 1.25rem; }
+    li { margin: 4px 0; }
+    code {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 5px; padding: 1px 6px; font-size: 0.9em;
+    }
+    .lead {
+      background: var(--surface); border: 1px solid var(--border);
+      border-left: 4px solid var(--gold); border-radius: 10px;
+      padding: 16px 18px; margin: 24px 0;
+    }
+    footer {
+      margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--border);
+      color: var(--muted); font-size: 0.88rem;
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <h1>Privacy Policy — Manna</h1>
+      <p class="meta">
+        App: <code>com.manna.bible</code> · Last updated: 20 June 2026 ·
+        Contact: <a href="mailto:mulakapati446@gmail.com">mulakapati446@gmail.com</a>
+      </p>
+    </header>
+
+    <p class="lead">
+      Manna is built privacy-first. We designed it so the app is fully useful
+      <strong>without an account, without tracking, and without ads</strong> — ever.
+    </p>
+
+    <h2>The short version</h2>
+    <ul>
+      <li><strong>No account is required</strong> to use any core feature.</li>
+      <li><strong>We do not collect, store, or sell your personal data.</strong></li>
+      <li><strong>No analytics, no advertising, and no third-party tracking SDKs</strong> are in the app.</li>
+      <li><strong>Your spiritual data stays on your device</strong> — your notes, highlights,
+        bookmarks, prayers, reading position and settings are stored locally and are
+        <strong>not</strong> uploaded to us or to any cloud service. They are also excluded
+        from Android's automatic Google backup by design.</li>
+    </ul>
+
+    <h2>What data the app handles</h2>
+
+    <h3>Stored only on your device</h3>
+    <p>The following never leaves your phone:</p>
+    <ul>
+      <li>Highlights, bookmarks, and notes</li>
+      <li>Prayer journal entries and reflections</li>
+      <li>Reading progress and your last reading position</li>
+      <li>App settings (languages, theme, audio preferences, reminders)</li>
+      <li>Downloaded Bible translations</li>
+    </ul>
+    <p>You can erase all of it at any time by clearing the app's data or uninstalling the app.</p>
+
+    <h3>Network requests the app makes</h3>
+    <p>Manna connects to the internet only for these purposes, and only to these hosts:</p>
+    <ul>
+      <li><strong><code>bible.helloao.org</code></strong> — the key-less, MIT-licensed
+        <em>Free Use Bible API</em>, used to download Bible translations and to fetch
+        streamed narrated-audio links. Only generic content references (translation id,
+        book, chapter) are sent. <strong>No personal data is sent.</strong></li>
+      <li><strong><code>generativelanguage.googleapis.com</code></strong> — <em>optional.</em>
+        Used only if you tap <strong>"Explain this passage"</strong> and a Gemini API key has
+        been configured for the build. In that case the relevant scripture text and a prompt
+        are sent to generate an explanation. <strong>No personal data, account, or device
+        identifier is sent.</strong> If no key is configured, this feature is disabled and no
+        request is made.</li>
+    </ul>
+    <p>All network traffic uses encrypted HTTPS. Offline-first features (reading bundled
+      Bibles, on-device text-to-speech, notes, prayers, daily verse) work with no network at all.</p>
+
+    <h3>On-device AI</h3>
+    <p>On supported devices, "Explain this passage" can run <strong>on-device</strong> via
+      Gemini Nano, in which case nothing is sent off the device.</p>
+
+    <h2>Permissions</h2>
+    <ul>
+      <li><strong>Internet / Network state</strong> — to download Bibles and stream narrated audio.</li>
+      <li><strong>Notifications</strong> — to show the optional daily-verse reminder you choose.</li>
+      <li><strong>Run after restart</strong> — to re-arm your daily reminder after the phone reboots.</li>
+    </ul>
+    <p>We request no location, contacts, microphone, camera, or storage permissions.</p>
+
+    <h2>Children's privacy</h2>
+    <p>Manna does not knowingly collect any personal information from anyone, including
+      children. The app contains no ads and no data collection.</p>
+
+    <h2>Changes to this policy</h2>
+    <p>If this policy changes, the updated version will be published at this URL with a new
+      "Last updated" date.</p>
+
+    <h2>Contact</h2>
+    <p>Questions about privacy? Email
+      <a href="mailto:mulakapati446@gmail.com">mulakapati446@gmail.com</a>.</p>
+
+    <footer>
+      Manna means "daily bread from heaven." This page mirrors
+      <code>PRIVACY_POLICY.md</code> in the app repository.
+    </footer>
+  </main>
+</body>
+</html>

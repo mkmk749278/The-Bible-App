@@ -78,9 +78,9 @@ graphics minimal; Play rejects feature graphics that are mostly text.
 
 ## Checklist
 
-- [ ] 512×512 app icon (PNG, matches launcher icon)
-- [ ] 1024×500 feature graphic
-- [ ] ≥2 phone screenshots (recommend 4–6, portrait 1080×1920+)
+- [x] 512×512 app icon (PNG, matches launcher icon) → `assets/icon-512.png`
+- [x] 1024×500 feature graphic → `assets/feature-graphic-1024x500.png`
+- [ ] ≥2 phone screenshots (recommend 4–6, portrait 1080×1920+) — **real device captures needed**
 - [ ] (optional) 7" tablet screenshots
 - [ ] (optional) 10" tablet screenshots
-- [ ] All assets stored under `docs/play-store/assets/`
+- [x] Assets directory created → `docs/play-store/assets/` (regenerate with `generate_graphics.py`)
