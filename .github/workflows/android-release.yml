@@ -115,26 +115,41 @@ jobs:
             app/build/outputs/apk/release/*.apk
             app/build/outputs/bundle/release/*.aab
 
-      # Optional CD: upload the signed AAB to the Play Console (internal track, draft).
-      # Opt-in only — runs on a manual dispatch with publish_to_play=true, and only when
-      # the build is signed AND the service-account secret is present. The Gradle Play
-      # Publisher plugin reads the credentials JSON from ANDROID_PUBLISHER_CREDENTIALS.
+      # CD: upload the signed AAB to the Play Console (internal track, draft).
+      # Runs automatically on a version-tag push, and on a manual dispatch with
+      # publish_to_play=true. Always gated on a signed build AND the service-account
+      # secret being present. When the secret is missing the behavior depends on intent:
+      # a tag-triggered run skips gracefully (the release still succeeds), while an
+      # explicit manual publish_to_play=true run fails loudly. The Gradle Play Publisher
+      # plugin reads the credentials JSON from ANDROID_PUBLISHER_CREDENTIALS and uploads
+      # to the internal track as a DRAFT (see the play { } block in app/build.gradle.kts),
+      # so nothing reaches users until you promote it in Play Console.
       # Prerequisite: the app must already exist in Play Console with one manual AAB
       # upload — the Play Developer API cannot create a new app from scratch.
       - name: Publish AAB to Play Console (internal)
         if: >-
-          github.event_name == 'workflow_dispatch' &&
-          github.event.inputs.publish_to_play == 'true' &&
-          steps.keystore.outputs.signed == 'true'
+          steps.keystore.outputs.signed == 'true' &&
+          (
+            startsWith(github.ref, 'refs/tags/') ||
+            (github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_play == 'true')
+          )
         env:
           # base64-encoded service-account JSON (per CLAUDE.md). The secrets context is
           # not usable in step `if:`, so presence is checked inside the script instead.
           PLAY_SA_BASE64: ${{ secrets.PLAY_STORE_SERVICE_ACCOUNT }}
+          # True only when the user explicitly asked to publish via manual dispatch — a
+          # missing secret is then an error rather than a graceful skip.
+          PUBLISH_EXPLICIT: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.publish_to_play == 'true' }}
         run: |
           set -euo pipefail
           if [ -z "${PLAY_SA_BASE64}" ]; then
-            echo "::error::publish_to_play=true but PLAY_STORE_SERVICE_ACCOUNT secret is not set — skipping upload."
-            exit 1
+            if [ "${PUBLISH_EXPLICIT}" = "true" ]; then
+              echo "::error::publish_to_play=true but PLAY_STORE_SERVICE_ACCOUNT secret is not set — cannot upload."
+              exit 1
+            fi
+            echo "::warning::PLAY_STORE_SERVICE_ACCOUNT secret is not set — skipping the Play Store upload. The APK/AAB and GitHub Release were still published."
+            echo "### ⏭️ Play upload skipped (no PLAY_STORE_SERVICE_ACCOUNT secret)" >> "$GITHUB_STEP_SUMMARY"
+            exit 0
           fi
           # Decode to raw JSON, which is what the Play Publisher plugin expects in
           # ANDROID_PUBLISHER_CREDENTIALS.
