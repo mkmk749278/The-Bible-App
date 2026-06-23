@@ -1,13 +1,13 @@
 package com.manna.bible.ui.settings
 
-import app.cash.turbine.test
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.SetupState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test
 /** Unit tests for [AppSettingsViewModel] — appearance, text size, audio speed, Elder Mode. */
 class AppSettingsViewModelTest {
 
-    private val dispatcher = StandardTestDispatcher()
+    private val dispatcher = UnconfinedTestDispatcher()
 
     @BeforeEach fun setUp() { Dispatchers.setMain(dispatcher) }
     @AfterEach fun tearDown() { Dispatchers.resetMain() }
@@ -32,15 +32,13 @@ class AppSettingsViewModelTest {
     fun setTheme() = runTest {
         val store = FakePreferencesStore()
         val vm = AppSettingsViewModel(store)
+        backgroundScope.launch { vm.uiState.collect {} } // keep the combine active
 
         vm.setTheme(ThemeChoice.DARK)
         advanceUntilIdle()
-        assertEquals(PreferencesStore.THEME_DARK, store.darkModeValue())
 
-        vm.uiState.test {
-            assertEquals(ThemeChoice.DARK, awaitItem().theme)
-            cancelAndIgnoreRemainingEvents()
-        }
+        assertEquals(PreferencesStore.THEME_DARK, store.darkModeValue())
+        assertEquals(ThemeChoice.DARK, vm.uiState.value.theme)
     }
 
     @Test

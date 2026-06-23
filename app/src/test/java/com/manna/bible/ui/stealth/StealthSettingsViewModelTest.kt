@@ -1,14 +1,15 @@
 package com.manna.bible.ui.stealth
 
-import app.cash.turbine.test
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.data.stealth.PinHasher
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.SetupState
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -22,9 +23,10 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
 /** Unit tests for [StealthSettingsViewModel] — arming, changing, and disarming the PIN. */
+@OptIn(ExperimentalCoroutinesApi::class)
 class StealthSettingsViewModelTest {
 
-    private val dispatcher = StandardTestDispatcher()
+    private val dispatcher = UnconfinedTestDispatcher()
 
     @BeforeEach fun setUp() { Dispatchers.setMain(dispatcher) }
     @AfterEach fun tearDown() { Dispatchers.resetMain() }
@@ -34,6 +36,7 @@ class StealthSettingsViewModelTest {
     fun enableArms() = runTest {
         val store = FakePreferencesStore()
         val vm = StealthSettingsViewModel(store)
+        backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("4821", "4821")
         advanceUntilIdle()
@@ -51,6 +54,7 @@ class StealthSettingsViewModelTest {
     fun rejectsShortPin() = runTest {
         val store = FakePreferencesStore()
         val vm = StealthSettingsViewModel(store)
+        backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("12", "12")
         advanceUntilIdle()
@@ -64,6 +68,7 @@ class StealthSettingsViewModelTest {
     fun rejectsMismatch() = runTest {
         val store = FakePreferencesStore()
         val vm = StealthSettingsViewModel(store)
+        backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("4821", "9999")
         advanceUntilIdle()
@@ -77,21 +82,19 @@ class StealthSettingsViewModelTest {
     fun disableRequiresPin() = runTest {
         val store = FakePreferencesStore()
         val vm = StealthSettingsViewModel(store)
-        vm.uiState.test {
-            awaitItem() // collect so the credential flow is observed
-            vm.enable("4821", "4821")
-            advanceUntilIdle()
+        backgroundScope.launch { vm.uiState.collect {} }
 
-            vm.disable("0000")
-            advanceUntilIdle()
-            assertTrue(store.enabledValue(), "wrong PIN must not disarm")
-            assertEquals(StealthMessage.WRONG_PIN, vm.uiState.value.message)
+        vm.enable("4821", "4821")
+        advanceUntilIdle()
 
-            vm.disable("4821")
-            advanceUntilIdle()
-            assertFalse(store.enabledValue())
-            cancelAndIgnoreRemainingEvents()
-        }
+        vm.disable("0000")
+        advanceUntilIdle()
+        assertTrue(store.enabledValue(), "wrong PIN must not disarm")
+        assertEquals(StealthMessage.WRONG_PIN, vm.uiState.value.message)
+
+        vm.disable("4821")
+        advanceUntilIdle()
+        assertFalse(store.enabledValue())
     }
 
     @Test
@@ -99,21 +102,19 @@ class StealthSettingsViewModelTest {
     fun changePin() = runTest {
         val store = FakePreferencesStore()
         val vm = StealthSettingsViewModel(store)
-        vm.uiState.test {
-            awaitItem()
-            vm.enable("1111", "1111")
-            advanceUntilIdle()
+        backgroundScope.launch { vm.uiState.collect {} }
 
-            vm.changePin("9999", "2222", "2222")
-            advanceUntilIdle()
-            assertTrue(PinHasher.verify("1111", store.credentialValue()), "wrong current PIN keeps the old one")
+        vm.enable("1111", "1111")
+        advanceUntilIdle()
 
-            vm.changePin("1111", "2222", "2222")
-            advanceUntilIdle()
-            assertTrue(PinHasher.verify("2222", store.credentialValue()))
-            assertEquals(StealthMessage.PIN_CHANGED, vm.uiState.value.message)
-            cancelAndIgnoreRemainingEvents()
-        }
+        vm.changePin("9999", "2222", "2222")
+        advanceUntilIdle()
+        assertTrue(PinHasher.verify("1111", store.credentialValue()), "wrong current PIN keeps the old one")
+
+        vm.changePin("1111", "2222", "2222")
+        advanceUntilIdle()
+        assertTrue(PinHasher.verify("2222", store.credentialValue()))
+        assertEquals(StealthMessage.PIN_CHANGED, vm.uiState.value.message)
     }
 
     private class FakePreferencesStore : PreferencesStore {
