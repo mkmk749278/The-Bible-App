@@ -6,9 +6,11 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.SetupState
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -148,6 +150,76 @@ interface PreferencesStore {
 
     /** Clears the active Sramanikal. */
     suspend fun clearSramanikal() {}
+
+    // --- appearance & accessibility settings ---------------------------------
+
+    /**
+     * Emits the theme preference: one of "system" (follow the OS), "light", or
+     * "dark". Defaults to "system" so the app keeps following the device until the
+     * user picks an explicit mode (see Settings → Appearance).
+     */
+    val darkMode: Flow<String>
+        get() = flowOf(THEME_SYSTEM)
+
+    /** Persists the theme preference ("system" | "light" | "dark"). */
+    suspend fun setDarkMode(value: String) {}
+
+    /**
+     * Emits the global reading text-scale multiplier, applied app-wide on top of the
+     * device font size (clamped to [MIN_TEXT_SCALE]..[MAX_TEXT_SCALE]). Defaults to
+     * 1.0 (no extra scaling).
+     */
+    val textScale: Flow<Float>
+        get() = flowOf(1.0f)
+
+    /** Persists the global reading text-scale multiplier. */
+    suspend fun setTextScale(value: Float) {}
+
+    /**
+     * Emits the preferred read-aloud (TTS / narration) speed in 0.5x..2.0x, used as
+     * the starting speed each time audio begins. Defaults to 1.0x.
+     */
+    val ttsSpeed: Flow<Float>
+        get() = flowOf(1.0f)
+
+    /** Persists the preferred read-aloud speed (0.5x..2.0x). */
+    suspend fun setTtsSpeed(value: Float) {}
+
+    // --- stealth / persecution mode ------------------------------------------
+
+    /**
+     * Emits whether Stealth (Persecution) Mode is armed. When true and a PIN
+     * credential is set, the app opens to a disguised lock screen until the correct
+     * PIN is entered (Phase 2, security spec).
+     */
+    val stealthEnabled: Flow<Boolean>
+        get() = flowOf(false)
+
+    /**
+     * Emits the persisted stealth PIN credential as a Base64 "salt:hash" pair, or an
+     * empty string when no PIN has been set. The PIN itself is never stored — only a
+     * PBKDF2-derived hash and its random salt.
+     */
+    val stealthPinCredential: Flow<String>
+        get() = flowOf("")
+
+    /**
+     * Arms Stealth Mode with the given Base64 "salt:hash" [credential] (derived from
+     * the user's PIN via PBKDF2). Persisting a credential implicitly enables the mode.
+     */
+    suspend fun setStealthCredential(credential: String) {}
+
+    /** Disarms Stealth Mode and clears the stored PIN credential. */
+    suspend fun clearStealth() {}
+
+    companion object {
+        const val THEME_SYSTEM = "system"
+        const val THEME_LIGHT = "light"
+        const val THEME_DARK = "dark"
+
+        const val MIN_TEXT_SCALE = 0.8f
+        const val MAX_TEXT_SCALE = 2.0f
+    }
 }
 
 /**
@@ -183,6 +255,11 @@ class DataStorePreferencesStore @Inject constructor(
         val FAST_PLAN_ID = stringPreferencesKey("fast_plan_id")
         val SRAMANIKAL_START_EPOCH_DAY = longPreferencesKey("sramanikal_start_epoch_day")
         val SRAMANIKAL_NAME = stringPreferencesKey("sramanikal_name")
+        val DARK_MODE = stringPreferencesKey("dark_mode")
+        val TEXT_SCALE = floatPreferencesKey("text_scale")
+        val TTS_SPEED = floatPreferencesKey("tts_speed")
+        val STEALTH_ENABLED = booleanPreferencesKey("stealth_enabled")
+        val STEALTH_PIN_CREDENTIAL = stringPreferencesKey("stealth_pin_credential")
     }
 
     override val setupState: Flow<SetupState> =
@@ -226,6 +303,21 @@ class DataStorePreferencesStore @Inject constructor(
 
     override val sramanikalName: Flow<String> =
         dataStore.data.map { prefs -> prefs[Keys.SRAMANIKAL_NAME] ?: "" }
+
+    override val darkMode: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.DARK_MODE] ?: PreferencesStore.THEME_SYSTEM }
+
+    override val textScale: Flow<Float> =
+        dataStore.data.map { prefs -> prefs[Keys.TEXT_SCALE] ?: 1.0f }
+
+    override val ttsSpeed: Flow<Float> =
+        dataStore.data.map { prefs -> prefs[Keys.TTS_SPEED] ?: 1.0f }
+
+    override val stealthEnabled: Flow<Boolean> =
+        dataStore.data.map { prefs -> prefs[Keys.STEALTH_ENABLED] ?: false }
+
+    override val stealthPinCredential: Flow<String> =
+        dataStore.data.map { prefs -> prefs[Keys.STEALTH_PIN_CREDENTIAL] ?: "" }
 
     override suspend fun saveSetup(state: SetupState) {
         dataStore.edit { prefs ->
@@ -315,6 +407,38 @@ class DataStorePreferencesStore @Inject constructor(
         dataStore.edit { prefs ->
             prefs.remove(Keys.SRAMANIKAL_START_EPOCH_DAY)
             prefs.remove(Keys.SRAMANIKAL_NAME)
+        }
+    }
+
+    override suspend fun setDarkMode(value: String) {
+        dataStore.edit { prefs -> prefs[Keys.DARK_MODE] = value }
+    }
+
+    override suspend fun setTextScale(value: Float) {
+        dataStore.edit { prefs ->
+            prefs[Keys.TEXT_SCALE] =
+                value.coerceIn(PreferencesStore.MIN_TEXT_SCALE, PreferencesStore.MAX_TEXT_SCALE)
+        }
+    }
+
+    override suspend fun setTtsSpeed(value: Float) {
+        dataStore.edit { prefs ->
+            prefs[Keys.TTS_SPEED] =
+                value.coerceIn(TtsReader.MIN_SPEED, TtsReader.MAX_SPEED)
+        }
+    }
+
+    override suspend fun setStealthCredential(credential: String) {
+        dataStore.edit { prefs ->
+            prefs[Keys.STEALTH_PIN_CREDENTIAL] = credential
+            prefs[Keys.STEALTH_ENABLED] = true
+        }
+    }
+
+    override suspend fun clearStealth() {
+        dataStore.edit { prefs ->
+            prefs.remove(Keys.STEALTH_PIN_CREDENTIAL)
+            prefs[Keys.STEALTH_ENABLED] = false
         }
     }
 

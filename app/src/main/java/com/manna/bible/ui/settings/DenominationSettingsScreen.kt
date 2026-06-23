@@ -13,14 +13,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -31,7 +38,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -81,23 +87,43 @@ private fun Denomination.descriptionRes(): Int = when (this) {
  * deleted; books outside the active canon are simply hidden.
  *
  * @param onReRunSetup invoked when the user chooses to re-run the setup flow (Req 11.1).
+ * @param onBack invoked when the user dismisses the screen; null hides the back affordance.
  */
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DenominationSettingsScreen(
     viewModel: DenominationSettingsViewModel = hiltViewModel(),
     onReRunSetup: () -> Unit = {},
+    onBack: (() -> Unit)? = null,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(stringResource(R.string.settings_denomination_section_title)) },
+                navigationIcon = {
+                    if (onBack != null) {
+                        IconButton(onClick = onBack) {
+                            Icon(
+                                Icons.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.action_back),
+                            )
+                        }
+                    }
+                },
+            )
+        },
+    ) { padding ->
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .padding(padding)
             .padding(horizontal = 24.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Spacer(Modifier.size(16.dp))
-        SectionTitle(R.string.settings_denomination_section_title)
 
         state.errorMessage?.let { message ->
             ErrorBanner(message)
@@ -163,18 +189,10 @@ fun DenominationSettingsScreen(
             onCancel = viewModel::cancelDenominationChange,
         )
     }
+    }
 }
 
 private val MIN_TOUCH_TARGET = 48.dp
-
-@Composable
-private fun SectionTitle(@StringRes titleRes: Int) {
-    Text(
-        text = stringResource(titleRes),
-        style = MaterialTheme.typography.headlineSmall,
-        fontWeight = FontWeight.Bold,
-    )
-}
 
 @Composable
 private fun SubHeader(@StringRes titleRes: Int) {

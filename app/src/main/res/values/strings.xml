@@ -223,4 +223,53 @@
     <string name="a11y_has_highlight">highlighted</string>
     <string name="a11y_has_bookmark">bookmarked</string>
     <string name="a11y_has_note">has a note</string>
+
+    <!-- Generic actions -->
+    <string name="action_back">Back</string>
+
+    <!-- More hub: new entries -->
+    <string name="more_section_library">My Library</string>
+    <string name="more_library_entry">Highlights, bookmarks &amp; notes</string>
+    <string name="more_settings_entry">Settings</string>
+
+    <!-- Library -->
+    <string name="library_title">Library</string>
+    <string name="library_filter_all">All</string>
+    <string name="library_filter_highlights">Highlights</string>
+    <string name="library_filter_bookmarks">Bookmarks</string>
+    <string name="library_filter_notes">Notes</string>
+    <string name="library_empty">Your highlights, bookmarks, and notes will appear here. Tap a verse while reading to save it.</string>
+    <string name="library_delete">Delete</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme_system">Follow system</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_section_text_size">Reading text size</string>
+    <string name="settings_text_size_preview">In the beginning God created the heavens and the earth.</string>
+    <string name="settings_section_audio">Audio</string>
+    <string name="settings_section_accessibility">Accessibility</string>
+    <string name="settings_section_reading">Reading &amp; language</string>
+    <string name="settings_denomination_entry">Denomination &amp; languages</string>
+    <string name="settings_section_privacy">Privacy</string>
+
+    <!-- Stealth / Persecution Mode -->
+    <string name="stealth_title">Persecution Mode</string>
+    <string name="stealth_explainer">When on, Manna opens disguised as a calculator. Enter your PIN and press = to reveal the app. A wrong entry simply clears, so no one can tell scripture is hidden here. Your PIN is stored only as a secure one-way hash, never as plain text.</string>
+    <string name="stealth_set_up">Set a PIN</string>
+    <string name="stealth_pin">PIN</string>
+    <string name="stealth_confirm_pin">Confirm PIN</string>
+    <string name="stealth_turn_on">Turn on Persecution Mode</string>
+    <string name="stealth_change_pin">Change PIN</string>
+    <string name="stealth_current_pin">Current PIN</string>
+    <string name="stealth_new_pin">New PIN</string>
+    <string name="stealth_turn_off">Turn off Persecution Mode</string>
+    <string name="stealth_msg_enabled">Persecution Mode is on. The app now opens as a calculator — enter your PIN and press = to unlock.</string>
+    <string name="stealth_msg_disabled">Persecution Mode is off.</string>
+    <string name="stealth_msg_pin_changed">Your PIN has been changed.</string>
+    <string name="stealth_msg_pin_too_short">Choose a PIN of at least 4 digits.</string>
+    <string name="stealth_msg_pin_mismatch">The PINs do not match.</string>
+    <string name="stealth_msg_wrong_pin">Incorrect PIN.</string>
 </resources>

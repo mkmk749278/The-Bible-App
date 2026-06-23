@@ -64,8 +64,12 @@ object FeatureFlags {
      */
     const val SERMON_HELPER: Boolean = true
 
-    /** Stealth / Persecution Mode (Phase 2). */
-    const val STEALTH_MODE: Boolean = false
+    /**
+     * Stealth / Persecution Mode (Phase 2). When armed with a PIN, the app opens to a
+     * disguised calculator lock and only reveals scripture once the PIN is entered; the
+     * PIN is stored as a PBKDF2 hash (never plaintext). Configured in Settings → Privacy.
+     */
+    const val STEALTH_MODE: Boolean = true
 
     /**
      * Church Mode — a guided, denomination-aware order of worship (the Holy Mass /

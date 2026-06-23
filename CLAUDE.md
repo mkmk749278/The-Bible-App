@@ -639,7 +639,7 @@ export KEY_PASSWORD=yourkeypassword
 - [ ] Scripture Card Generator (WhatsApp-ready)
 - [ ] Fasting Companion
 - [ ] Scripture Inheritance (Voice Legacy)
-- [ ] Stealth / Persecution Mode ← moved up from Phase 3
+- [x] Stealth / Persecution Mode — disguised calculator lock + PBKDF2 PIN (Settings → Privacy)
 
 ### Phase 3 — AI + Ministry (Months 7–10)
 - [ ] Gemini Nano offline AI theologian
