@@ -221,7 +221,9 @@ Steps:
 6. Build signed release AAB: `./gradlew bundleRelease`
 7. Upload APK + AAB as workflow artifacts
 8. Create GitHub Release with APK + AAB attached
-9. *(Future)* Upload AAB to Play Store via Gradle Play Publisher plugin
+9. Upload AAB to the Play Console (internal track, draft) via the Gradle Play
+   Publisher plugin — automatic on a version-tag push, gated on a signed build
+   and the `PLAY_STORE_SERVICE_ACCOUNT` secret (skips gracefully if unset)
 
 ### GitHub Secrets
 
@@ -512,7 +514,8 @@ Use **Semantic Versioning**: `MAJOR.MINOR.PATCH`
 6. GitHub Actions automatically:
    - Builds signed release APK + AAB
    - Creates a GitHub Release with artifacts
-   - *(Future)* Uploads AAB to Google Play via service account
+   - Uploads the AAB to Google Play (internal track, draft) via the service
+     account — skips gracefully if `PLAY_STORE_SERVICE_ACCOUNT` is not set
 7. Merge `main` back into `develop`
 
 ### Play Store Release (AAB)
