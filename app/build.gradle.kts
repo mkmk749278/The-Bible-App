@@ -78,6 +78,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            // Bundle native debug symbols into the AAB so Play Console can symbolicate
+            // crashes/ANRs from bundled native (.so) libraries. Clears the Play upload
+            // warning and makes crash reports readable.
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
             // Sign only when a real keystore is provided (CI release builds): the path
             // must be set, non-blank, AND point at a file that exists. Otherwise build
             // an unsigned release rather than failing on a missing/garbage keystore, so
