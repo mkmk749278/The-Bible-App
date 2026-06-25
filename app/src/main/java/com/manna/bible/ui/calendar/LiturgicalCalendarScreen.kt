@@ -393,60 +393,84 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
 }
 
 /**
- * The verse of the day for the selected date — the same deterministic verse the rest
- * of the app shows — with its text, plus actions to read it in context or share it.
+ * The verse of the day for the selected date, displayed as a share-ready card —
+ * the same visual style as the "Share a verse" screen in the More tab.
  */
 @Composable
 private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -> Unit) {
     var showCard by remember { mutableStateOf(false) }
-    Column {
-        Text(
-            text = stringResource(R.string.calendar_verse_header),
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.Bold,
-            color = MannaTheme.colors.gold
-        )
-        Spacer(Modifier.height(8.dp))
-        Text(
-            text = verse.text,
-            style = MaterialTheme.typography.bodyLarge,
-            color = MannaTheme.colors.ink,
-            lineHeight = 26.sp
-        )
-        Spacer(Modifier.height(4.dp))
-        Text(
-            text = verse.reference,
-            style = MaterialTheme.typography.labelMedium,
-            color = MannaTheme.colors.soft
-        )
-        Spacer(Modifier.height(10.dp))
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
+
+    Text(
+        text = stringResource(R.string.calendar_verse_header),
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.Bold,
+        color = MannaTheme.colors.gold,
+        modifier = Modifier.padding(bottom = 10.dp)
+    )
+
+    // Verse card — same look as the "Share a verse" preview card.
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(MannaTheme.colors.card)
+            .padding(horizontal = 24.dp, vertical = 32.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            TextButton(
-                onClick = { onOpenVerse(verse.osisRef) },
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(
-                    horizontal = 0.dp, vertical = 0.dp
-                )
-            ) {
-                Text(stringResource(R.string.calendar_verse_open))
-            }
-            Button(
-                onClick = { showCard = true },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MannaTheme.colors.gold,
-                    contentColor = MannaTheme.colors.bg
-                )
-            ) {
-                Icon(
-                    Icons.Filled.Share,
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp)
-                )
-                Spacer(Modifier.width(6.dp))
-                Text(stringResource(R.string.calendar_verse_share))
-            }
+            Text(
+                text = verse.text,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Medium,
+                color = MannaTheme.colors.ink,
+                textAlign = TextAlign.Center,
+                lineHeight = 28.sp
+            )
+            // Gold underline divider
+            Box(
+                modifier = Modifier
+                    .width(40.dp)
+                    .height(2.dp)
+                    .background(MannaTheme.colors.gold, RoundedCornerShape(1.dp))
+            )
+            Text(
+                text = verse.reference,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                color = MannaTheme.colors.gold,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+
+    Spacer(Modifier.height(12.dp))
+
+    // Action row
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        TextButton(
+            onClick = { onOpenVerse(verse.osisRef) },
+            modifier = Modifier.weight(1f)
+        ) {
+            Text(stringResource(R.string.calendar_verse_open))
+        }
+        Button(
+            onClick = { showCard = true },
+            modifier = Modifier.weight(1f),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MannaTheme.colors.gold,
+                contentColor = MannaTheme.colors.bg
+            )
+        ) {
+            Icon(Icons.Filled.Share, contentDescription = null, modifier = Modifier.size(16.dp))
+            Spacer(Modifier.width(6.dp))
+            Text(stringResource(R.string.calendar_verse_share))
         }
     }
 
