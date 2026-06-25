@@ -81,7 +81,8 @@ private fun liturgicalColor(color: LiturgicalColor): Color = when (color) {
 fun LiturgicalCalendarScreen(
     modifier: Modifier = Modifier,
     viewModel: LiturgicalCalendarViewModel = hiltViewModel(),
-    onOpenVerse: (String) -> Unit = {}
+    onOpenVerse: (String) -> Unit = {},
+    onFindVerse: (() -> Unit)? = null
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val monthFormatter = remember { DateTimeFormatter.ofPattern("MMMM yyyy", Locale.getDefault()) }
@@ -171,7 +172,7 @@ fun LiturgicalCalendarScreen(
             Spacer(Modifier.height(12.dp))
 
             state.selected?.let { selected ->
-                SelectedDayCard(selected = selected, onOpenVerse = onOpenVerse)
+                SelectedDayCard(selected = selected, onOpenVerse = onOpenVerse, onFindVerse = onFindVerse)
             }
 
             Spacer(Modifier.height(20.dp))
@@ -310,7 +311,7 @@ private fun Dot(color: Color) {
 }
 
 @Composable
-private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit) {
+private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit, onFindVerse: (() -> Unit)? = null) {
     val dateFormatter = remember {
         DateTimeFormatter.ofPattern("EEEE, MMMM d", Locale.getDefault())
     }
@@ -386,7 +387,7 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
 
             selected.dailyVerse?.let { verse ->
                 Spacer(Modifier.height(18.dp))
-                VerseOfDaySection(verse = verse, onOpenVerse = onOpenVerse)
+                VerseOfDaySection(verse = verse, onOpenVerse = onOpenVerse, onFindVerse = onFindVerse)
             }
         }
     }
@@ -397,7 +398,7 @@ private fun SelectedDayCard(selected: SelectedDay, onOpenVerse: (String) -> Unit
  * the same visual style as the "Share a verse" screen in the More tab.
  */
 @Composable
-private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -> Unit) {
+private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -> Unit, onFindVerse: (() -> Unit)? = null) {
     var showCard by remember { mutableStateOf(false) }
 
     Text(
@@ -478,7 +479,8 @@ private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -
         com.manna.bible.ui.card.VerseCardSheet(
             verseText = verse.text,
             reference = verse.reference,
-            onDismiss = { showCard = false }
+            onDismiss = { showCard = false },
+            onFindVerse = onFindVerse
         )
     }
 }

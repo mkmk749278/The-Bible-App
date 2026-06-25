@@ -42,6 +42,7 @@ import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
 import com.manna.bible.ui.calendar.LiturgicalCalendarScreen
 import com.manna.bible.ui.card.ScriptureCardScreen
+import com.manna.bible.ui.card.VerseRecommendationScreen
 import com.manna.bible.ui.catalog.TranslationCatalogScreen
 import com.manna.bible.ui.crisis.CrisisModeScreen
 import com.manna.bible.ui.daily.DailyVerseScreen
@@ -93,6 +94,7 @@ private object Routes {
     const val PRAYER = "prayer"
     const val FASTING = "fasting"
     const val CARD = "card"
+    const val CARD_RECOMMEND = "card_recommend"
     const val SERMON = "sermon"
     const val CHURCH = "church"
     const val LIBRARY = "library"
@@ -237,7 +239,10 @@ fun MannaApp(
                     // --- Calendar tab --------------------------------------------
                     composable(Routes.CALENDAR) {
                         LiturgicalCalendarScreen(
-                            onOpenVerse = { ref -> openInReader(ref, false) }
+                            onOpenVerse = { ref -> openInReader(ref, false) },
+                            onFindVerse = if (FeatureFlags.VERSE_RECOMMENDATION_AI) {
+                                { navController.navigate(Routes.CARD_RECOMMEND) }
+                            } else null
                         )
                     }
 
@@ -387,6 +392,13 @@ fun MannaApp(
                         ScriptureCardScreen(
                             onBack = { navController.popBackStack() }
                         )
+                    }
+                    if (FeatureFlags.VERSE_RECOMMENDATION_AI) {
+                        composable(Routes.CARD_RECOMMEND) {
+                            VerseRecommendationScreen(
+                                onBack = { navController.popBackStack() }
+                            )
+                        }
                     }
                     if (FeatureFlags.SERMON_HELPER) {
                         composable(Routes.SERMON) {

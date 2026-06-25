@@ -45,6 +45,7 @@ import com.manna.bible.data.explain.GeminiNanoExplanationEngine
 import com.manna.bible.data.explain.HybridExplanationEngine
 import com.manna.bible.data.crisis.GeminiCrisisEngine
 import com.manna.bible.data.sermon.GeminiSermonEngine
+import com.manna.bible.data.share.GeminiVerseRecommendationEngine
 import com.manna.bible.domain.crisis.CrisisAiEngine
 import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRepository
@@ -89,6 +90,7 @@ import com.manna.bible.domain.reminder.ReminderScheduler
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.BookNameProvider
 import com.manna.bible.domain.share.DefaultBookNameProvider
+import com.manna.bible.domain.share.VerseRecommendationEngine
 import com.manna.bible.domain.translation.DefaultTranslationFilter
 import com.manna.bible.domain.translation.TranslationFilter
 import dagger.Binds
@@ -205,6 +207,11 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindBookNameProvider(impl: DefaultBookNameProvider): BookNameProvider
+
+    @Binds
+    abstract fun bindVerseRecommendationEngine(
+        impl: GeminiVerseRecommendationEngine
+    ): VerseRecommendationEngine
 
     // --- audio (offline TTS) -------------------------------------------------
 

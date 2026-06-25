@@ -79,6 +79,17 @@ object FeatureFlags {
      */
     const val SERMON_AI_BUILDER: Boolean = false
 
+    /**
+     * Context-Aware Verse Cards (Phase D, F-05). An optional online discovery layer for
+     * the Scripture Card flow: the user describes an occasion or situation ("failed exam",
+     * "wedding today") and Gemini recommends the single passage best suited to share, with
+     * a short personal message in the Bible language. The verse text is always resolved
+     * from the active local translation and rendered with the existing card pipeline; the
+     * manual share flow remains the primary, no-network surface. Phase-gated; promoted in
+     * E-04 after Phase D QA.
+     */
+    const val VERSE_RECOMMENDATION_AI: Boolean = false
+
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 
