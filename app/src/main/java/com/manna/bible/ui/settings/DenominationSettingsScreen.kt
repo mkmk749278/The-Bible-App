@@ -140,16 +140,6 @@ fun DenominationSettingsScreen(
             )
         }
 
-        // UI language (Req 13).
-        SubHeader(R.string.settings_ui_language_heading)
-        SUPPORTED_LANGUAGES.forEach { option ->
-            SelectableRow(
-                selected = state.uiLanguage == option.code,
-                onClick = { viewModel.changeUiLanguage(option.code) },
-                title = stringResource(option.labelRes),
-            )
-        }
-
         // Bible language (Req 13).
         SubHeader(R.string.settings_bible_language_heading)
         SUPPORTED_LANGUAGES.forEach { option ->

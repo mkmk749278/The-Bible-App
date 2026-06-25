@@ -90,7 +90,7 @@ class SetupViewModelTest {
         vm.next()
         assertEquals(SetupStep.DENOMINATION, vm.uiState.value.step)
         vm.next()
-        assertEquals(SetupStep.UI_LANGUAGE, vm.uiState.value.step)
+        assertEquals(SetupStep.BIBLE_LANGUAGE, vm.uiState.value.step)
         vm.back()
         assertEquals(SetupStep.DENOMINATION, vm.uiState.value.step)
     }
@@ -100,11 +100,10 @@ class SetupViewModelTest {
     fun translationStepPopulatesAvailableTranslations() = runTest {
         val vm = viewModel()
         vm.selectDenomination(Denomination.CATHOLIC)
-        vm.selectUiLanguage("ml")
         vm.selectBibleLanguage("ml")
 
-        // Advance WELCOME -> DENOMINATION -> UI_LANGUAGE -> BIBLE_LANGUAGE -> TRANSLATION
-        repeat(4) { vm.next() }
+        // Advance WELCOME -> DENOMINATION -> BIBLE_LANGUAGE -> TRANSLATION
+        repeat(3) { vm.next() }
         advanceUntilIdle()
 
         val state = vm.uiState.value
@@ -121,7 +120,6 @@ class SetupViewModelTest {
             useCase = CompleteSetupUseCase(FakeCanonEngine(), FakeLectionaryProvider(), store)
         )
         vm.selectDenomination(Denomination.CSI)
-        vm.selectUiLanguage("ta")
         vm.selectBibleLanguage("ta")
 
         vm.complete()
@@ -143,7 +141,6 @@ class SetupViewModelTest {
             useCase = CompleteSetupUseCase(FakeCanonEngine(), FakeLectionaryProvider(), store)
         )
         vm.selectDenomination(Denomination.CATHOLIC)
-        vm.selectUiLanguage("ml")
         vm.selectBibleLanguage("ml")
 
         vm.complete()
@@ -155,7 +152,6 @@ class SetupViewModelTest {
         assertNotNull(state.errorMessage)
         // Selections retained for retry.
         assertEquals(Denomination.CATHOLIC, state.denomination)
-        assertEquals("ml", state.uiLanguage)
         assertEquals("ml", state.bibleLanguage)
     }
 

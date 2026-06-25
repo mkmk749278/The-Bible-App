@@ -104,7 +104,7 @@ class TranslationCatalogViewModel @Inject constructor(
                 downloadManager.progress()
             ) { catalog, setup, progress -> Triple(catalog, setup, progress) }
                 .collect { (catalog, setup, progress) ->
-                    val language = setup.bibleLanguage ?: setup.uiLanguage ?: ""
+                    val language = setup.bibleLanguage ?: ""
                     val denomination = setup.denomination ?: Denomination.SHOW_EVERYTHING
                     val profile = canonEngine.profileFor(denomination, language)
                     val compatible = translationFilter.filter(catalog, profile, language)

@@ -136,11 +136,6 @@ fun SetupHost(
                     onSelect = viewModel::selectDenomination,
                     simplifiedMode = simplifiedMode,
                 )
-                SetupStep.UI_LANGUAGE -> UiLanguageStep(
-                    selected = state.uiLanguage,
-                    onSelect = viewModel::selectUiLanguage,
-                    simplifiedMode = simplifiedMode,
-                )
                 SetupStep.BIBLE_LANGUAGE -> BibleLanguageStep(
                     selected = state.bibleLanguage,
                     onSelect = viewModel::selectBibleLanguage,
@@ -294,19 +289,6 @@ private fun DenominationStep(
 }
 
 @Composable
-private fun UiLanguageStep(
-    selected: String?,
-    onSelect: (String) -> Unit,
-    simplifiedMode: Boolean,
-) {
-    StepHeader(
-        titleRes = R.string.setup_ui_language_title,
-        subtitleRes = R.string.setup_ui_language_subtitle,
-    )
-    LanguageList(selected = selected, onSelect = onSelect, simplifiedMode = simplifiedMode)
-}
-
-@Composable
 private fun BibleLanguageStep(
     selected: String?,
     onSelect: (String) -> Unit,
@@ -404,8 +386,6 @@ private fun SummaryStep(state: SetupUiState) {
     val notSelected = stringResource(R.string.setup_summary_none_selected)
 
     val denominationLabel = state.denomination?.let { stringResource(it.labelRes()) } ?: notSelected
-    val uiLanguageLabel = languageLabelRes(state.uiLanguage)?.let { stringResource(it) }
-        ?: state.uiLanguage ?: notSelected
     val bibleLanguageLabel = languageLabelRes(state.bibleLanguage)?.let { stringResource(it) }
         ?: state.bibleLanguage ?: notSelected
     val translationLabel = state.availableTranslations
@@ -415,7 +395,6 @@ private fun SummaryStep(state: SetupUiState) {
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SummaryRow(stringResource(R.string.setup_summary_denomination), denominationLabel)
-        SummaryRow(stringResource(R.string.setup_summary_ui_language), uiLanguageLabel)
         SummaryRow(stringResource(R.string.setup_summary_bible_language), bibleLanguageLabel)
         SummaryRow(stringResource(R.string.setup_summary_translation), translationLabel)
         SummaryRow(stringResource(R.string.setup_summary_lectionary), lectionaryLabel)

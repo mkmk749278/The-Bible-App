@@ -163,7 +163,7 @@ class SearchViewModel @Inject constructor(
                 }
                 return@launch
             }
-            val language = setup.bibleLanguage ?: setup.uiLanguage ?: ""
+            val language = setup.bibleLanguage ?: ""
             val denomination = setup.denomination ?: Denomination.SHOW_EVERYTHING
             val profile = canonEngine.profileFor(denomination, language)
             val bookNames = bibleContentRepository.books(translationId).first()

@@ -338,7 +338,7 @@ class ReaderViewModel @Inject constructor(
                         denomination = denomination,
                         bibleLanguage = language,
                         translationId = setup.bibleTranslationId,
-                        uiLanguage = setup.uiLanguage ?: DEFAULT_UI_LANGUAGE
+                        uiLanguage = DEFAULT_UI_LANGUAGE
                     )
                 }
                 .distinctUntilChanged()
