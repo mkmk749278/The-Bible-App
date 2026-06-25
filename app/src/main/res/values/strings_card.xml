@@ -10,4 +10,17 @@
     <string name="card_theme_description">Card colour</string>
     <string name="card_unavailable">Download a translation to create a card.</string>
     <string name="card_preview_description">Preview of the verse card</string>
+
+    <!-- Context-Aware Verse Cards (F-05) -->
+    <string name="verse_rec_title">Find a verse to share</string>
+    <string name="verse_rec_entry">Find a verse to share</string>
+    <string name="verse_rec_back">Back</string>
+    <string name="verse_rec_prompt">What\'s the occasion or situation?</string>
+    <string name="verse_rec_placeholder">e.g. a friend failed an exam, a new baby, a wedding</string>
+    <string name="verse_rec_recommend">Recommend a verse</string>
+    <string name="verse_rec_thinking">Finding a verse for you…</string>
+    <string name="verse_rec_offline_hint">Verse recommendations need internet. You can still browse and share verses.</string>
+    <string name="verse_rec_message_label">A note you can send</string>
+    <string name="verse_rec_share">Share this verse</string>
+    <string name="verse_rec_try_again">Couldn\'t find a verse. Try a different description.</string>
 </resources>

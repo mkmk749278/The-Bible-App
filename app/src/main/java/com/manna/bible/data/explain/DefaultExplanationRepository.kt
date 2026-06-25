@@ -33,5 +33,5 @@ class DefaultExplanationRepository @Inject constructor(
     }
 
     private fun cacheKey(request: ExplanationRequest): String =
-        "${request.osisRef}|${request.uiLanguageCode}|${request.depth.name}"
+        "${request.osisRef}|${request.uiLanguageCode}|${request.depth.name}|${request.denomination?.id ?: "any"}"
 }

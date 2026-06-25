@@ -14,6 +14,8 @@ import com.manna.bible.domain.model.NumberingScheme
 import com.manna.bible.domain.model.SetupState
 import com.manna.bible.domain.audio.ChapterAudioSource
 import com.manna.bible.domain.audio.NarratedAudioPlayer
+import com.manna.bible.domain.audio.SpeechEngine
+import com.manna.bible.domain.audio.SpeechListener
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.audio.TtsState
 import com.manna.bible.domain.audio.TtsStatus
@@ -87,7 +89,8 @@ class ReaderViewModelTest {
         narratedPlayer: FakeNarratedAudioPlayer = FakeNarratedAudioPlayer(),
         chapterAudioSource: ChapterAudioSource = FakeChapterAudioSource(),
         explanationRepository: com.manna.bible.domain.explain.ExplanationRepository =
-            FakeExplanationRepository()
+            FakeExplanationRepository(),
+        speechEngine: FakeSpeechEngine = FakeSpeechEngine()
     ): ReaderViewModel {
         val getChapter = GetChapterUseCase(content)
         return ReaderViewModel(
@@ -105,7 +108,8 @@ class ReaderViewModelTest {
             ttsReader = ttsReader,
             narratedPlayer = narratedPlayer,
             chapterAudioSource = chapterAudioSource,
-            explanationRepository = explanationRepository
+            explanationRepository = explanationRepository,
+            speechEngine = speechEngine
         )
     }
 
@@ -116,10 +120,14 @@ class ReaderViewModelTest {
             ),
         private val configured: Boolean = false
     ) : com.manna.bible.domain.explain.ExplanationRepository {
+        var lastRequest: com.manna.bible.domain.explain.ExplanationRequest? = null
         override fun isConfigured(): Boolean = configured
         override suspend fun explain(
             request: com.manna.bible.domain.explain.ExplanationRequest
-        ): com.manna.bible.domain.explain.ExplanationResult = result
+        ): com.manna.bible.domain.explain.ExplanationResult {
+            lastRequest = request
+            return result
+        }
     }
 
     @Test
@@ -144,6 +152,88 @@ class ReaderViewModelTest {
 
         vm.dismissExplain()
         assertEquals(null, vm.uiState.value.explain)
+    }
+
+    @Test
+    @DisplayName("explainVerse passes the reader's denomination to the explanation request (F-01)")
+    fun explainVersePassesDenomination() = runTest {
+        val repo = FakeExplanationRepository(
+            result = com.manna.bible.domain.explain.ExplanationResult.Success("ok"),
+            configured = true
+        )
+        val vm = viewModel(
+            denomination = Denomination.CATHOLIC,
+            prefs = FakePreferencesStore(denomination = Denomination.CATHOLIC),
+            explanationRepository = repo
+        )
+        advanceUntilIdle()
+
+        vm.explainVerse(1)
+        advanceUntilIdle()
+
+        assertEquals(Denomination.CATHOLIC, repo.lastRequest?.denomination)
+    }
+
+    // --- F-02 Oral Bible AI: spoken explanations -----------------------------
+
+    @Test
+    @DisplayName("speakExplanation speaks the ready explanation in the Bible language, stop ends it")
+    fun speakExplanationSetsSpeakingTrueThenFalse() = runTest {
+        val repo = FakeExplanationRepository(
+            result = com.manna.bible.domain.explain.ExplanationResult.Success("Rest in him tonight."),
+            configured = true
+        )
+        val speech = FakeSpeechEngine(available = true)
+        val vm = viewModel(explanationRepository = repo, speechEngine = speech)
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.canSpeakExplanation)
+
+        vm.explainVerse(1)
+        advanceUntilIdle()
+
+        vm.speakExplanation()
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.explanationSpeaking)
+        assertEquals("Rest in him tonight.", speech.spokenText)
+        assertEquals("en", speech.selectedLanguage)
+
+        vm.stopExplanation()
+        assertFalse(vm.uiState.value.explanationSpeaking)
+    }
+
+    @Test
+    @DisplayName("stopExplanation stops the engine and clears the speaking flag")
+    fun stopExplanationCallsSpeechEngineStop() = runTest {
+        val speech = FakeSpeechEngine(available = true)
+        val vm = viewModel(speechEngine = speech)
+        advanceUntilIdle()
+
+        vm.stopExplanation()
+
+        assertTrue(speech.stopCalled)
+        assertFalse(vm.uiState.value.explanationSpeaking)
+    }
+
+    @Test
+    @DisplayName("speakExplanation is a no-op when no on-device voice is available (flag-off behaviour)")
+    fun speakExplanationNoOpWhenUnavailable() = runTest {
+        val repo = FakeExplanationRepository(
+            result = com.manna.bible.domain.explain.ExplanationResult.Success("Rest in him tonight."),
+            configured = true
+        )
+        val speech = FakeSpeechEngine(available = false)
+        val vm = viewModel(explanationRepository = repo, speechEngine = speech)
+        advanceUntilIdle()
+        assertFalse(vm.uiState.value.canSpeakExplanation)
+
+        vm.explainVerse(1)
+        advanceUntilIdle()
+
+        vm.speakExplanation()
+        advanceUntilIdle()
+
+        assertFalse(vm.uiState.value.explanationSpeaking)
+        assertEquals(null, speech.spokenText)
     }
 
     @Test
@@ -649,5 +739,28 @@ class ReaderViewModelTest {
             _state.value = TtsState(status = TtsStatus.IDLE)
             _errors.tryEmit(Unit)
         }
+    }
+
+    /** In-memory [SpeechEngine] that records spoken text/language and stop calls (F-02). */
+    private class FakeSpeechEngine(private val available: Boolean = true) : SpeechEngine {
+        var spokenText: String? = null
+            private set
+        var selectedLanguage: String? = null
+            private set
+        var stopCalled: Boolean = false
+            private set
+
+        override fun setListener(listener: SpeechListener?) = Unit
+        override fun selectLanguage(languageTag: String): Boolean {
+            selectedLanguage = languageTag
+            return available
+        }
+        override fun isLanguageAvailable(languageTag: String): Boolean = available
+        override fun setSpeed(speed: Float) = Unit
+        override fun speak(utteranceId: String, text: String, flush: Boolean) {
+            spokenText = text
+        }
+        override fun stop() { stopCalled = true }
+        override fun shutdown() = Unit
     }
 }

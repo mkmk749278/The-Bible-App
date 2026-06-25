@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.manna.bible.R
+import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.theme.MannaTheme
 
 /**
@@ -48,13 +49,16 @@ import com.manna.bible.ui.theme.MannaTheme
  * @param verseText the verse text to render.
  * @param reference the human reference (e.g. "John 3:16").
  * @param onDismiss called when the sheet is dismissed.
+ * @param onFindVerse optional entry point into the Context-Aware Verse Cards flow (F-05);
+ *   when provided and the feature flag is on, a "Find a verse to share" action is shown.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VerseCardSheet(
     verseText: String,
     reference: String,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onFindVerse: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
     var theme by remember { mutableStateOf(CardTheme.ALL.first()) }
@@ -127,6 +131,16 @@ fun VerseCardSheet(
                 },
                 modifier = Modifier.fillMaxWidth()
             ) { Text(stringResource(R.string.card_share_text)) }
+
+            if (FeatureFlags.VERSE_RECOMMENDATION_AI && onFindVerse != null) {
+                TextButton(
+                    onClick = {
+                        onDismiss()
+                        onFindVerse()
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text(stringResource(R.string.verse_rec_entry)) }
+            }
         }
     }
 }

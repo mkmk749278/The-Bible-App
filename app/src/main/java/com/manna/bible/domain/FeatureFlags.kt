@@ -45,6 +45,51 @@ object FeatureFlags {
     /** 3AM / Crisis Mode — compassionate companion for hard moments (Phase 2, P2-1). */
     const val CRISIS_MODE: Boolean = true
 
+    /**
+     * Persecution-Aware Comfort (Phase A, F-06). A curated, fully-offline tier of
+     * Scripture inside Crisis Mode, organised by the kind of pressure a believer faces
+     * (family rejection, livelihood threat, physical danger, social exclusion, faith
+     * crisis). Ships enabled — it is local curated data with no network dependency.
+     */
+    const val PERSECUTION_COMFORT: Boolean = true
+
+    /**
+     * Crisis AI Companion (Phase B, F-03). An optional online enrichment layer inside
+     * Crisis Mode: the user describes their situation in their own words and Gemini
+     * returns the single most relevant passage, explained compassionately in the Bible
+     * language. The curated offline comfort list remains the primary, no-network tier.
+     * Phase-gated; promoted in E-02 after the privacy audit.
+     */
+    const val CRISIS_AI_COMPANION: Boolean = true
+
+    /**
+     * Oral Bible AI (Phase B, F-02). Pipes a displayed "Explain this passage" result
+     * through the existing on-device TTS engine so a semi-literate or 3am listener can
+     * hear the explanation read aloud in the Bible language. Phase-gated; promoted in
+     * E-01 after Phase B QA.
+     */
+    const val ORAL_AI_EXPLANATION: Boolean = true
+
+    /**
+     * AI Sermon Builder (Phase C, F-04). An optional online layer inside the Village
+     * Pastor Sermon Helper: given a passage reference, the preacher's tradition, and a
+     * congregation type, Gemini generates a complete, editable sermon outline in the
+     * Bible language. The manual notepad remains the primary, no-network surface.
+     * Phase-gated; promoted in E-03 after Phase C QA.
+     */
+    const val SERMON_AI_BUILDER: Boolean = true
+
+    /**
+     * Context-Aware Verse Cards (Phase D, F-05). An optional online discovery layer for
+     * the Scripture Card flow: the user describes an occasion or situation ("failed exam",
+     * "wedding today") and Gemini recommends the single passage best suited to share, with
+     * a short personal message in the Bible language. The verse text is always resolved
+     * from the active local translation and rendered with the existing card pipeline; the
+     * manual share flow remains the primary, no-network surface. Phase-gated; promoted in
+     * E-04 after Phase D QA.
+     */
+    const val VERSE_RECOMMENDATION_AI: Boolean = true
+
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 

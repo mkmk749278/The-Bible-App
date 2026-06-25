@@ -169,6 +169,10 @@
     <string name="explain_unavailable_offline">You\'re offline. Connect to the internet to explain a new passage; once explained, it\'s saved for offline reading.</string>
     <string name="explain_unavailable_error">Couldn\'t load an explanation just now. Please try again.</string>
     <string name="explain_diagnostic">Details: %1$s</string>
+    <!-- Oral Bible AI (F-02) — spoken explanations -->
+    <string name="explain_speak">Speak explanation</string>
+    <string name="explain_stop_speaking">Stop speaking explanation</string>
+    <string name="explain_voice_unavailable">Install the Bible-language TTS voice in Android Settings to listen.</string>
 
     <!-- Bottom navigation (UX directive: Home · Listen · Search · Library) -->
     <string name="nav_home">Home</string>
