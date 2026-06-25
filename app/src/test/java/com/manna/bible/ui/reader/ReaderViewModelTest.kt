@@ -116,10 +116,14 @@ class ReaderViewModelTest {
             ),
         private val configured: Boolean = false
     ) : com.manna.bible.domain.explain.ExplanationRepository {
+        var lastRequest: com.manna.bible.domain.explain.ExplanationRequest? = null
         override fun isConfigured(): Boolean = configured
         override suspend fun explain(
             request: com.manna.bible.domain.explain.ExplanationRequest
-        ): com.manna.bible.domain.explain.ExplanationResult = result
+        ): com.manna.bible.domain.explain.ExplanationResult {
+            lastRequest = request
+            return result
+        }
     }
 
     @Test
@@ -144,6 +148,26 @@ class ReaderViewModelTest {
 
         vm.dismissExplain()
         assertEquals(null, vm.uiState.value.explain)
+    }
+
+    @Test
+    @DisplayName("explainVerse passes the reader's denomination to the explanation request (F-01)")
+    fun explainVersePassesDenomination() = runTest {
+        val repo = FakeExplanationRepository(
+            result = com.manna.bible.domain.explain.ExplanationResult.Success("ok"),
+            configured = true
+        )
+        val vm = viewModel(
+            denomination = Denomination.CATHOLIC,
+            prefs = FakePreferencesStore(denomination = Denomination.CATHOLIC),
+            explanationRepository = repo
+        )
+        advanceUntilIdle()
+
+        vm.explainVerse(1)
+        advanceUntilIdle()
+
+        assertEquals(Denomination.CATHOLIC, repo.lastRequest?.denomination)
     }
 
     @Test

@@ -45,6 +45,14 @@ object FeatureFlags {
     /** 3AM / Crisis Mode — compassionate companion for hard moments (Phase 2, P2-1). */
     const val CRISIS_MODE: Boolean = true
 
+    /**
+     * Persecution-Aware Comfort (Phase A, F-06). A curated, fully-offline tier of
+     * Scripture inside Crisis Mode, organised by the kind of pressure a believer faces
+     * (family rejection, livelihood threat, physical danger, social exclusion, faith
+     * crisis). Ships enabled — it is local curated data with no network dependency.
+     */
+    const val PERSECUTION_COMFORT: Boolean = true
+
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 

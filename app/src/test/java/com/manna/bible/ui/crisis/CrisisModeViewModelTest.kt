@@ -3,6 +3,8 @@ package com.manna.bible.ui.crisis
 import app.cash.turbine.test
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.crisis.CrisisCompanion
+import com.manna.bible.domain.crisis.PersecutionCategory
+import com.manna.bible.domain.crisis.PersecutionCompanion
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.CanonType
 import com.manna.bible.domain.model.Denomination
@@ -30,6 +32,7 @@ import kotlinx.coroutines.test.setMain
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -52,6 +55,7 @@ class CrisisModeViewModelTest {
                 comfort = listOf(ReadingRef("PSA", 23, 4), ReadingRef("ISA", 43, 2)),
                 listen = ReadingRef("PSA", 23, 1)
             ),
+            persecutionCompanion = FakePersecutionCompanion(),
             preferencesStore = FakePreferencesStore(activeId = "web"),
             translationRepository = FakeTranslationRepository(listOf(translation("web"))),
             bibleContentRepository = FakeContentRepository()
@@ -70,6 +74,71 @@ class CrisisModeViewModelTest {
         }
     }
 
+    @Test
+    @DisplayName("selectPersecutionCategory resolves verse texts from the active translation")
+    fun selectPersecutionResolvesText() = runTest {
+        val vm = CrisisModeViewModel(
+            crisisCompanion = FakeCompanion(
+                comfort = listOf(ReadingRef("PSA", 23, 4)),
+                listen = ReadingRef("PSA", 23, 1)
+            ),
+            persecutionCompanion = FakePersecutionCompanion(
+                verses = mapOf(
+                    PersecutionCategory.FAMILY_REJECTION to listOf(ReadingRef("MAT", 10, 34))
+                )
+            ),
+            preferencesStore = FakePreferencesStore(activeId = "web"),
+            translationRepository = FakeTranslationRepository(listOf(translation("web"))),
+            bibleContentRepository = FakeContentRepository()
+        )
+        advanceUntilIdle()
+
+        vm.selectPersecutionCategory(PersecutionCategory.FAMILY_REJECTION)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertEquals(PersecutionCategory.FAMILY_REJECTION, state.selectedPersecutionCategory)
+        assertFalse(state.isPersecutionLoading)
+        assertEquals(1, state.persecutionVerses.size)
+        val verse = state.persecutionVerses.first()
+        assertEquals("Matthew 10:34", verse.reference)
+        assertEquals("MAT 10:34", verse.text)
+        assertEquals("MAT.10.34", verse.osisRef)
+        // The curated comfort list is untouched by the category selection.
+        assertEquals(1, state.comfortVerses.size)
+    }
+
+    @Test
+    @DisplayName("selecting the same category again clears the selection")
+    fun selectSameCategoryClears() = runTest {
+        val vm = CrisisModeViewModel(
+            crisisCompanion = FakeCompanion(
+                comfort = listOf(ReadingRef("PSA", 23, 4)),
+                listen = ReadingRef("PSA", 23, 1)
+            ),
+            persecutionCompanion = FakePersecutionCompanion(
+                verses = mapOf(
+                    PersecutionCategory.FAMILY_REJECTION to listOf(ReadingRef("MAT", 10, 34))
+                )
+            ),
+            preferencesStore = FakePreferencesStore(activeId = "web"),
+            translationRepository = FakeTranslationRepository(listOf(translation("web"))),
+            bibleContentRepository = FakeContentRepository()
+        )
+        advanceUntilIdle()
+
+        vm.selectPersecutionCategory(PersecutionCategory.FAMILY_REJECTION)
+        advanceUntilIdle()
+        assertEquals(PersecutionCategory.FAMILY_REJECTION, vm.uiState.value.selectedPersecutionCategory)
+
+        vm.selectPersecutionCategory(PersecutionCategory.FAMILY_REJECTION)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertEquals(null, state.selectedPersecutionCategory)
+        assertTrue(state.persecutionVerses.isEmpty())
+    }
+
     private fun translation(id: String) = Translation(
         id = id, name = "World English Bible", languageCode = "en",
         canonType = CanonType.PROTESTANT_66, hasDeuterocanon = false,
@@ -84,8 +153,19 @@ class CrisisModeViewModelTest {
         override fun listenPassage(): ReadingRef = listen
     }
 
+    private class FakePersecutionCompanion(
+        private val verses: Map<PersecutionCategory, List<ReadingRef>> = emptyMap()
+    ) : PersecutionCompanion {
+        override fun categoriesForDenomination(
+            denomination: com.manna.bible.domain.model.Denomination?
+        ): List<PersecutionCategory> = PersecutionCategory.entries.toList()
+
+        override fun versesFor(category: PersecutionCategory): List<ReadingRef> =
+            verses[category] ?: emptyList()
+    }
+
     private class FakeContentRepository : BibleContentRepository {
-        private val names = mapOf("PSA" to "Psalms", "ISA" to "Isaiah")
+        private val names = mapOf("PSA" to "Psalms", "ISA" to "Isaiah", "MAT" to "Matthew")
         override fun books(translationId: String): Flow<List<BookSummary>> =
             MutableStateFlow(names.entries.mapIndexed { i, e ->
                 BookSummary(e.key, e.value, Testament.OLD, i, 150)

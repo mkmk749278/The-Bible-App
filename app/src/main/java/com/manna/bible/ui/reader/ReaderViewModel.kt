@@ -197,6 +197,9 @@ class ReaderViewModel @Inject constructor(
     // BCP-47 language tag of the active Bible text, used to pick a TTS voice (Req 9.5).
     private var bibleLanguageTag: String? = null
     private var uiLanguageTag: String = DEFAULT_UI_LANGUAGE
+    // The reader's tradition, resolved from setup; passed to the explanation engine so
+    // the Indian Cultural Lens (F-01) can frame the explanation for that tradition.
+    private var denomination: Denomination? = null
     private var explainJob: Job? = null
 
     init {
@@ -348,6 +351,7 @@ class ReaderViewModel @Inject constructor(
                     val translationId = snapshot.translationId
                     bibleLanguageTag = language
                     uiLanguageTag = snapshot.uiLanguage
+                    this@ReaderViewModel.denomination = snapshot.denomination
                     val profile = canonEngine.profileFor(denomination, language)
                     val resolvedTranslation = resolveActiveTranslation(translationId)
                     _uiState.value = _uiState.value.copy(
@@ -691,7 +695,8 @@ class ReaderViewModel @Inject constructor(
                     reference = reference,
                     passageText = verseLine.text,
                     uiLanguageCode = bibleLanguageTag ?: DEFAULT_UI_LANGUAGE,
-                    depth = depth
+                    depth = depth,
+                    denomination = denomination
                 )
             )
             val status = when (result) {

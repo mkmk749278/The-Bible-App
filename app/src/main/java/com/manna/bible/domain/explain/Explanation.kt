@@ -1,5 +1,7 @@
 package com.manna.bible.domain.explain
 
+import com.manna.bible.domain.model.Denomination
+
 /** How deep an explanation should go. */
 enum class ExplainDepth {
     /** A plain, warm explanation for an ordinary reader: context, meaning, application. */
@@ -18,13 +20,16 @@ enum class ExplainDepth {
  * @property passageText the verse text(s) to explain, in the Bible language.
  * @property uiLanguageCode the language the explanation should be written in.
  * @property depth [ExplainDepth].
+ * @property denomination the reader's tradition, used to add a denomination-aware
+ *   cultural lens to the explanation. Null applies no denominational constraint.
  */
 data class ExplanationRequest(
     val osisRef: String,
     val reference: String,
     val passageText: String,
     val uiLanguageCode: String,
-    val depth: ExplainDepth
+    val depth: ExplainDepth,
+    val denomination: Denomination? = null
 )
 
 /** Why an explanation could not be produced. */

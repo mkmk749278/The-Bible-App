@@ -10,4 +10,13 @@
     <string name="crisis_listen">Just listen</string>
     <string name="crisis_prayer_title">A prayer when you have no words</string>
     <string name="crisis_prayer_body">Lord, I am weary and afraid. Be near to me now. Quiet my heart, hold me through this night, and remind me that I am Yours. Amen.</string>
+
+    <!-- Persecution-Aware Comfort (F-06) -->
+    <string name="crisis_persecution_heading">I am facing persecution</string>
+    <string name="crisis_persecution_subheading">Choose what you are facing for Scripture that speaks to it.</string>
+    <string name="crisis_persecution_family">Family pressure</string>
+    <string name="crisis_persecution_livelihood">Job or livelihood</string>
+    <string name="crisis_persecution_danger">Physical danger</string>
+    <string name="crisis_persecution_exclusion">Social exclusion</string>
+    <string name="crisis_persecution_faith">Faith under doubt</string>
 </resources>

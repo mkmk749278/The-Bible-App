@@ -48,6 +48,8 @@ import com.manna.bible.domain.explain.ExplanationRepository
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
+import com.manna.bible.domain.crisis.DefaultPersecutionCompanion
+import com.manna.bible.domain.crisis.PersecutionCompanion
 import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.devotion.DefaultJesusPrayerProvider
 import com.manna.bible.domain.devotion.DefaultParalokaProvider
@@ -285,6 +287,11 @@ abstract class BindingsModule {
 
     @Binds
     abstract fun bindCrisisCompanion(impl: DefaultCrisisCompanion): CrisisCompanion
+
+    @Binds
+    abstract fun bindPersecutionCompanion(
+        impl: DefaultPersecutionCompanion
+    ): PersecutionCompanion
 
     // --- grief companion -----------------------------------------------------
 
