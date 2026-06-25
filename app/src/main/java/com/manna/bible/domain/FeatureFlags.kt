@@ -70,6 +70,15 @@ object FeatureFlags {
      */
     const val ORAL_AI_EXPLANATION: Boolean = false
 
+    /**
+     * AI Sermon Builder (Phase C, F-04). An optional online layer inside the Village
+     * Pastor Sermon Helper: given a passage reference, the preacher's tradition, and a
+     * congregation type, Gemini generates a complete, editable sermon outline in the
+     * Bible language. The manual notepad remains the primary, no-network surface.
+     * Phase-gated; promoted in E-03 after Phase C QA.
+     */
+    const val SERMON_AI_BUILDER: Boolean = false
+
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 

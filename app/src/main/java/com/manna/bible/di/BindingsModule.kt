@@ -44,6 +44,7 @@ import com.manna.bible.data.explain.GeminiExplanationEngine
 import com.manna.bible.data.explain.GeminiNanoExplanationEngine
 import com.manna.bible.data.explain.HybridExplanationEngine
 import com.manna.bible.data.crisis.GeminiCrisisEngine
+import com.manna.bible.data.sermon.GeminiSermonEngine
 import com.manna.bible.domain.crisis.CrisisAiEngine
 import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRepository
@@ -82,6 +83,7 @@ import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import com.manna.bible.domain.repository.PrayerRepository
 import com.manna.bible.domain.repository.SermonRepository
+import com.manna.bible.domain.sermon.SermonAiEngine
 import com.manna.bible.data.reminder.AlarmReminderScheduler
 import com.manna.bible.domain.reminder.ReminderScheduler
 import com.manna.bible.domain.repository.TranslationRepository
@@ -314,6 +316,9 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindSermonRepository(impl: DefaultSermonRepository): SermonRepository
+
+    @Binds
+    abstract fun bindSermonAiEngine(impl: GeminiSermonEngine): SermonAiEngine
 
     // --- fasting companion ---------------------------------------------------
 
