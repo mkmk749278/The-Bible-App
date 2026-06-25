@@ -690,7 +690,7 @@ class ReaderViewModel @Inject constructor(
                     osisRef = osisRef,
                     reference = reference,
                     passageText = verseLine.text,
-                    uiLanguageCode = uiLanguageTag,
+                    uiLanguageCode = bibleLanguageTag ?: DEFAULT_UI_LANGUAGE,
                     depth = depth
                 )
             )
