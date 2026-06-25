@@ -147,22 +147,6 @@ class DenominationSettingsViewModelTest {
         assertEquals(true, store.lastShowDeuterocanonical)
     }
 
-    @Test
-    @DisplayName("changeUiLanguage saves setup with updated uiLanguage (Req 13)")
-    fun changeUiLanguagePersists() = runTest {
-        val store = FakePreferencesStore()
-        val vm = viewModel(store)
-        advanceUntilIdle() // let the init collector capture the current SetupState
-
-        vm.changeUiLanguage("ta")
-        advanceUntilIdle()
-
-        assertEquals("ta", store.currentState.uiLanguage)
-        // Other fields preserved (Req 11.4).
-        assertEquals(Denomination.CATHOLIC, store.currentState.denomination)
-        assertEquals("ml", store.currentState.bibleLanguage)
-    }
-
     private companion object {
         val INITIAL_STATE = SetupState(
             denomination = Denomination.CATHOLIC,

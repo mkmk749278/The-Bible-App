@@ -28,7 +28,6 @@ import kotlinx.coroutines.launch
 enum class SetupStep {
     WELCOME,
     DENOMINATION,
-    UI_LANGUAGE,
     BIBLE_LANGUAGE,
     TRANSLATION,
     LECTIONARY,
@@ -40,8 +39,7 @@ enum class SetupStep {
  *
  * @property step The current setup step.
  * @property denomination Chosen tradition, or null when not yet chosen / skipped (Req 2, 3).
- * @property uiLanguage Selected app UI language code (Req 4).
- * @property bibleLanguage Selected Bible text language code, independent of [uiLanguage] (Req 5).
+ * @property bibleLanguage Selected Bible text language code (Req 5).
  * @property bibleTranslationId Selected translation id (Req 5).
  * @property showDeuterocanonical Protestant deuterocanonical visibility toggle (Req 15).
  * @property availableTranslations Translations offered on the translation step (Req 5).
@@ -53,7 +51,6 @@ enum class SetupStep {
 data class SetupUiState(
     val step: SetupStep = SetupStep.WELCOME,
     val denomination: Denomination? = null,
-    val uiLanguage: String? = null,
     val bibleLanguage: String? = null,
     val bibleTranslationId: String? = null,
     val showDeuterocanonical: Boolean = false,
@@ -110,11 +107,6 @@ class SetupViewModel @Inject constructor(
                 lectionaryId = lectionaryProvider.lectionaryIdFor(denomination)
             )
         }
-    }
-
-    /** Records the selected app UI language (Requirement 4). */
-    fun selectUiLanguage(code: String) {
-        _uiState.update { it.copy(uiLanguage = code) }
     }
 
     /** Records the selected Bible text language (Requirement 5). */
@@ -181,7 +173,7 @@ class SetupViewModel @Inject constructor(
             val result = completeSetupUseCase(
                 SetupSelections(
                     denomination = state.denomination,
-                    uiLanguage = state.uiLanguage,
+                    uiLanguage = "en",
                     bibleLanguage = state.bibleLanguage,
                     bibleTranslationId = state.bibleTranslationId,
                     showDeuterocanonical = state.showDeuterocanonical
@@ -211,7 +203,7 @@ class SetupViewModel @Inject constructor(
         viewModelScope.launch {
             val snapshot = _uiState.value
             val effectiveDenomination = snapshot.denomination ?: Denomination.SHOW_EVERYTHING
-            val effectiveBibleLanguage = snapshot.bibleLanguage ?: snapshot.uiLanguage ?: ""
+            val effectiveBibleLanguage = snapshot.bibleLanguage ?: ""
             // Pull the live catalog when online so editions appear even on a fresh
             // install; offline this is a no-op and the cached catalog is used.
             runCatching { translationRepository.refreshCatalog() }

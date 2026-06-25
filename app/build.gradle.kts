@@ -122,6 +122,16 @@ android {
         // Don't fail the build on those intentional gaps.
         disable += "MissingTranslation"
     }
+    // Disable Play Store language-based APK splitting so all locale string resources
+    // (values-te/, values-ta/, values-hi/, values-ml/) are delivered to every device,
+    // regardless of the device's system language. Without this, a device set to English
+    // receives an APK with only the English resources, and the Bible-language prayer text
+    // (e.g. Telugu prayers for a user whose phone is in English) falls back to English.
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 // Gradle Play Publisher (com.github.triplet.play) — uploads the signed AAB to the

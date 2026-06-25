@@ -29,7 +29,6 @@ import kotlinx.coroutines.launch
  *
  * @property denomination The currently persisted tradition.
  * @property canonType The currently persisted canon.
- * @property uiLanguage The persisted app UI language code (Req 13).
  * @property bibleLanguage The persisted Bible text language code (Req 13).
  * @property showDeuterocanonical The Protestant deuterocanonical visibility toggle (Req 15).
  * @property pendingDenomination A denomination change awaiting user confirmation (Req 12).
@@ -39,7 +38,6 @@ import kotlinx.coroutines.launch
 data class DenominationSettingsUiState(
     val denomination: Denomination? = null,
     val canonType: CanonType? = null,
-    val uiLanguage: String? = null,
     val bibleLanguage: String? = null,
     val showDeuterocanonical: Boolean = false,
     val pendingDenomination: Denomination? = null,
@@ -101,7 +99,6 @@ class DenominationSettingsViewModel @Inject constructor(
             DenominationSettingsUiState(
                 denomination = setup.denomination,
                 canonType = setup.canonType,
-                uiLanguage = setup.uiLanguage,
                 bibleLanguage = setup.bibleLanguage,
                 showDeuterocanonical = setup.showDeuterocanonical,
                 pendingDenomination = inter.pendingDenomination,
@@ -165,15 +162,6 @@ class DenominationSettingsViewModel @Inject constructor(
                     )
                 }
             )
-        }
-    }
-
-    /** Persists a new UI language immediately, preserving all other setup fields (Req 13). */
-    fun changeUiLanguage(code: String) {
-        val current = latestSetupState ?: return
-        viewModelScope.launch {
-            runCatching { preferencesStore.saveSetup(current.copy(uiLanguage = code)) }
-                .onFailure { error -> interaction.update { it.copy(errorMessage = error.message) } }
         }
     }
 
