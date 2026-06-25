@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -18,8 +19,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -37,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
+import com.manna.bible.domain.crisis.CrisisAiResult
 import com.manna.bible.domain.crisis.PersecutionCategory
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
@@ -130,6 +136,20 @@ fun CrisisModeScreen(
                 }
             }
 
+            if (FeatureFlags.CRISIS_AI_COMPANION) {
+                item {
+                    CrisisAiSection(
+                        situationText = state.situationText,
+                        aiResponse = state.aiResponse,
+                        isAiLoading = state.isAiLoading,
+                        aiConfigured = state.aiConfigured,
+                        onSituationChange = viewModel::updateSituation,
+                        onSubmit = viewModel::submitSituation,
+                        onOpenVerse = onOpenVerse
+                    )
+                }
+            }
+
             if (FeatureFlags.PERSECUTION_COMFORT) {
                 item {
                     PersecutionSection(
@@ -170,6 +190,110 @@ fun CrisisModeScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun CrisisAiSection(
+    situationText: String,
+    aiResponse: CrisisAiResult?,
+    isAiLoading: Boolean,
+    aiConfigured: Boolean,
+    onSituationChange: (String) -> Unit,
+    onSubmit: () -> Unit,
+    onOpenVerse: (String) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        if (aiConfigured) {
+            val submitDescription = stringResource(R.string.crisis_ai_submit)
+            OutlinedTextField(
+                value = situationText,
+                onValueChange = onSituationChange,
+                placeholder = { Text(stringResource(R.string.crisis_ai_placeholder)) },
+                trailingIcon = {
+                    if (situationText.isNotBlank() && !isAiLoading) {
+                        IconButton(
+                            onClick = onSubmit,
+                            modifier = Modifier.semantics { contentDescription = submitDescription }
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                },
+                enabled = !isAiLoading,
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            if (isAiLoading) {
+                Row(
+                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+                    Text(
+                        text = stringResource(R.string.crisis_ai_thinking),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MannaTheme.colors.soft
+                    )
+                }
+            }
+
+            when (val response = aiResponse) {
+                is CrisisAiResult.Success -> CrisisAiResponseCard(
+                    response = response,
+                    onClick = { onOpenVerse(response.osisRef) }
+                )
+                CrisisAiResult.Offline -> Text(
+                    text = stringResource(R.string.crisis_ai_offline_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MannaTheme.colors.muted
+                )
+                is CrisisAiResult.Unavailable -> Unit
+                null -> Unit
+            }
+        } else {
+            Text(
+                text = stringResource(R.string.crisis_ai_offline_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MannaTheme.colors.muted
+            )
+        }
+    }
+}
+
+@Composable
+private fun CrisisAiResponseCard(response: CrisisAiResult.Success, onClick: () -> Unit) {
+    val description = stringResource(R.string.a11y_open_in_reader, response.passageRef)
+    Surface(
+        color = MannaTheme.colors.card,
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
+            .semantics { contentDescription = description }
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(18.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = response.explanation,
+                fontFamily = ScriptureFontFamily,
+                style = MaterialTheme.typography.titleMedium,
+                color = MannaTheme.colors.ink,
+                lineHeight = 28.sp
+            )
+            Text(
+                text = response.passageRef,
+                style = MaterialTheme.typography.labelLarge,
+                color = MannaTheme.colors.gold,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

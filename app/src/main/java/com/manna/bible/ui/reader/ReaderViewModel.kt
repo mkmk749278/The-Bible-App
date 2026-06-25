@@ -6,6 +6,7 @@ import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.domain.audio.ChapterAudioSource
 import com.manna.bible.domain.audio.NarratedAudioPlayer
+import com.manna.bible.domain.audio.SpeechEngine
 import com.manna.bible.domain.audio.TtsReader
 import com.manna.bible.domain.audio.TtsStatus
 import com.manna.bible.domain.audio.TtsVerse
@@ -142,7 +143,15 @@ data class ReaderUiState(
     /** True when Simplified Mode (audio-first, enlarged controls) is enabled (Req 14.5). */
     val simplifiedMode: Boolean = false,
     /** The Explain bottom sheet state for the selected verse, or null when closed. */
-    val explain: ExplainSheetState? = null
+    val explain: ExplainSheetState? = null,
+    // --- Oral Bible AI (F-02) -----------------------------------------------
+    /** True while the displayed explanation is being read aloud by the TTS engine. */
+    val explanationSpeaking: Boolean = false,
+    /**
+     * True when the explanation can be spoken: the Oral AI flag is on and an on-device
+     * voice exists for the Bible language. False greys out the speak control (Req 9.6).
+     */
+    val canSpeakExplanation: Boolean = false
 ) {
     /** True when audio is playing or paused — the audio bar shows stop/resume controls. */
     val isAudioActive: Boolean get() = isAudioPlaying || isAudioPaused
@@ -178,7 +187,8 @@ class ReaderViewModel @Inject constructor(
     private val ttsReader: TtsReader,
     private val narratedPlayer: NarratedAudioPlayer,
     private val chapterAudioSource: ChapterAudioSource,
-    private val explanationRepository: ExplanationRepository
+    private val explanationRepository: ExplanationRepository,
+    private val speechEngine: SpeechEngine
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReaderUiState())
@@ -354,10 +364,16 @@ class ReaderViewModel @Inject constructor(
                     this@ReaderViewModel.denomination = snapshot.denomination
                     val profile = canonEngine.profileFor(denomination, language)
                     val resolvedTranslation = resolveActiveTranslation(translationId)
+                    // Whether a spoken explanation is possible: an on-device voice exists
+                    // for the Bible language (F-02, Req 9.6). The ORAL_AI_EXPLANATION flag
+                    // gates the on-screen control itself (see ReaderScreen), mirroring how
+                    // EXPLAIN_PASSAGE gates the explain action without gating the ViewModel.
+                    val canSpeak = speechEngine.isLanguageAvailable(language)
                     _uiState.value = _uiState.value.copy(
                         profile = profile,
                         activeTranslationId = resolvedTranslation,
-                        isRtl = ScriptDirection.isRightToLeft(language)
+                        isRtl = ScriptDirection.isRightToLeft(language),
+                        canSpeakExplanation = canSpeak
                     )
                     loadInitial(profile, resolvedTranslation)
                 }
@@ -676,6 +692,43 @@ class ReaderViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(explain = null)
     }
 
+    // --- Oral Bible AI: spoken explanations (F-02) ---------------------------
+
+    /**
+     * Reads the currently displayed explanation aloud through the on-device TTS engine
+     * in the Bible language (FR-02.1, FR-02.2). No-op when no on-device voice is
+     * available for the Bible language ([ReaderUiState.canSpeakExplanation]) or no
+     * explanation is ready. Starting explanation playback first pauses any narrated
+     * audio and stops chapter TTS so the two never overlap (FR-02.3).
+     *
+     * The on-screen speak control is itself gated by [FeatureFlags.ORAL_AI_EXPLANATION]
+     * in `ReaderScreen`, the same UI-gating convention used for the explain action.
+     *
+     * The explanation utterance bypasses [TtsReader] (whose queue is for chapter verses)
+     * and speaks directly on the [SpeechEngine] with a dedicated utterance id.
+     */
+    fun speakExplanation() {
+        val state = _uiState.value
+        if (!state.canSpeakExplanation) return
+        val text = (state.explain?.status as? ExplainStatus.Ready)?.text ?: return
+        val langTag = bibleLanguageTag ?: DEFAULT_UI_LANGUAGE
+        viewModelScope.launch {
+            // Exclusive audio: pause narrated streaming and stop chapter TTS first.
+            narratedPlayer.pause()
+            ttsReader.stop()
+            narratedActive = false
+            _uiState.value = _uiState.value.copy(explanationSpeaking = true)
+            speechEngine.selectLanguage(langTag)
+            speechEngine.speak(EXPLANATION_UTTERANCE_ID, text, flush = true)
+        }
+    }
+
+    /** Stops explanation playback and returns the speak control to its idle state. */
+    fun stopExplanation() {
+        speechEngine.stop()
+        _uiState.value = _uiState.value.copy(explanationSpeaking = false)
+    }
+
     private fun startExplain(verse: Int, depth: ExplainDepth) {
         val state = _uiState.value
         val osisRef = verseRefOf(verse) ?: return
@@ -837,5 +890,8 @@ class ReaderViewModel @Inject constructor(
         // first time audio starts in Simplified Mode, and only while the speed is still
         // at the default — so a user who picks their own speed is never overridden.
         const val SIMPLIFIED_TTS_SPEED = 0.8f
+        // Utterance id for spoken explanations (F-02), kept distinct from the chapter
+        // reader's "manna-verse-<n>" ids so the two audio paths never collide.
+        const val EXPLANATION_UTTERANCE_ID = "manna-explanation"
     }
 }

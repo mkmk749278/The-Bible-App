@@ -43,6 +43,8 @@ import com.manna.bible.data.explain.DefaultExplanationRepository
 import com.manna.bible.data.explain.GeminiExplanationEngine
 import com.manna.bible.data.explain.GeminiNanoExplanationEngine
 import com.manna.bible.data.explain.HybridExplanationEngine
+import com.manna.bible.data.crisis.GeminiCrisisEngine
+import com.manna.bible.domain.crisis.CrisisAiEngine
 import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRepository
 import com.manna.bible.domain.canon.CanonEngine
@@ -292,6 +294,9 @@ abstract class BindingsModule {
     abstract fun bindPersecutionCompanion(
         impl: DefaultPersecutionCompanion
     ): PersecutionCompanion
+
+    @Binds
+    abstract fun bindCrisisAiEngine(impl: GeminiCrisisEngine): CrisisAiEngine
 
     // --- grief companion -----------------------------------------------------
 

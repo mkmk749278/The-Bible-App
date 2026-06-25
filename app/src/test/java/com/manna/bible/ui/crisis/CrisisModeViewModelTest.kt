@@ -2,6 +2,8 @@ package com.manna.bible.ui.crisis
 
 import app.cash.turbine.test
 import com.manna.bible.data.preferences.PreferencesStore
+import com.manna.bible.domain.crisis.CrisisAiEngine
+import com.manna.bible.domain.crisis.CrisisAiResult
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.PersecutionCategory
 import com.manna.bible.domain.crisis.PersecutionCompanion
@@ -58,7 +60,8 @@ class CrisisModeViewModelTest {
             persecutionCompanion = FakePersecutionCompanion(),
             preferencesStore = FakePreferencesStore(activeId = "web"),
             translationRepository = FakeTranslationRepository(listOf(translation("web"))),
-            bibleContentRepository = FakeContentRepository()
+            bibleContentRepository = FakeContentRepository(),
+            crisisAiEngine = FakeCrisisAiEngine()
         )
         vm.uiState.test {
             advanceUntilIdle()
@@ -89,7 +92,8 @@ class CrisisModeViewModelTest {
             ),
             preferencesStore = FakePreferencesStore(activeId = "web"),
             translationRepository = FakeTranslationRepository(listOf(translation("web"))),
-            bibleContentRepository = FakeContentRepository()
+            bibleContentRepository = FakeContentRepository(),
+            crisisAiEngine = FakeCrisisAiEngine()
         )
         advanceUntilIdle()
 
@@ -123,7 +127,8 @@ class CrisisModeViewModelTest {
             ),
             preferencesStore = FakePreferencesStore(activeId = "web"),
             translationRepository = FakeTranslationRepository(listOf(translation("web"))),
-            bibleContentRepository = FakeContentRepository()
+            bibleContentRepository = FakeContentRepository(),
+            crisisAiEngine = FakeCrisisAiEngine()
         )
         advanceUntilIdle()
 
@@ -139,11 +144,145 @@ class CrisisModeViewModelTest {
         assertTrue(state.persecutionVerses.isEmpty())
     }
 
+    // --- F-03 Crisis AI Companion -------------------------------------------
+
+    private fun aiViewModel(engine: FakeCrisisAiEngine): CrisisModeViewModel =
+        CrisisModeViewModel(
+            crisisCompanion = FakeCompanion(
+                comfort = listOf(ReadingRef("PSA", 23, 4)),
+                listen = ReadingRef("PSA", 23, 1)
+            ),
+            persecutionCompanion = FakePersecutionCompanion(),
+            preferencesStore = FakePreferencesStore(activeId = "web"),
+            translationRepository = FakeTranslationRepository(listOf(translation("web"))),
+            bibleContentRepository = FakeContentRepository(),
+            crisisAiEngine = engine
+        )
+
+    @Test
+    @DisplayName("submitSituation emits loading then a Success response")
+    fun submitEmitsLoadingThenSuccess() = runTest {
+        val gate = kotlinx.coroutines.CompletableDeferred<Unit>()
+        val engine = FakeCrisisAiEngine(
+            configured = true,
+            result = CrisisAiResult.Success("Psalm 34:18", "PSA.34.18", "He is near."),
+            gate = gate
+        )
+        val vm = aiViewModel(engine)
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.aiConfigured)
+
+        vm.updateSituation("I am grieving")
+        vm.submitSituation()
+        advanceUntilIdle()
+
+        // The request is gated, so the ViewModel is observably in the loading state.
+        assertTrue(vm.uiState.value.isAiLoading)
+
+        gate.complete(Unit)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertFalse(state.isAiLoading)
+        assertEquals(
+            CrisisAiResult.Success("Psalm 34:18", "PSA.34.18", "He is near."),
+            state.aiResponse
+        )
+    }
+
+    @Test
+    @DisplayName("submitSituation is a no-op when the engine is not configured")
+    fun submitNoOpWhenNotConfigured() = runTest {
+        val engine = FakeCrisisAiEngine(configured = false)
+        val vm = aiViewModel(engine)
+        advanceUntilIdle()
+        assertFalse(vm.uiState.value.aiConfigured)
+
+        vm.updateSituation("I am grieving")
+        vm.submitSituation()
+        advanceUntilIdle()
+
+        assertEquals(0, engine.callCount)
+        assertEquals(null, vm.uiState.value.aiResponse)
+    }
+
+    @Test
+    @DisplayName("clearAiResponse resets the situation text and the AI response")
+    fun clearResetsState() = runTest {
+        val engine = FakeCrisisAiEngine(
+            configured = true,
+            result = CrisisAiResult.Success("Psalm 34:18", "PSA.34.18", "He is near.")
+        )
+        val vm = aiViewModel(engine)
+        advanceUntilIdle()
+
+        vm.updateSituation("I am grieving")
+        vm.submitSituation()
+        advanceUntilIdle()
+
+        vm.clearAiResponse()
+        assertEquals("", vm.uiState.value.situationText)
+        assertEquals(null, vm.uiState.value.aiResponse)
+    }
+
+    @Test
+    @DisplayName("an offline result is surfaced as the Offline state")
+    fun offlineResultSurfaced() = runTest {
+        val engine = FakeCrisisAiEngine(configured = true, result = CrisisAiResult.Offline)
+        val vm = aiViewModel(engine)
+        advanceUntilIdle()
+
+        vm.updateSituation("I am grieving")
+        vm.submitSituation()
+        advanceUntilIdle()
+
+        assertEquals(CrisisAiResult.Offline, vm.uiState.value.aiResponse)
+    }
+
+    @Test
+    @DisplayName("the situation text is not retained in state after a successful submit (privacy)")
+    fun situationTextNotRetainedAfterSubmit() = runTest {
+        val engine = FakeCrisisAiEngine(
+            configured = true,
+            result = CrisisAiResult.Success("Psalm 34:18", "PSA.34.18", "He is near.")
+        )
+        val vm = aiViewModel(engine)
+        advanceUntilIdle()
+
+        vm.updateSituation("a private and painful disclosure")
+        vm.submitSituation()
+        advanceUntilIdle()
+
+        assertEquals("", vm.uiState.value.situationText)
+    }
+
     private fun translation(id: String) = Translation(
         id = id, name = "World English Bible", languageCode = "en",
         canonType = CanonType.PROTESTANT_66, hasDeuterocanon = false,
         isDownloaded = true, isBundled = true
     )
+
+    private class FakeCrisisAiEngine(
+        private val configured: Boolean = true,
+        private val result: CrisisAiResult = CrisisAiResult.Offline,
+        private val gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+    ) : CrisisAiEngine {
+        var callCount = 0
+            private set
+
+        override val isConfigured: Boolean get() = configured
+
+        override suspend fun respond(
+            situation: String,
+            languageCode: String,
+            isNight: Boolean,
+            denomination: com.manna.bible.domain.model.Denomination?
+        ): CrisisAiResult {
+            callCount++
+            gate?.await()
+            return result
+        }
+    }
 
     private class FakeCompanion(
         private val comfort: List<ReadingRef>,

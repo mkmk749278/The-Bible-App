@@ -24,6 +24,15 @@ interface SpeechEngine {
     fun setSpeed(speed: Float)
 
     /**
+     * Returns true when the synthesizer has an on-device voice for [languageTag]
+     * (BCP-47) ready to speak — i.e. the language is supported and its data is
+     * installed. Returns false when no such voice exists or the engine has not yet
+     * finished initializing. Unlike [selectLanguage] this is a pure query: it does not
+     * change the currently selected voice (F-02, Req 9.6).
+     */
+    fun isLanguageAvailable(languageTag: String): Boolean
+
+    /**
      * Speaks [text], reporting completion via [SpeechListener.onDone] with
      * [utteranceId]. When [flush] is true any in-progress utterance is interrupted;
      * otherwise [text] is queued after it.

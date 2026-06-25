@@ -19,4 +19,10 @@
     <string name="crisis_persecution_danger">Physical danger</string>
     <string name="crisis_persecution_exclusion">Social exclusion</string>
     <string name="crisis_persecution_faith">Faith under doubt</string>
+
+    <!-- Crisis AI Companion (F-03) -->
+    <string name="crisis_ai_placeholder">Tell me what\'s happening…</string>
+    <string name="crisis_ai_offline_hint">AI response needs internet. The verses below work offline.</string>
+    <string name="crisis_ai_submit">Send</string>
+    <string name="crisis_ai_thinking">Finding a passage for you…</string>
 </resources>

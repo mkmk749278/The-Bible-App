@@ -3,7 +3,10 @@ package com.manna.bible.ui.crisis
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
+import com.manna.bible.domain.crisis.CrisisAiEngine
+import com.manna.bible.domain.crisis.CrisisAiResult
 import com.manna.bible.domain.crisis.CrisisCompanion
+import com.manna.bible.domain.crisis.NightWindow
 import com.manna.bible.domain.crisis.PersecutionCategory
 import com.manna.bible.domain.crisis.PersecutionCompanion
 import com.manna.bible.domain.repository.BibleContentRepository
@@ -15,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.Calendar
 import javax.inject.Inject
 
 /**
@@ -40,6 +44,13 @@ data class ComfortVerse(
  *   null when none is selected (F-06).
  * @property persecutionVerses The resolved verses for [selectedPersecutionCategory].
  * @property isPersecutionLoading True while a persecution category's verses are resolving.
+ * @property situationText The free-text crisis description currently being typed (F-03).
+ *   It is transient UI state only: it is cleared the moment a response returns and is
+ *   never persisted to Room, DataStore, or logs.
+ * @property aiResponse The AI companion's response to the last submitted situation, or null.
+ * @property isAiLoading True while an AI companion request is in flight.
+ * @property aiConfigured True when the AI companion engine has its credentials; gates the
+ *   text input (the curated list is always available regardless).
  */
 data class CrisisUiState(
     val isLoading: Boolean = true,
@@ -47,7 +58,11 @@ data class CrisisUiState(
     val listenRef: String? = null,
     val selectedPersecutionCategory: PersecutionCategory? = null,
     val persecutionVerses: List<ComfortVerse> = emptyList(),
-    val isPersecutionLoading: Boolean = false
+    val isPersecutionLoading: Boolean = false,
+    val situationText: String = "",
+    val aiResponse: CrisisAiResult? = null,
+    val isAiLoading: Boolean = false,
+    val aiConfigured: Boolean = false
 )
 
 /**
@@ -67,7 +82,8 @@ class CrisisModeViewModel @Inject constructor(
     private val persecutionCompanion: PersecutionCompanion,
     private val preferencesStore: PreferencesStore,
     private val translationRepository: TranslationRepository,
-    private val bibleContentRepository: BibleContentRepository
+    private val bibleContentRepository: BibleContentRepository,
+    private val crisisAiEngine: CrisisAiEngine
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(CrisisUiState())
@@ -75,6 +91,9 @@ class CrisisModeViewModel @Inject constructor(
 
     init {
         load()
+        // The compile-time flag gates the on-screen surface; this engine-config signal
+        // gates whether the input is interactive vs. shows the offline hint (F-03).
+        _uiState.value = _uiState.value.copy(aiConfigured = crisisAiEngine.isConfigured)
     }
 
     /** Resolves comfort verses' text for display. */
@@ -141,6 +160,52 @@ class CrisisModeViewModel @Inject constructor(
         }
     }
 
+    /**
+     * Records the latest free-text situation as the user types (F-03). Editing the text
+     * clears any previously shown AI response so a stale answer is never paired with new
+     * input. The text lives only in transient UI state.
+     */
+    fun updateSituation(text: String) {
+        _uiState.value = _uiState.value.copy(situationText = text, aiResponse = null)
+    }
+
+    /**
+     * Submits the current situation to the AI companion (F-03). No-op when the text is
+     * blank or the engine is unconfigured.
+     *
+     * Privacy: the situation is read into a local `val` for the duration of the call and
+     * is never copied to the ViewModel or [CrisisUiState]. The moment the response
+     * returns, [CrisisUiState.situationText] is cleared, so no crisis disclosure lingers
+     * in state, and nothing is persisted or logged (FR-03.3, FR-03.4).
+     */
+    fun submitSituation() {
+        val situation = _uiState.value.situationText.trim()
+        if (situation.isBlank() || !_uiState.value.aiConfigured) return
+        viewModelScope.launch {
+            _uiState.value = _uiState.value.copy(isAiLoading = true, aiResponse = null)
+            val setup = preferencesStore.setupState.first()
+            val languageCode = setup.bibleLanguage ?: DEFAULT_LANGUAGE
+            val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
+            val result = crisisAiEngine.respond(
+                situation = situation,
+                languageCode = languageCode,
+                isNight = NightWindow.isNight(hour),
+                denomination = setup.denomination
+            )
+            // Discard the situation immediately — never retained on state after the call.
+            _uiState.value = _uiState.value.copy(
+                isAiLoading = false,
+                aiResponse = result,
+                situationText = ""
+            )
+        }
+    }
+
+    /** Clears the AI response and the situation text (e.g. on navigate away — FR-03 AC5). */
+    fun clearAiResponse() {
+        _uiState.value = _uiState.value.copy(aiResponse = null, situationText = "")
+    }
+
     /** Resolves [refs] to displayable [ComfortVerse]s from [translationId]; missing verses skipped. */
     private suspend fun resolveVerses(
         translationId: String,
@@ -171,5 +236,10 @@ class CrisisModeViewModel @Inject constructor(
         if (!persistedId.isNullOrBlank()) return persistedId
         val catalog = runCatching { translationRepository.catalog().first() }.getOrDefault(emptyList())
         return catalog.firstOrNull { it.isDownloaded }?.id ?: catalog.firstOrNull()?.id
+    }
+
+    private companion object {
+        /** Fallback Bible-language ISO code when setup has not recorded one. */
+        const val DEFAULT_LANGUAGE = "en"
     }
 }

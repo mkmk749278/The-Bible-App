@@ -86,6 +86,15 @@ class AndroidSpeechEngine @Inject constructor(
         tts.setSpeechRate(speed)
     }
 
+    override fun isLanguageAvailable(languageTag: String): Boolean {
+        if (!ready) return false
+        val locale = Locale.forLanguageTag(languageTag)
+        val result = tts.isLanguageAvailable(locale)
+        return result == TextToSpeech.LANG_AVAILABLE ||
+            result == TextToSpeech.LANG_COUNTRY_AVAILABLE ||
+            result == TextToSpeech.LANG_COUNTRY_VAR_AVAILABLE
+    }
+
     override fun speak(utteranceId: String, text: String, flush: Boolean) {
         val action = {
             val mode = if (flush) TextToSpeech.QUEUE_FLUSH else TextToSpeech.QUEUE_ADD

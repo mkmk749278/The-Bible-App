@@ -53,6 +53,23 @@ object FeatureFlags {
      */
     const val PERSECUTION_COMFORT: Boolean = true
 
+    /**
+     * Crisis AI Companion (Phase B, F-03). An optional online enrichment layer inside
+     * Crisis Mode: the user describes their situation in their own words and Gemini
+     * returns the single most relevant passage, explained compassionately in the Bible
+     * language. The curated offline comfort list remains the primary, no-network tier.
+     * Phase-gated; promoted in E-02 after the privacy audit.
+     */
+    const val CRISIS_AI_COMPANION: Boolean = false
+
+    /**
+     * Oral Bible AI (Phase B, F-02). Pipes a displayed "Explain this passage" result
+     * through the existing on-device TTS engine so a semi-literate or 3am listener can
+     * hear the explanation read aloud in the Bible language. Phase-gated; promoted in
+     * E-01 after Phase B QA.
+     */
+    const val ORAL_AI_EXPLANATION: Boolean = false
+
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
 
