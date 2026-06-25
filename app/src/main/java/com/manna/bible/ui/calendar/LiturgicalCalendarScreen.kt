@@ -31,6 +31,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -416,19 +419,32 @@ private fun VerseOfDaySection(verse: CalendarDailyVerse, onOpenVerse: (String) -
             style = MaterialTheme.typography.labelMedium,
             color = MannaTheme.colors.soft
         )
-        Spacer(Modifier.height(4.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Spacer(Modifier.height(10.dp))
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             TextButton(
                 onClick = { onOpenVerse(verse.osisRef) },
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                contentPadding = androidx.compose.foundation.layout.PaddingValues(
+                    horizontal = 0.dp, vertical = 0.dp
+                )
             ) {
                 Text(stringResource(R.string.calendar_verse_open))
             }
-            Spacer(Modifier.width(16.dp))
-            TextButton(
+            Button(
                 onClick = { showCard = true },
-                contentPadding = androidx.compose.foundation.layout.PaddingValues(0.dp)
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MannaTheme.colors.gold,
+                    contentColor = MannaTheme.colors.bg
+                )
             ) {
+                Icon(
+                    Icons.Filled.Share,
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp)
+                )
+                Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.calendar_verse_share))
             }
         }

@@ -305,7 +305,7 @@ class DataStorePreferencesStore @Inject constructor(
         dataStore.data.map { prefs -> prefs[Keys.SRAMANIKAL_NAME] ?: "" }
 
     override val darkMode: Flow<String> =
-        dataStore.data.map { prefs -> prefs[Keys.DARK_MODE] ?: PreferencesStore.THEME_SYSTEM }
+        dataStore.data.map { prefs -> prefs[Keys.DARK_MODE] ?: PreferencesStore.THEME_DARK }
 
     override val textScale: Flow<Float> =
         dataStore.data.map { prefs -> prefs[Keys.TEXT_SCALE] ?: 1.0f }

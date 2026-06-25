@@ -223,7 +223,6 @@ fun MannaApp(
                                 onSwitchTranslation = { navController.navigate(Routes.CATALOG) },
                                 onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) },
                                 onOpenSearch = { navController.navigate(Routes.SEARCH) },
-                                onOpenDaily = { navController.navigate(Routes.DAILY) },
                                 onOpenCrisis = if (FeatureFlags.CRISIS_MODE) {
                                     { navController.navigate(Routes.CRISIS) }
                                 } else null,
@@ -271,7 +270,6 @@ fun MannaApp(
                             onOpenLibrary = { navController.navigate(Routes.LIBRARY) },
                             onOpenSettings = { navController.navigate(Routes.SETTINGS) },
                             onOpenTranslations = { navController.navigate(Routes.CATALOG) },
-                            onOpenDaily = { navController.navigate(Routes.DAILY) },
                             onOpenCalendar = null, // Calendar is a primary tab now.
                             onOpenReminder = if (FeatureFlags.DAILY_REMINDER) {
                                 { navController.navigate(Routes.REMINDER) }

@@ -84,6 +84,6 @@ class GeminiExplanationEngine @Inject constructor(
 
     private companion object {
         /** Fast, low-cost model suited to on-the-fly explanations. */
-        const val MODEL = "gemini-2.0-flash"
+        const val MODEL = "gemini-2.0-flash-lite"
     }
 }

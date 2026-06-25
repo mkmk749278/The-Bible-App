@@ -107,7 +107,6 @@ fun ReaderScreen(
     onSwitchTranslation: () -> Unit = {},
     onOpenAttribution: () -> Unit = {},
     onOpenSearch: () -> Unit = {},
-    onOpenDaily: () -> Unit = {},
     onOpenCrisis: (() -> Unit)? = null,
     pendingScrollRef: String? = null,
     onScrollRefConsumed: () -> Unit = {},
@@ -164,10 +163,6 @@ fun ReaderScreen(
                 onOpenAttribution = {
                     showMenu = false
                     onOpenAttribution()
-                },
-                onOpenDaily = {
-                    showMenu = false
-                    onOpenDaily()
                 },
                 onOpenCrisis = onOpenCrisis?.let {
                     {
@@ -265,7 +260,6 @@ private fun ReaderTopBar(
     onMenuToggle: (Boolean) -> Unit,
     onSwitchTranslation: () -> Unit,
     onOpenAttribution: () -> Unit,
-    onOpenDaily: () -> Unit,
     onOpenCrisis: (() -> Unit)? = null
 ) {
     val heading = if (bookName.isBlank()) {
@@ -313,10 +307,6 @@ private fun ReaderTopBar(
                         onClick = onOpenCrisis
                     )
                 }
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.reader_daily_verse)) },
-                    onClick = onOpenDaily
-                )
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.reader_switch_translation)) },
                     onClick = onSwitchTranslation
