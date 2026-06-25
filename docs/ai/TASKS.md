@@ -23,7 +23,7 @@ dependency — complete them top-to-bottom unless they are marked `[PARALLEL]`.
 
 ## Phase A — Foundation
 
-### A-01 · Add `denomination` field to `ExplanationRequest` `[PARALLEL]`
+### A-01 · [x] Add `denomination` field to `ExplanationRequest` `[PARALLEL]`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/explain/Explanation.kt`
@@ -40,7 +40,7 @@ change. The default `null` keeps every existing call site compiling without modi
 
 ---
 
-### A-02 · Update `DefaultExplanationRepository` cache key `[PARALLEL with A-01]`
+### A-02 · [x] Update `DefaultExplanationRepository` cache key `[PARALLEL with A-01]`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/data/explain/DefaultExplanationRepository.kt`
@@ -82,7 +82,7 @@ change. The default `null` keeps every existing call site compiling without modi
 
 ---
 
-### A-03 · Rewrite `ExplanationPrompt.build()` with cultural and denominational grounding
+### A-03 · [x] Rewrite `ExplanationPrompt.build()` with cultural and denominational grounding
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/explain/ExplanationPrompt.kt`
@@ -174,7 +174,7 @@ class ExplanationPromptTest {
 
 ---
 
-### A-04 · Pass `denomination` from `ReaderViewModel` to `ExplanationRequest`
+### A-04 · [x] Pass `denomination` from `ReaderViewModel` to `ExplanationRequest`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/reader/ReaderViewModel.kt`
@@ -193,7 +193,7 @@ assert the captured request contains that denomination.
 
 ---
 
-### A-05 · Define `PersecutionCategory` and `DefaultPersecutionCompanion` `[PARALLEL with A-01]`
+### A-05 · [x] Define `PersecutionCategory` and `DefaultPersecutionCompanion` `[PARALLEL with A-01]`
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/domain/crisis/PersecutionCompanion.kt`
@@ -270,7 +270,7 @@ class PersecutionCompanionTest {
 
 ---
 
-### A-06 · Bind `PersecutionCompanion` in DI; add `PERSECUTION_COMFORT` feature flag
+### A-06 · [x] Bind `PersecutionCompanion` in DI; add `PERSECUTION_COMFORT` feature flag
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/FeatureFlags.kt`
@@ -286,7 +286,7 @@ compile time via Hilt.
 
 ---
 
-### A-07 · Extend `CrisisModeViewModel` and `CrisisModeScreen` for persecution categories
+### A-07 · [x] Extend `CrisisModeViewModel` and `CrisisModeScreen` for persecution categories
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/crisis/CrisisModeViewModel.kt`
@@ -319,7 +319,7 @@ horizontally scrollable `FilterChip` components (one per category). Tapping one 
 
 ## Phase B — Crisis AI + Oral AI
 
-### B-01 · Define `CrisisAiEngine` interface and `CrisisAiResult` sealed class
+### B-01 · [x] Define `CrisisAiEngine` interface and `CrisisAiResult` sealed class
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/domain/crisis/CrisisAiEngine.kt`
@@ -331,7 +331,7 @@ No Android imports. No Hilt annotations.
 
 ---
 
-### B-02 · Add `CRISIS_AI_COMPANION` feature flag
+### B-02 · [x] Add `CRISIS_AI_COMPANION` feature flag
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/FeatureFlags.kt`
@@ -340,7 +340,7 @@ No Android imports. No Hilt annotations.
 
 ---
 
-### B-03 · Implement `GeminiCrisisEngine`
+### B-03 · [x] Implement `GeminiCrisisEngine`
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/data/crisis/GeminiCrisisEngine.kt`
@@ -371,7 +371,7 @@ Use a `FakeGeminiApi` that returns canned `GeminiResponseDto` objects. Do not us
 
 ---
 
-### B-04 · Bind `GeminiCrisisEngine` in DI
+### B-04 · [x] Bind `GeminiCrisisEngine` in DI
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/di/BindingsModule.kt`
@@ -380,7 +380,7 @@ Use a `FakeGeminiApi` that returns canned `GeminiResponseDto` objects. Do not us
 
 ---
 
-### B-05 · Extend `CrisisModeViewModel` for AI companion
+### B-05 · [x] Extend `CrisisModeViewModel` for AI companion
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/crisis/CrisisModeViewModel.kt`
@@ -409,7 +409,7 @@ class CrisisModeViewModelTest {
 
 ---
 
-### B-06 · Update `CrisisModeScreen` for AI companion UI
+### B-06 · [x] Update `CrisisModeScreen` for AI companion UI
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/crisis/CrisisModeScreen.kt`
@@ -425,7 +425,7 @@ card, and offline hint as specified in `IMPLEMENTATION.md` § F-03 Step 6.
 
 ---
 
-### B-07 · Add `isLanguageAvailable()` to `SpeechEngine` and `AndroidSpeechEngine`
+### B-07 · [x] Add `isLanguageAvailable()` to `SpeechEngine` and `AndroidSpeechEngine`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/audio/SpeechEngine.kt`
@@ -444,7 +444,7 @@ manual test: install app on a device without Telugu TTS; confirm speak button gr
 
 ---
 
-### B-08 · Add `ORAL_AI_EXPLANATION` flag + speak/stop to `ReaderViewModel`
+### B-08 · [x] Add `ORAL_AI_EXPLANATION` flag + speak/stop to `ReaderViewModel`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/FeatureFlags.kt`
@@ -473,7 +473,7 @@ manual test: install app on a device without Telugu TTS; confirm speak button gr
 
 ---
 
-### B-09 · Add speak button to explanation sheet in `ReaderScreen`
+### B-09 · [x] Add speak button to explanation sheet in `ReaderScreen`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/reader/ReaderScreen.kt`
@@ -485,7 +485,7 @@ language-unavailable hint text as specified in `IMPLEMENTATION.md` § F-02 Step 
 
 ## Phase C — AI Sermon Builder
 
-### C-01 · Define sermon AI domain contracts
+### C-01 · [x] Define sermon AI domain contracts
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/domain/sermon/SermonAiEngine.kt`
@@ -495,7 +495,7 @@ language-unavailable hint text as specified in `IMPLEMENTATION.md` § F-02 Step 
 
 ---
 
-### C-02 · Add `SERMON_AI_BUILDER` flag
+### C-02 · [x] Add `SERMON_AI_BUILDER` flag
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/FeatureFlags.kt`
@@ -504,7 +504,7 @@ Add `const val SERMON_AI_BUILDER: Boolean = false`.
 
 ---
 
-### C-03 · Implement `GeminiSermonEngine`
+### C-03 · [x] Implement `GeminiSermonEngine`
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/data/sermon/GeminiSermonEngine.kt`
@@ -527,7 +527,7 @@ class GeminiSermonEngineTest {
 
 ---
 
-### C-04 · Bind `GeminiSermonEngine` in DI
+### C-04 · [x] Bind `GeminiSermonEngine` in DI
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/di/BindingsModule.kt`
@@ -536,7 +536,7 @@ Add `@Binds abstract fun bindSermonAiEngine(impl: GeminiSermonEngine): SermonAiE
 
 ---
 
-### C-05 · Refactor `SermonHelperViewModel` to MutableStateFlow pattern
+### C-05 · [x] Refactor `SermonHelperViewModel` to MutableStateFlow pattern
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/sermon/SermonHelperViewModel.kt`
@@ -550,7 +550,7 @@ refactor. Do not delete or modify the existing tests — use them as a regressio
 
 ---
 
-### C-06 · Add `generateOutline()` and congregation type selector to `SermonHelperViewModel`
+### C-06 · [x] Add `generateOutline()` and congregation type selector to `SermonHelperViewModel`
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/sermon/SermonHelperViewModel.kt`
@@ -571,7 +571,7 @@ Implement `selectCongregationType()` and `generateOutline()` per `IMPLEMENTATION
 
 ---
 
-### C-07 · Update `SermonHelperScreen` with congregation selector and Build outline button
+### C-07 · [x] Update `SermonHelperScreen` with congregation selector and Build outline button
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/ui/sermon/SermonHelperScreen.kt`
@@ -585,7 +585,7 @@ Show `outlineError` as a `Snackbar`.
 
 ## Phase D — Context-Aware Verse Cards
 
-### D-01 · Define `VerseRecommendationEngine` interface
+### D-01 · [x] Define `VerseRecommendationEngine` interface
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/domain/share/VerseRecommendationEngine.kt`
@@ -595,7 +595,7 @@ interface. Pure Kotlin.
 
 ---
 
-### D-02 · Add `VERSE_RECOMMENDATION_AI` flag
+### D-02 · [x] Add `VERSE_RECOMMENDATION_AI` flag
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/domain/FeatureFlags.kt`
@@ -604,7 +604,7 @@ Add `const val VERSE_RECOMMENDATION_AI: Boolean = false`.
 
 ---
 
-### D-03 · Implement `GeminiVerseRecommendationEngine`
+### D-03 · [x] Implement `GeminiVerseRecommendationEngine`
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/data/share/GeminiVerseRecommendationEngine.kt`
@@ -636,14 +636,14 @@ Use `FakeGeminiApi` and `FakeBibleContentRepository`.
 
 ---
 
-### D-04 · Bind `GeminiVerseRecommendationEngine` in DI
+### D-04 · [x] Bind `GeminiVerseRecommendationEngine` in DI
 
 **Files changed**:
 - `app/src/main/java/com/manna/bible/di/BindingsModule.kt`
 
 ---
 
-### D-05 · Implement `VerseRecommendationViewModel`
+### D-05 · [x] Implement `VerseRecommendationViewModel`
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/ui/card/VerseRecommendationViewModel.kt`
@@ -655,7 +655,7 @@ Use `FakeGeminiApi` and `FakeBibleContentRepository`.
 
 ---
 
-### D-06 · Implement `VerseRecommendationScreen` and navigation entry point
+### D-06 · [x] Implement `VerseRecommendationScreen` and navigation entry point
 
 **Files changed** (new):
 - `app/src/main/java/com/manna/bible/ui/card/VerseRecommendationScreen.kt`
@@ -672,26 +672,26 @@ result card → share button using `ScriptureCardRenderer`.
 
 ## Phase E — Flag Promotion
 
-### E-01 · Promote `ORAL_AI_EXPLANATION` to `true`
+### E-01 · [x] Promote `ORAL_AI_EXPLANATION` to `true`
 
 **Prerequisite**: Phase B QA sign-off documented in the PR description.
 
 ---
 
-### E-02 · Promote `CRISIS_AI_COMPANION` to `true`
+### E-02 · [x] Promote `CRISIS_AI_COMPANION` to `true`
 
 **Prerequisite**: Phase B QA sign-off. Privacy audit of `GeminiCrisisEngine` completed
 (confirm no situation text in logs, Room, or DataStore).
 
 ---
 
-### E-03 · Promote `SERMON_AI_BUILDER` to `true`
+### E-03 · [x] Promote `SERMON_AI_BUILDER` to `true`
 
 **Prerequisite**: Phase C QA sign-off.
 
 ---
 
-### E-04 · Promote `VERSE_RECOMMENDATION_AI` to `true`
+### E-04 · [x] Promote `VERSE_RECOMMENDATION_AI` to `true`
 
 **Prerequisite**: Phase D QA sign-off.
 

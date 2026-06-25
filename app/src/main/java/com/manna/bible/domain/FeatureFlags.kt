@@ -60,7 +60,7 @@ object FeatureFlags {
      * language. The curated offline comfort list remains the primary, no-network tier.
      * Phase-gated; promoted in E-02 after the privacy audit.
      */
-    const val CRISIS_AI_COMPANION: Boolean = false
+    const val CRISIS_AI_COMPANION: Boolean = true
 
     /**
      * Oral Bible AI (Phase B, F-02). Pipes a displayed "Explain this passage" result
@@ -68,7 +68,7 @@ object FeatureFlags {
      * hear the explanation read aloud in the Bible language. Phase-gated; promoted in
      * E-01 after Phase B QA.
      */
-    const val ORAL_AI_EXPLANATION: Boolean = false
+    const val ORAL_AI_EXPLANATION: Boolean = true
 
     /**
      * AI Sermon Builder (Phase C, F-04). An optional online layer inside the Village
@@ -77,7 +77,7 @@ object FeatureFlags {
      * Bible language. The manual notepad remains the primary, no-network surface.
      * Phase-gated; promoted in E-03 after Phase C QA.
      */
-    const val SERMON_AI_BUILDER: Boolean = false
+    const val SERMON_AI_BUILDER: Boolean = true
 
     /**
      * Context-Aware Verse Cards (Phase D, F-05). An optional online discovery layer for
@@ -88,7 +88,7 @@ object FeatureFlags {
      * manual share flow remains the primary, no-network surface. Phase-gated; promoted in
      * E-04 after Phase D QA.
      */
-    const val VERSE_RECOMMENDATION_AI: Boolean = false
+    const val VERSE_RECOMMENDATION_AI: Boolean = true
 
     /** Grief Companion — a gentle 30-day journey through loss (Phase 2, P2-1). */
     const val GRIEF_COMPANION: Boolean = true
