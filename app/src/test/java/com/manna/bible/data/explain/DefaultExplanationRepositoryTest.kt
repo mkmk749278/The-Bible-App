@@ -7,8 +7,10 @@ import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRequest
 import com.manna.bible.domain.explain.ExplanationResult
 import com.manna.bible.domain.explain.ExplanationUnavailableReason
+import com.manna.bible.domain.model.Denomination
 import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -66,6 +68,42 @@ class DefaultExplanationRepositoryTest {
 
         assertTrue(dao.stored.isEmpty())
         assertEquals(2, engine.calls)
+    }
+
+    @Test
+    @DisplayName("Cache key includes denomination — Catholic and Protestant differ for the same verse")
+    fun cacheKeyIncludesDenomination() = runTest {
+        val dao = FakeDao()
+        val repo = DefaultExplanationRepository(FakeEngine(ExplanationResult.Success("x")), dao)
+
+        val catholic = ExplanationRequest(
+            "GEN.1.1", "Genesis 1:1", "In the beginning...",
+            "te", ExplainDepth.PLAIN, Denomination.CATHOLIC
+        )
+        val protestant = catholic.copy(denomination = Denomination.PROTESTANT_OTHER)
+
+        repo.explain(catholic)
+        repo.explain(protestant)
+
+        // Two distinct cache keys were stored for the same osisRef + language + depth.
+        assertEquals(2, dao.stored.size)
+        val keys = dao.stored.keys.toList()
+        assertNotEquals(keys[0], keys[1])
+    }
+
+    @Test
+    @DisplayName("Null denomination produces a cache key ending in '|any'")
+    fun nullDenominationUsesAnySuffix() = runTest {
+        val dao = FakeDao()
+        val repo = DefaultExplanationRepository(FakeEngine(ExplanationResult.Success("x")), dao)
+
+        val req = ExplanationRequest(
+            "GEN.1.1", "Genesis 1:1", "text", "en", ExplainDepth.PLAIN, null
+        )
+        repo.explain(req)
+
+        assertEquals(1, dao.stored.size)
+        assertTrue(dao.stored.keys.first().endsWith("|any"))
     }
 
     private class FakeDao : ExplanationDao {

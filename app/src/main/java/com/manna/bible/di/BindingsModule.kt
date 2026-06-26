@@ -45,11 +45,17 @@ import com.manna.bible.data.explain.DefaultExplanationRepository
 import com.manna.bible.data.explain.GeminiExplanationEngine
 import com.manna.bible.data.explain.GeminiNanoExplanationEngine
 import com.manna.bible.data.explain.HybridExplanationEngine
+import com.manna.bible.data.crisis.GeminiCrisisEngine
+import com.manna.bible.data.sermon.GeminiSermonEngine
+import com.manna.bible.data.share.GeminiVerseRecommendationEngine
+import com.manna.bible.domain.crisis.CrisisAiEngine
 import com.manna.bible.domain.explain.ExplanationEngine
 import com.manna.bible.domain.explain.ExplanationRepository
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.DefaultCrisisCompanion
+import com.manna.bible.domain.crisis.DefaultPersecutionCompanion
+import com.manna.bible.domain.crisis.PersecutionCompanion
 import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.devotion.DefaultJesusPrayerProvider
 import com.manna.bible.domain.devotion.DefaultParalokaProvider
@@ -80,11 +86,13 @@ import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.PendingDownloadRepository
 import com.manna.bible.domain.repository.PrayerRepository
 import com.manna.bible.domain.repository.SermonRepository
+import com.manna.bible.domain.sermon.SermonAiEngine
 import com.manna.bible.data.reminder.AlarmReminderScheduler
 import com.manna.bible.domain.reminder.ReminderScheduler
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.BookNameProvider
 import com.manna.bible.domain.share.DefaultBookNameProvider
+import com.manna.bible.domain.share.VerseRecommendationEngine
 import com.manna.bible.domain.translation.DefaultTranslationFilter
 import com.manna.bible.domain.translation.TranslationFilter
 import dagger.Binds
@@ -207,6 +215,11 @@ abstract class BindingsModule {
     @Binds
     abstract fun bindBookNameProvider(impl: DefaultBookNameProvider): BookNameProvider
 
+    @Binds
+    abstract fun bindVerseRecommendationEngine(
+        impl: GeminiVerseRecommendationEngine
+    ): VerseRecommendationEngine
+
     // --- audio (offline TTS) -------------------------------------------------
 
     @Binds
@@ -293,6 +306,14 @@ abstract class BindingsModule {
     @Binds
     abstract fun bindCrisisCompanion(impl: DefaultCrisisCompanion): CrisisCompanion
 
+    @Binds
+    abstract fun bindPersecutionCompanion(
+        impl: DefaultPersecutionCompanion
+    ): PersecutionCompanion
+
+    @Binds
+    abstract fun bindCrisisAiEngine(impl: GeminiCrisisEngine): CrisisAiEngine
+
     // --- grief companion -----------------------------------------------------
 
     @Binds
@@ -309,6 +330,9 @@ abstract class BindingsModule {
     @Binds
     @Singleton
     abstract fun bindSermonRepository(impl: DefaultSermonRepository): SermonRepository
+
+    @Binds
+    abstract fun bindSermonAiEngine(impl: GeminiSermonEngine): SermonAiEngine
 
     // --- fasting companion ---------------------------------------------------
 

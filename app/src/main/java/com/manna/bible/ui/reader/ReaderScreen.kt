@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.StopCircle
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -242,7 +244,11 @@ fun ReaderScreen(
     state.explain?.let { explain ->
         ExplainSheet(
             explain = explain,
+            explanationSpeaking = state.explanationSpeaking,
+            canSpeakExplanation = state.canSpeakExplanation,
             onDepthChange = viewModel::setExplainDepth,
+            onSpeak = viewModel::speakExplanation,
+            onStop = viewModel::stopExplanation,
             onDismiss = viewModel::dismissExplain
         )
     }
@@ -1004,7 +1010,11 @@ private fun AnnotationSheet(
 @Composable
 private fun ExplainSheet(
     explain: ExplainSheetState,
+    explanationSpeaking: Boolean,
+    canSpeakExplanation: Boolean,
     onDepthChange: (ExplainDepth) -> Unit,
+    onSpeak: () -> Unit,
+    onStop: () -> Unit,
     onDismiss: () -> Unit
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -1052,6 +1062,32 @@ private fun ExplainSheet(
                         text = status.text,
                         style = androidx.compose.material3.MaterialTheme.typography.bodyLarge
                     )
+                    if (FeatureFlags.ORAL_AI_EXPLANATION) {
+                        IconButton(
+                            onClick = { if (explanationSpeaking) onStop() else onSpeak() },
+                            enabled = canSpeakExplanation || explanationSpeaking
+                        ) {
+                            Icon(
+                                imageVector = if (explanationSpeaking) {
+                                    Icons.Filled.StopCircle
+                                } else {
+                                    Icons.Filled.VolumeUp
+                                },
+                                contentDescription = if (explanationSpeaking) {
+                                    stringResource(R.string.explain_stop_speaking)
+                                } else {
+                                    stringResource(R.string.explain_speak)
+                                }
+                            )
+                        }
+                        if (!canSpeakExplanation && !explanationSpeaking) {
+                            Text(
+                                text = stringResource(R.string.explain_voice_unavailable),
+                                style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                                color = MannaTheme.colors.muted
+                            )
+                        }
+                    }
                 }
                 is ExplainStatus.Unavailable -> {
                     val message = when (status.reason) {

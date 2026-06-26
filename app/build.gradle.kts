@@ -37,8 +37,8 @@ android {
         applicationId = "com.manna.bible"
         minSdk = 26
         targetSdk = 35
-        versionCode = 207
-        versionName = "0.2.7"
+        versionCode = 208
+        versionName = "0.2.8"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
@@ -184,6 +184,9 @@ dependencies {
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    // Extended Material icons (VolumeUp / StopCircle for the Oral AI speak control, F-02).
+    // Version is managed by the Compose BOM above.
+    implementation("androidx.compose.material:material-icons-extended")
     debugImplementation(libs.androidx.compose.ui.tooling)
 
     implementation(libs.androidx.navigation.compose)

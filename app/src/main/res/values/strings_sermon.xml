@@ -13,4 +13,14 @@
     <string name="sermon_delete">Delete</string>
     <string name="sermon_back">Back</string>
     <string name="sermon_close">Close</string>
+
+    <!-- AI Sermon Builder (Phase C, F-04) -->
+    <string name="sermon_congregation_label">Congregation</string>
+    <string name="sermon_congregation_general">General</string>
+    <string name="sermon_congregation_youth">Youth</string>
+    <string name="sermon_congregation_grief">Grief</string>
+    <string name="sermon_build_outline">Build outline</string>
+    <string name="sermon_outline_generating">Building outline…</string>
+    <string name="sermon_outline_error_offline">Outline generation requires internet.</string>
+    <string name="sermon_outline_error_generic">Couldn\'t build the outline. Please try again.</string>
 </resources>

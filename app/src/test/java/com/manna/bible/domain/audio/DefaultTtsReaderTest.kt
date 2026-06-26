@@ -176,6 +176,8 @@ class DefaultTtsReaderTest {
             return voiceAvailable
         }
 
+        override fun isLanguageAvailable(languageTag: String): Boolean = voiceAvailable
+
         override fun setSpeed(speed: Float) {
             lastSpeed = speed
         }
