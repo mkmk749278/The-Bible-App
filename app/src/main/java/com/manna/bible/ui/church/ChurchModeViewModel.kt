@@ -60,7 +60,7 @@ class ChurchModeViewModel @Inject constructor(
             ?: all.firstOrNull()
         ChurchModeUiState(
             isLoading = false,
-            available = all.map { LiturgyOption(it.id, it.title, it.tradition) },
+            available = all.map { LiturgyOption(it.id, it.title.english, it.tradition) },
             selected = selected,
             matchedTradition = default != null
         )

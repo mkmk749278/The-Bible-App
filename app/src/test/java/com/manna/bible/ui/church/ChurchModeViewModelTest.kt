@@ -2,7 +2,9 @@ package com.manna.bible.ui.church
 
 import app.cash.turbine.test
 import com.manna.bible.data.preferences.PreferencesStore
-import com.manna.bible.domain.liturgy.DefaultLiturgyProvider
+import com.manna.bible.domain.liturgy.Liturgy
+import com.manna.bible.domain.liturgy.LiturgyProvider
+import com.manna.bible.domain.liturgy.LocalizedText
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.model.SetupState
@@ -33,7 +35,7 @@ class ChurchModeViewModelTest {
     fun tearDown() = Dispatchers.resetMain()
 
     private fun viewModel(denomination: Denomination) =
-        ChurchModeViewModel(DefaultLiturgyProvider(), FakePreferencesStore(denomination))
+        ChurchModeViewModel(FakeLiturgyProvider(), FakePreferencesStore(denomination))
 
     @Test
     @DisplayName("Catholic sees the Mass; both orders are available")
@@ -78,6 +80,7 @@ class ChurchModeViewModelTest {
     }
 
     private class FakePreferencesStore(denomination: Denomination) : PreferencesStore {
+
         private val state = MutableStateFlow(
             SetupState(
                 denomination = denomination,
@@ -98,5 +101,27 @@ class ChurchModeViewModelTest {
         override suspend fun setShowDeuterocanonical(value: Boolean) {}
         override suspend fun setActiveTranslation(translationId: String) {}
         override suspend fun setLastReadPosition(ref: String) {}
+    }
+
+    /** Minimal in-test [LiturgyProvider] mirroring the two bundled orders and their mapping. */
+    private class FakeLiturgyProvider : LiturgyProvider {
+        private fun liturgy(id: String, title: String, tradition: String) = Liturgy(
+            id = id,
+            title = LocalizedText(mapOf("en" to title)),
+            tradition = tradition,
+            sections = emptyList(),
+            sourceNote = LocalizedText(mapOf("en" to "Source"))
+        )
+
+        private val mass = liturgy("roman_catholic_mass", "The Holy Mass", "Roman Catholic")
+        private val communion = liturgy("csi_holy_communion", "The Holy Communion", "Church of South India")
+
+        override fun all(): List<Liturgy> = listOf(mass, communion)
+
+        override fun defaultFor(denomination: Denomination): Liturgy? = when (denomination) {
+            Denomination.CATHOLIC -> mass
+            Denomination.CSI, Denomination.PROTESTANT_OTHER -> communion
+            else -> null
+        }
     }
 }

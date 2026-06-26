@@ -29,6 +29,14 @@ aicore = "0.0.1-exp02"
 junit5 = "5.11.3"
 turbine = "1.2.0"
 mockk = "1.13.13"
+# Kotest — property-based testing (io.kotest.property) + matchers. 5.9.1 is the last
+# stable 5.x; pure-JVM, used INSIDE JUnit 5 @Test methods (no Kotest runner).
+kotest = "5.9.1"
+# Robolectric + a community JUnit 5 extension so rendering/Android-resource tests run
+# on the JVM under the existing useJUnitPlatform() setup. 0.9.0 targets JUnit 5.11.3
+# (matches junit5 above) and Robolectric 4.14 (the first release with Android SDK 35).
+robolectric = "4.14.1"
+robolectricJunit5 = "0.9.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -68,6 +76,10 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 junit-jupiter-params = { group = "org.junit.jupiter", name = "junit-jupiter-params", version.ref = "junit5" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+kotest-property = { group = "io.kotest", name = "kotest-property", version.ref = "kotest" }
+kotest-assertions-core = { group = "io.kotest", name = "kotest-assertions-core", version.ref = "kotest" }
+robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
+junit5-robolectric-extension = { group = "tech.apter.junit5.jupiter", name = "robolectric-extension", version.ref = "robolectricJunit5" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -77,3 +89,4 @@ compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 play-publisher = { id = "com.github.triplet.play", version.ref = "playPublisher" }
+robolectric-junit5 = { id = "tech.apter.junit5.jupiter.robolectric-extension-gradle-plugin", version.ref = "robolectricJunit5" }

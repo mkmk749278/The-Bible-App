@@ -38,6 +38,7 @@ import com.manna.bible.domain.liturgy.LiturgyPart
 import com.manna.bible.domain.liturgy.LiturgyRole
 import com.manna.bible.domain.liturgy.LiturgySection
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.util.rememberBibleLanguage
 
 private val MinTouchTarget = 48.dp
 
@@ -58,6 +59,7 @@ fun ChurchModeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val backDescription = stringResource(R.string.church_back)
+    val bibleLanguage = rememberBibleLanguage()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -113,7 +115,7 @@ fun ChurchModeScreen(
                 item(key = "header") {
                     Column(modifier = Modifier.padding(vertical = 4.dp)) {
                         Text(
-                            text = selected.title,
+                            text = selected.title.resolve(bibleLanguage),
                             style = MaterialTheme.typography.headlineSmall,
                             fontWeight = FontWeight.Bold,
                             color = MannaTheme.colors.ink
@@ -127,18 +129,18 @@ fun ChurchModeScreen(
                 }
 
                 selected.sections.forEachIndexed { sIndex, section ->
-                    item(key = "section_$sIndex") { SectionHeader(section) }
+                    item(key = "section_$sIndex") { SectionHeader(section, bibleLanguage) }
                     items(
                         count = section.parts.size,
                         key = { pIndex -> "part_${sIndex}_$pIndex" }
                     ) { pIndex ->
-                        PartRow(part = section.parts[pIndex], onOpenVerse = onOpenVerse)
+                        PartRow(part = section.parts[pIndex], bibleLanguage = bibleLanguage, onOpenVerse = onOpenVerse)
                     }
                 }
 
                 item(key = "source") {
                     Text(
-                        text = "${stringResource(R.string.church_source)}: ${selected.sourceNote}",
+                        text = "${stringResource(R.string.church_source)}: ${selected.sourceNote.resolve(bibleLanguage)}",
                         style = MaterialTheme.typography.labelSmall,
                         color = MannaTheme.colors.muted,
                         fontStyle = FontStyle.Italic,
@@ -151,9 +153,9 @@ fun ChurchModeScreen(
 }
 
 @Composable
-private fun SectionHeader(section: LiturgySection) {
+private fun SectionHeader(section: LiturgySection, bibleLanguage: String) {
     Text(
-        text = section.title,
+        text = section.title.resolve(bibleLanguage),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
         color = MannaTheme.colors.gold,
@@ -162,11 +164,11 @@ private fun SectionHeader(section: LiturgySection) {
 }
 
 @Composable
-private fun PartRow(part: LiturgyPart, onOpenVerse: (String) -> Unit) {
+private fun PartRow(part: LiturgyPart, bibleLanguage: String, onOpenVerse: (String) -> Unit) {
     // A bare rubric reads as a quiet stage-direction; spoken parts get a role label.
     if (part.role == LiturgyRole.RUBRIC && part.title == null) {
         Text(
-            text = part.rubric.orEmpty(),
+            text = part.rubric?.resolve(bibleLanguage).orEmpty(),
             style = MaterialTheme.typography.bodyMedium,
             color = MannaTheme.colors.muted,
             fontStyle = FontStyle.Italic,
@@ -201,7 +203,7 @@ private fun PartRow(part: LiturgyPart, onOpenVerse: (String) -> Unit) {
                         )
                     }
                     Text(
-                        text = part.title,
+                        text = part.title.resolve(bibleLanguage),
                         style = MaterialTheme.typography.labelMedium,
                         color = MannaTheme.colors.soft
                     )
@@ -209,7 +211,7 @@ private fun PartRow(part: LiturgyPart, onOpenVerse: (String) -> Unit) {
             }
             if (part.text != null) {
                 Text(
-                    text = part.text,
+                    text = part.text.resolve(bibleLanguage),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MannaTheme.colors.ink,
                     lineHeight = 26.sp,
@@ -218,7 +220,7 @@ private fun PartRow(part: LiturgyPart, onOpenVerse: (String) -> Unit) {
             }
             if (part.rubric != null) {
                 Text(
-                    text = part.rubric,
+                    text = part.rubric.resolve(bibleLanguage),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MannaTheme.colors.muted,
                     fontStyle = FontStyle.Italic,

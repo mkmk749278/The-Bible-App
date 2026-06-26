@@ -1,0 +1,376 @@
+{
+    "id": "csi_holy_communion",
+    "title": {
+        "en": "The Holy Communion"
+    },
+    "tradition": "Church of South India",
+    "denominations": [
+        "csi",
+        "protestant_other"
+    ],
+    "sourceNote": {
+        "en": "The Lord's Supper or the Holy Eucharist — structure per the Church of South India Book of Common Worship (1950/1954). Texts in traditional English; the Collect of the day and the Thanksgiving (Eucharistic) prayer follow the CSI service book."
+    },
+    "sections": [
+        {
+            "title": {
+                "en": "The Preparation"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "The people gather; a hymn of praise is sung."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Greeting"
+                    },
+                    "text": {
+                        "en": "The Lord be with you."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with thy spirit."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Collect for Purity"
+                    },
+                    "text": {
+                        "en": "Almighty God, unto whom all hearts are open, all desires known, and from whom no secrets are hid: cleanse the thoughts of our hearts by the inspiration of thy Holy Spirit, that we may perfectly love thee, and worthily magnify thy holy name; through Christ our Lord. Amen."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Confession"
+                    },
+                    "rubric": {
+                        "en": "All kneel and make humble confession to Almighty God."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "text": {
+                        "en": "Almighty God, our heavenly Father, we have sinned against thee in thought, word, and deed. Have mercy upon us, forgive us our sins, and grant that we may serve thee in newness of life, to the glory of thy name. Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Absolution"
+                    },
+                    "text": {
+                        "en": "Almighty God have mercy upon you, pardon and deliver you from all your sins, and bring you to everlasting life."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Kyrie / Gloria"
+                    },
+                    "text": {
+                        "en": "Glory be to God on high, and on earth peace, good will toward men…"
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "The Ministry of the Word"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Collect of the Day"
+                    },
+                    "rubric": {
+                        "en": "The minister says the Collect appointed for the day."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Lessons"
+                    },
+                    "rubric": {
+                        "en": "The appointed Old Testament lesson and Epistle are read — see the day's readings in the Calendar."
+                    }
+                },
+                {
+                    "role": "READER",
+                    "text": {
+                        "en": "This is the word of the Lord."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Thanks be to God."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Gospel"
+                    },
+                    "rubric": {
+                        "en": "All stand for the Gospel."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Glory be to thee, O Lord."
+                    }
+                },
+                {
+                    "role": "READER",
+                    "text": {
+                        "en": "This is the Gospel of Christ."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Praise be to thee, O Christ."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Sermon"
+                    },
+                    "rubric": {
+                        "en": "The minister preaches the Word, explaining the Scriptures."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "The Nicene Creed"
+                    },
+                    "text": {
+                        "en": "We believe in one God, the Father, the Almighty, maker of heaven and earth, of all that is, seen and unseen…"
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "(All stand and confess the faith of the Church.)"
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "The Intercession"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Prayers of the Church"
+                    },
+                    "rubric": {
+                        "en": "Prayers are offered for the Church, the nations, the community, and those in need."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "Lord, in thy mercy:"
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Hear our prayer."
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "The Lord's Supper"
+            },
+            "parts": [
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Peace"
+                    },
+                    "text": {
+                        "en": "The peace of the Lord be always with you."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with thy spirit."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Offertory"
+                    },
+                    "rubric": {
+                        "en": "All greet one another with a sign of peace; the bread and wine are brought, and the offerings of the people gathered."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Thanksgiving"
+                    },
+                    "text": {
+                        "en": "Lift up your hearts."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "We lift them up unto the Lord."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "Let us give thanks unto the Lord our God."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "It is meet and right so to do."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Sanctus"
+                    },
+                    "text": {
+                        "en": "Holy, Holy, Holy, Lord God of hosts, heaven and earth are full of thy glory. Glory be to thee, O Lord most high. Amen."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Thanksgiving Prayer"
+                    },
+                    "rubric": {
+                        "en": "The presbyter continues the great Thanksgiving, giving thanks for creation and redemption and calling upon the Holy Spirit."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Words of Institution"
+                    },
+                    "text": {
+                        "en": "Who, in the same night that he was betrayed, took bread; and when he had given thanks, he brake it, and gave it to his disciples, saying, Take, eat; this is my body which is given for you… This cup is the new covenant in my blood…"
+                    },
+                    "osisRef": "1CO.11.23"
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "The Lord's Prayer"
+                    },
+                    "text": {
+                        "en": "Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. For thine is the kingdom, the power, and the glory, for ever and ever. Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Breaking of the Bread"
+                    },
+                    "text": {
+                        "en": "We being many are one body, for we all share in the one bread."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Communion"
+                    },
+                    "rubric": {
+                        "en": "The people come forward to receive the bread and the cup."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Thanksgiving after Communion"
+                    },
+                    "text": {
+                        "en": "Almighty and everliving God, we thank thee that thou dost feed us, who have duly received these holy mysteries, with the spiritual food of the body and blood of thy Son. Amen."
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "The Conclusion"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Blessing"
+                    },
+                    "rubric": {
+                        "en": "The presbyter blesses the people in the name of the Father, and the Son, and the Holy Spirit."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Dismissal"
+                    },
+                    "text": {
+                        "en": "Go in peace, and serve the Lord."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "In the name of Christ. Amen."
+                    }
+                }
+            ]
+        }
+    ]
+}

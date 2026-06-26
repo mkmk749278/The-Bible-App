@@ -8,6 +8,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.play.publisher)
+    // Enables JUnit Platform launcher interceptors so the JUnit 5 Robolectric extension can
+    // set up Robolectric's environment under the existing useJUnitPlatform() configuration.
+    alias(libs.plugins.robolectric.junit5)
 }
 
 // Build-time secrets: read from the environment (CI injects them from GitHub
@@ -114,6 +117,10 @@ android {
     testOptions {
         unitTests.all { it.useJUnitPlatform() }
         unitTests.isReturnDefaultValues = true
+        // Make merged Android resources and assets/ visible to JVM unit tests so
+        // Robolectric-backed tests can resolve values-*/ string resources and read
+        // bundled assets/liturgy/*.json the same way the app does at runtime.
+        unitTests.isIncludeAndroidResources = true
     }
     lint {
         // Localization is incremental: a locale (e.g. values-ta) may translate the
@@ -216,6 +223,20 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
+
+    // Property-based testing (Kotest property + matchers) used inside JUnit 5 tests.
+    testImplementation(libs.kotest.property)
+    testImplementation(libs.kotest.assertions.core)
+
+    // Robolectric + JUnit 5 extension so Android-resource / Compose-rendering tests
+    // run on the JVM under useJUnitPlatform(). Compose UI-test artifacts are added to
+    // the unit-test classpath (in addition to androidTest) so rendering property tests
+    // can drive Compose under Robolectric.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit5.robolectric.extension)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.compose.ui.test.manifest)
 
     // Instrumented / Compose UI tests
     androidTestImplementation(platform(libs.androidx.compose.bom))

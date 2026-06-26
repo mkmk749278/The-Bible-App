@@ -1,0 +1,23 @@
+{
+    "liturgies": [
+        {
+            "id": "roman_catholic_mass",
+            "title": "The Holy Mass",
+            "tradition": "Roman Catholic",
+            "denominations": [
+                "catholic"
+            ],
+            "assetFile": "roman_catholic_mass.json"
+        },
+        {
+            "id": "csi_holy_communion",
+            "title": "The Holy Communion",
+            "tradition": "Church of South India",
+            "denominations": [
+                "csi",
+                "protestant_other"
+            ],
+            "assetFile": "csi_holy_communion.json"
+        }
+    ]
+}
