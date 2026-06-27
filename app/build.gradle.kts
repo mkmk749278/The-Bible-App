@@ -263,11 +263,11 @@ dependencies {
 tasks.withType<Test>().configureEach {
     timeout.set(Duration.ofMinutes(40))
     maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
-    // Diagnostic (temporary): Gradle prints zero per-test progress by default, so a CI hang
-    // gives no clue which test/fork is stuck. Surface per-test start/finish + the test JVM's
-    // own stdout/stderr so the next hang's log shows exactly where it stopped.
+    // Gradle prints zero per-test progress by default, so a CI hang gives no clue which
+    // test is stuck — this is how the GraphicsMode mismatch (robolectric/robolectric#8073)
+    // that hung this task for 40+ minutes with zero output got pinpointed. Cheap enough to
+    // keep on permanently for the next time something hangs.
     testLogging {
-        events("started", "passed", "skipped", "failed")
-        showStandardStreams = true
+        events("started", "skipped", "failed")
     }
 }

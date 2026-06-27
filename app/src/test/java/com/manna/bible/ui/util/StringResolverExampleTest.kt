@@ -10,14 +10,22 @@ import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import tech.apter.junit.jupiter.robolectric.RobolectricExtension
 
 /**
  * Example tests for the String_Resolver (Requirements 1.1, 1.5, 2.1, 2.2): a translated
  * key resolves in the requested Bible language, an untranslated key falls back to the
  * English default, and string-array resolution works. Robolectric/Compose-backed.
+ *
+ * Hang-safety: explicit [GraphicsMode] NATIVE, matching every other Robolectric test class in
+ * the suite. Robolectric does not clean up reliably when consecutive test classes in the same
+ * JVM fork switch between NATIVE and the LEGACY default (robolectric/robolectric#8073) — that
+ * mismatch, not a slow/stuck test, is what hung CI for 40+ minutes with zero output between
+ * this class and the one that ran before it.
  */
 @ExtendWith(RobolectricExtension::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
 class StringResolverExampleTest {
 

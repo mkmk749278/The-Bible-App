@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import tech.apter.junit.jupiter.robolectric.RobolectricExtension
 
 /**
@@ -20,8 +21,13 @@ import tech.apter.junit.jupiter.robolectric.RobolectricExtension
  * `tech.apter` extension runs under `useJUnitPlatform()` and that
  * `testOptions.unitTests.isIncludeAndroidResources = true` makes the bundled
  * `assets/liturgy` JSON files visible to JVM tests.
+ *
+ * Hang-safety: explicit [GraphicsMode] NATIVE, matching every other Robolectric test class in
+ * the suite — see [com.manna.bible.ui.util.StringResolverExampleTest] for why a mismatched
+ * default here can hang the whole Test task (robolectric/robolectric#8073).
  */
 @ExtendWith(RobolectricExtension::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34])
 class LiturgyAssetReaderRobolectricTest {
 
