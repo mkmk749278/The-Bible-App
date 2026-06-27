@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tamil (ta) translations for the Village Pastor Sermon Helper + AI Sermon Builder
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Village Pastor Sermon Helper -->
+    <string name="sermon_title">பிரசங்க உதவியாளர்</string>
+    <string name="sermon_tool_entry">பிரசங்க உதவியாளர்</string>
+    <string name="sermon_new">புதிய பிரசங்கம்</string>
+    <string name="sermon_edit">பிரசங்கத்தைத் திருத்து</string>
+    <string name="sermon_empty">இன்னும் பிரசங்கங்கள் இல்லை. உங்கள் முதல் பிரசங்கத்தைத் தயாரிக்க + என்பதைத் தட்டுங்கள்.</string>
+    <string name="sermon_field_title">தலைப்பு</string>
+    <string name="sermon_field_reference">வேதவசனம் (எ.கா. யோவான் 3:16)</string>
+    <string name="sermon_field_notes">வரைவு மற்றும் குறிப்புகள்</string>
+    <string name="sermon_save">சேமி</string>
+    <string name="sermon_delete">நீக்கு</string>
+    <string name="sermon_back">பின்செல்</string>
+    <string name="sermon_close">மூடு</string>
+
+    <!-- AI Sermon Builder (F-04) -->
+    <string name="sermon_congregation_label">சபை</string>
+    <string name="sermon_congregation_general">பொது</string>
+    <string name="sermon_congregation_youth">இளைஞர்</string>
+    <string name="sermon_congregation_grief">துயரம்</string>
+    <string name="sermon_build_outline">வரைவை உருவாக்கு</string>
+    <string name="sermon_outline_generating">வரைவை உருவாக்குகிறது…</string>
+    <string name="sermon_outline_error_offline">வரைவை உருவாக்க இணையம் தேவை.</string>
+    <string name="sermon_outline_error_generic">வரைவை உருவாக்க முடியவில்லை. மீண்டும் முயற்சிக்கவும்.</string>
+</resources>

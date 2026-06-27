@@ -8,4 +8,19 @@
     <string name="nav_calendar">క్యాలెండర్</string>
     <string name="nav_more">మరిన్ని</string>
     <string name="reader_search_hint">బైబిల్‌లో వెతకండి</string>
+
+    <!-- Explain this passage + Oral Bible AI (F-02). Machine-translated, pending review.
+         The "%1$s" placeholders in explain_title and explain_diagnostic are preserved. -->
+    <string name="explain_action">ఈ వచనాన్ని వివరించు</string>
+    <string name="explain_title">వివరణ · %1$s</string>
+    <string name="explain_depth_plain">సరళమైన</string>
+    <string name="explain_depth_preaching">ప్రసంగం కోసం</string>
+    <string name="explain_loading">భాగాన్ని ధ్యానిస్తున్నాను…</string>
+    <string name="explain_unavailable_key">AI వివరణలు ఇంకా అమర్చబడలేదు. వాటిని ప్రారంభించడానికి Gemini API కీని జోడించండి.</string>
+    <string name="explain_unavailable_offline">మీరు ఆఫ్‌లైన్‌లో ఉన్నారు. కొత్త భాగాన్ని వివరించడానికి ఇంటర్నెట్‌కు కనెక్ట్ అవ్వండి; వివరించిన తర్వాత, అది ఆఫ్‌లైన్ చదవడానికి భద్రపరచబడుతుంది.</string>
+    <string name="explain_unavailable_error">ఇప్పుడు వివరణను లోడ్ చేయలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+    <string name="explain_diagnostic">వివరాలు: %1$s</string>
+    <string name="explain_speak">వివరణను చదివి వినిపించు</string>
+    <string name="explain_stop_speaking">వివరణ చదవడం ఆపు</string>
+    <string name="explain_voice_unavailable">వినడానికి, Android సెట్టింగ్‌లలో బైబిల్-భాష TTS వాయిస్‌ను ఇన్‌స్టాల్ చేయండి.</string>
 </resources>

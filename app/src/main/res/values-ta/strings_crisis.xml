@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tamil (ta) translations for the 3AM / Crisis Mode + Persecution Comfort + Crisis AI
+  surfaces (PR #80 AI features). Machine-translated, pending native-speaker review
+  (see app/src/test/resources/localization/translation-provenance.json). Placeholder
+  tokens are preserved exactly from the English default.
+-->
+<resources>
+    <!-- 3AM / Crisis Mode -->
+    <string name="crisis_title">நீங்கள் தனியாக இல்லை</string>
+    <string name="crisis_back">பின்செல்</string>
+    <string name="crisis_tool_entry">எனக்கு இப்போது நலமில்லை</string>
+    <string name="crisis_menu_entry">எனக்கு நலமில்லை</string>
+    <string name="crisis_heading">கடவுள் இப்போது உங்களைப் பார்க்கிறார்.</string>
+    <string name="crisis_reassurance">இன்றிரவு நீங்கள் சுமக்கும் எதுவாயினும், அதைத் தனியாகச் சுமக்க வேண்டியதில்லை. மூச்சு விடுங்கள். சிறிது நேரம் இங்கே ஓய்வெடுங்கள்.</string>
+    <string name="crisis_listen">வெறுமனே கேளுங்கள்</string>
+    <string name="crisis_prayer_title">வார்த்தைகள் இல்லாதபோது ஒரு ஜெபம்</string>
+    <string name="crisis_prayer_body">ஆண்டவரே, நான் சோர்ந்தும் பயந்தும் இருக்கிறேன். இப்போது என் அருகில் இரும். என் இதயத்தை அமைதிப்படுத்தி, இந்த இரவு முழுவதும் என்னைத் தாங்கி, நான் உம்முடையவன் என்பதை நினைவூட்டும். ஆமென்.</string>
+
+    <!-- Persecution-Aware Comfort (F-06) -->
+    <string name="crisis_persecution_heading">நான் துன்புறுத்தலை எதிர்கொள்கிறேன்</string>
+    <string name="crisis_persecution_subheading">நீங்கள் எதிர்கொள்வதைத் தேர்ந்தெடுத்தால், அதற்கேற்ற வேதவசனம் கிடைக்கும்.</string>
+    <string name="crisis_persecution_family">குடும்ப அழுத்தம்</string>
+    <string name="crisis_persecution_livelihood">வேலை அல்லது வாழ்வாதாரம்</string>
+    <string name="crisis_persecution_danger">உடல் ஆபத்து</string>
+    <string name="crisis_persecution_exclusion">சமூக ஒதுக்கல்</string>
+    <string name="crisis_persecution_faith">சந்தேகத்தில் விசுவாசம்</string>
+
+    <!-- Crisis AI Companion (F-03) -->
+    <string name="crisis_ai_placeholder">என்ன நடக்கிறது என்று சொல்லுங்கள்…</string>
+    <string name="crisis_ai_offline_hint">AI பதிலுக்கு இணையம் தேவை. கீழே உள்ள வசனங்கள் ஆஃப்லைனில் வேலை செய்யும்.</string>
+    <string name="crisis_ai_submit">அனுப்பு</string>
+    <string name="crisis_ai_thinking">உங்களுக்கான பகுதியைத் தேடுகிறேன்…</string>
+</resources>

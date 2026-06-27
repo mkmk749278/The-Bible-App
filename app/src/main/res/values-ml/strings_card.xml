@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Malayalam (ml) translations for the Scripture Card Generator + Context-Aware Verse Cards
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Scripture Card Generator -->
+    <string name="card_title">ഒരു വാക്യം പങ്കിടുക</string>
+    <string name="card_back">തിരികെ</string>
+    <string name="card_tool_entry">ഇന്നത്തെ വാക്യം ഒരു കാർഡായി പങ്കിടുക</string>
+    <string name="card_share">പങ്കിടുക</string>
+    <string name="card_share_image">ചിത്രമായി പങ്കിടുക</string>
+    <string name="card_share_text">വാചകമായി പങ്കിടുക</string>
+    <string name="card_theme_description">കാർഡ് നിറം</string>
+    <string name="card_unavailable">ഒരു കാർഡ് ഉണ്ടാക്കാൻ ഒരു പരിഭാഷ ഡൗൺലോഡ് ചെയ്യുക.</string>
+    <string name="card_preview_description">വാക്യ കാർഡിന്റെ പ്രിവ്യൂ</string>
+
+    <!-- Context-Aware Verse Cards (F-05) -->
+    <string name="verse_rec_title">പങ്കിടാൻ ഒരു വാക്യം കണ്ടെത്തുക</string>
+    <string name="verse_rec_entry">പങ്കിടാൻ ഒരു വാക്യം കണ്ടെത്തുക</string>
+    <string name="verse_rec_back">തിരികെ</string>
+    <string name="verse_rec_prompt">സന്ദർഭം അല്ലെങ്കിൽ സാഹചര്യം എന്താണ്?</string>
+    <string name="verse_rec_placeholder">ഉദാ. ഒരു സുഹൃത്ത് പരീക്ഷയിൽ പരാജയപ്പെട്ടു, പുതിയ കുഞ്ഞ്, വിവാഹം</string>
+    <string name="verse_rec_recommend">ഒരു വാക്യം നിർദ്ദേശിക്കുക</string>
+    <string name="verse_rec_thinking">നിങ്ങൾക്കായി ഒരു വാക്യം തിരയുന്നു…</string>
+    <string name="verse_rec_offline_hint">വാക്യ നിർദ്ദേശങ്ങൾക്ക് ഇന്റർനെറ്റ് ആവശ്യമാണ്. നിങ്ങൾക്ക് ഇപ്പോഴും വാക്യങ്ങൾ ബ്രൗസ് ചെയ്ത് പങ്കിടാം.</string>
+    <string name="verse_rec_message_label">നിങ്ങൾക്ക് അയയ്ക്കാവുന്ന ഒരു കുറിപ്പ്</string>
+    <string name="verse_rec_share">ഈ വാക്യം പങ്കിടുക</string>
+    <string name="verse_rec_try_again">വാക്യം കണ്ടെത്താനായില്ല. മറ്റൊരു വിവരണം ശ്രമിക്കുക.</string>
+</resources>

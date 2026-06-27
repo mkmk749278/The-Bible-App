@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) translations for the Scripture Card Generator + Context-Aware Verse Cards
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Scripture Card Generator -->
+    <string name="card_title">ఒక వచనాన్ని పంచుకోండి</string>
+    <string name="card_back">వెనుకకు</string>
+    <string name="card_tool_entry">నేటి వచనాన్ని కార్డుగా పంచుకోండి</string>
+    <string name="card_share">పంచుకో</string>
+    <string name="card_share_image">చిత్రంగా పంచుకో</string>
+    <string name="card_share_text">పాఠ్యంగా పంచుకో</string>
+    <string name="card_theme_description">కార్డు రంగు</string>
+    <string name="card_unavailable">కార్డును రూపొందించడానికి ఒక అనువాదాన్ని డౌన్‌లోడ్ చేయండి.</string>
+    <string name="card_preview_description">వచన కార్డు ప్రివ్యూ</string>
+
+    <!-- Context-Aware Verse Cards (F-05) -->
+    <string name="verse_rec_title">పంచుకోవడానికి ఒక వచనాన్ని కనుగొనండి</string>
+    <string name="verse_rec_entry">పంచుకోవడానికి ఒక వచనాన్ని కనుగొనండి</string>
+    <string name="verse_rec_back">వెనుకకు</string>
+    <string name="verse_rec_prompt">సందర్భం లేదా పరిస్థితి ఏమిటి?</string>
+    <string name="verse_rec_placeholder">ఉదా. ఒక స్నేహితుడు పరీక్షలో విఫలమయ్యాడు, కొత్త శిశువు, వివాహం</string>
+    <string name="verse_rec_recommend">ఒక వచనాన్ని సిఫార్సు చేయి</string>
+    <string name="verse_rec_thinking">మీ కోసం ఒక వచనాన్ని వెతుకుతున్నాను…</string>
+    <string name="verse_rec_offline_hint">వచన సిఫార్సులకు ఇంటర్నెట్ అవసరం. మీరు ఇప్పటికీ వచనాలను బ్రౌజ్ చేసి పంచుకోవచ్చు.</string>
+    <string name="verse_rec_message_label">మీరు పంపగల ఒక గమనిక</string>
+    <string name="verse_rec_share">ఈ వచనాన్ని పంచుకో</string>
+    <string name="verse_rec_try_again">వచనాన్ని కనుగొనలేకపోయాం. వేరే వివరణను ప్రయత్నించండి.</string>
+</resources>

@@ -32,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +41,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.manna.bible.R
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -60,7 +61,8 @@ fun ScriptureCardScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-    val backDescription = stringResource(R.string.card_back)
+    val bibleLanguage = rememberBibleLanguage()
+    val backDescription = stringResourceIn(bibleLanguage, R.string.card_back)
 
     var theme by remember { mutableStateOf(CardTheme.ALL.first()) }
 
@@ -75,7 +77,7 @@ fun ScriptureCardScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.card_title), fontWeight = FontWeight.SemiBold) },
+                title = { Text(stringResourceIn(bibleLanguage, R.string.card_title), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
@@ -98,14 +100,14 @@ fun ScriptureCardScreen(
                 state.isLoading -> CircularProgressIndicator()
 
                 bitmap == null -> Text(
-                    text = stringResource(R.string.card_unavailable),
+                    text = stringResourceIn(bibleLanguage, R.string.card_unavailable),
                     color = MannaTheme.colors.soft
                 )
 
                 else -> {
                     Image(
                         bitmap = bitmap.asImageBitmap(),
-                        contentDescription = stringResource(R.string.card_preview_description),
+                        contentDescription = stringResourceIn(bibleLanguage, R.string.card_preview_description),
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1f)
@@ -133,7 +135,7 @@ fun ScriptureCardScreen(
                     Button(
                         onClick = { CardSharer.share(context, bitmap) },
                         modifier = Modifier.fillMaxWidth()
-                    ) { Text(stringResource(R.string.card_share)) }
+                    ) { Text(stringResourceIn(bibleLanguage, R.string.card_share)) }
                 }
             }
         }

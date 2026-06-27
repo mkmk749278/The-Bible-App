@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) translations for the Liturgy / Order-of-Worship framing strings.
+  Machine-translated, pending native-speaker review. The "%1$s" placeholder in
+  church_library_open is preserved exactly.
+-->
+<resources>
+    <!-- Church Mode — guided order of worship -->
+    <string name="church_title">आराधना का क्रम</string>
+    <string name="church_entry">आराधना का क्रम</string>
+    <string name="church_back">वापस</string>
+    <string name="church_role_presider">पुरोहित</string>
+    <string name="church_role_people">लोग</string>
+    <string name="church_role_all">सभी</string>
+    <string name="church_role_reader">पाठक</string>
+    <string name="church_needs_official">आज के लिए उपयुक्त प्रार्थना — अपनी कलीसिया की पुस्तक / मिस्सल का अनुसरण करें।</string>
+    <string name="church_open_reading">संदर्भ में पढ़ें</string>
+    <string name="church_source">स्रोत</string>
+    <string name="church_unavailable">आपकी परंपरा के लिए पूरा आराधना क्रम तैयार किया जा रहा है। अभी उपलब्ध क्रम ये हैं:</string>
+    <!-- Liturgy Library (browse) -->
+    <string name="church_library_title">आराधना के क्रम</string>
+    <string name="church_library_preparing">आपकी परंपरा के लिए एक क्रम तैयार किया जा रहा है। अभी उपलब्ध क्रम ये हैं:</string>
+    <string name="church_library_open">%1$s खोलें</string>
+</resources>

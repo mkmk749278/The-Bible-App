@@ -9,4 +9,19 @@
     <string name="nav_calendar">कैलेंडर</string>
     <string name="nav_more">और</string>
     <string name="reader_search_hint">बाइबल में खोजें</string>
+
+    <!-- Explain this passage + Oral Bible AI (F-02). Machine-translated, pending review.
+         The "%1$s" placeholders in explain_title and explain_diagnostic are preserved. -->
+    <string name="explain_action">इस वचन की व्याख्या करें</string>
+    <string name="explain_title">व्याख्या · %1$s</string>
+    <string name="explain_depth_plain">सरल</string>
+    <string name="explain_depth_preaching">उपदेश के लिए</string>
+    <string name="explain_loading">अंश पर मनन कर रहा हूँ…</string>
+    <string name="explain_unavailable_key">AI व्याख्याएँ अभी सेट नहीं हैं। इन्हें सक्षम करने के लिए एक Gemini API कुंजी जोड़ें।</string>
+    <string name="explain_unavailable_offline">आप ऑफ़लाइन हैं। नया अंश समझाने के लिए इंटरनेट से जुड़ें; एक बार समझाने के बाद, यह ऑफ़लाइन पढ़ने के लिए सहेज लिया जाता है।</string>
+    <string name="explain_unavailable_error">अभी व्याख्या लोड नहीं हो सकी। कृपया पुनः प्रयास करें।</string>
+    <string name="explain_diagnostic">विवरण: %1$s</string>
+    <string name="explain_speak">व्याख्या सुनाएँ</string>
+    <string name="explain_stop_speaking">व्याख्या सुनाना रोकें</string>
+    <string name="explain_voice_unavailable">सुनने के लिए, Android सेटिंग्स में बाइबल-भाषा TTS आवाज़ इंस्टॉल करें।</string>
 </resources>

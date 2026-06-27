@@ -26,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -38,6 +37,8 @@ import com.manna.bible.R
 import com.manna.bible.domain.share.VerseRecommendation
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -60,7 +61,8 @@ fun VerseRecommendationScreen(
     onBack: () -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val backDescription = stringResource(R.string.verse_rec_back)
+    val bibleLanguage = rememberBibleLanguage()
+    val backDescription = stringResourceIn(bibleLanguage, R.string.verse_rec_back)
 
     var shareTarget by remember { mutableStateOf<VerseRecommendation.Success?>(null) }
 
@@ -69,7 +71,7 @@ fun VerseRecommendationScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(stringResource(R.string.verse_rec_title), fontWeight = FontWeight.SemiBold)
+                    Text(stringResourceIn(bibleLanguage, R.string.verse_rec_title), fontWeight = FontWeight.SemiBold)
                 },
                 navigationIcon = {
                     IconButton(
@@ -91,7 +93,7 @@ fun VerseRecommendationScreen(
         ) {
             if (!state.engineConfigured) {
                 Text(
-                    text = stringResource(R.string.verse_rec_offline_hint),
+                    text = stringResourceIn(bibleLanguage, R.string.verse_rec_offline_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MannaTheme.colors.muted
                 )
@@ -99,7 +101,7 @@ fun VerseRecommendationScreen(
             }
 
             Text(
-                text = stringResource(R.string.verse_rec_prompt),
+                text = stringResourceIn(bibleLanguage, R.string.verse_rec_prompt),
                 style = MaterialTheme.typography.titleMedium,
                 color = MannaTheme.colors.ink,
                 fontWeight = FontWeight.SemiBold
@@ -108,7 +110,7 @@ fun VerseRecommendationScreen(
             OutlinedTextField(
                 value = state.situationText,
                 onValueChange = viewModel::onSituationChange,
-                placeholder = { Text(stringResource(R.string.verse_rec_placeholder)) },
+                placeholder = { Text(stringResourceIn(bibleLanguage, R.string.verse_rec_placeholder)) },
                 enabled = !state.isLoading,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -119,7 +121,7 @@ fun VerseRecommendationScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 56.dp)
-            ) { Text(stringResource(R.string.verse_rec_recommend)) }
+            ) { Text(stringResourceIn(bibleLanguage, R.string.verse_rec_recommend)) }
 
             if (state.isLoading) {
                 Row(
@@ -128,7 +130,7 @@ fun VerseRecommendationScreen(
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                     Text(
-                        text = stringResource(R.string.verse_rec_thinking),
+                        text = stringResourceIn(bibleLanguage, R.string.verse_rec_thinking),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MannaTheme.colors.soft
                     )
@@ -141,12 +143,12 @@ fun VerseRecommendationScreen(
                     onShare = { shareTarget = result }
                 )
                 VerseRecommendation.Offline -> Text(
-                    text = stringResource(R.string.verse_rec_offline_hint),
+                    text = stringResourceIn(bibleLanguage, R.string.verse_rec_offline_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MannaTheme.colors.muted
                 )
                 is VerseRecommendation.Unavailable -> Text(
-                    text = stringResource(R.string.verse_rec_try_again),
+                    text = stringResourceIn(bibleLanguage, R.string.verse_rec_try_again),
                     style = MaterialTheme.typography.bodySmall,
                     color = MannaTheme.colors.muted
                 )
@@ -170,6 +172,7 @@ private fun RecommendationCard(
     result: VerseRecommendation.Success,
     onShare: () -> Unit
 ) {
+    val bibleLanguage = rememberBibleLanguage()
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(14.dp),
@@ -195,7 +198,7 @@ private fun RecommendationCard(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = stringResource(R.string.verse_rec_message_label),
+                text = stringResourceIn(bibleLanguage, R.string.verse_rec_message_label),
                 style = MaterialTheme.typography.labelMedium,
                 color = MannaTheme.colors.soft,
                 fontWeight = FontWeight.Medium
@@ -210,7 +213,7 @@ private fun RecommendationCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .heightIn(min = 56.dp)
-            ) { Text(stringResource(R.string.verse_rec_share)) }
+            ) { Text(stringResourceIn(bibleLanguage, R.string.verse_rec_share)) }
         }
     }
 }

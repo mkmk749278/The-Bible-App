@@ -1,0 +1,73 @@
+package com.manna.bible.ui.util
+
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.runComposeUiTest
+import com.manna.bible.R
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.robolectric.annotation.Config
+import tech.apter.junit.jupiter.robolectric.RobolectricExtension
+
+/**
+ * Example tests for the String_Resolver (Requirements 1.1, 1.5, 2.1, 2.2): a translated
+ * key resolves in the requested Bible language, an untranslated key falls back to the
+ * English default, and string-array resolution works. Robolectric/Compose-backed.
+ */
+@ExtendWith(RobolectricExtension::class)
+@Config(sdk = [34])
+class StringResolverExampleTest {
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun `stringResourceIn resolves a values-ta key in Tamil and falls back to English when absent`() {
+        runComposeUiTest {
+            val captured = HashMap<String, String>()
+            setContent {
+                // A key translated in values-ta (crisis_title) resolves differently per language.
+                captured["ta_translated"] = stringResourceIn("ta", R.string.crisis_title)
+                captured["en_translated"] = stringResourceIn("en", R.string.crisis_title)
+                // A key with no Tamil value (nav_home) must fall back to the English default.
+                captured["ta_fallback"] = stringResourceIn("ta", R.string.nav_home)
+                captured["en_fallback"] = stringResourceIn("en", R.string.nav_home)
+            }
+            waitForIdle()
+
+            // Req 1.1 / 2.1: the Tamil resolution differs from English for a translated key.
+            assertNotEquals(
+                captured["en_translated"], captured["ta_translated"],
+                "crisis_title should resolve differently in Tamil vs English"
+            )
+            assertTrue(
+                captured["ta_translated"]!!.isNotBlank(),
+                "Tamil crisis_title resolved blank"
+            )
+            // Req 1.4 / 1.5: untranslated key falls back to the English default value.
+            assertEquals(
+                captured["en_fallback"], captured["ta_fallback"],
+                "nav_home should fall back to the English value under tag 'ta'"
+            )
+        }
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun `stringArrayResourceIn resolves a string-array in the requested language`() {
+        runComposeUiTest {
+            val sizes = mutableStateOf(0 to 0)
+            setContent {
+                val en = stringArrayResourceIn("en", R.array.calendar_weekdays)
+                val ta = stringArrayResourceIn("ta", R.array.calendar_weekdays)
+                sizes.value = en.size to ta.size
+            }
+            waitForIdle()
+            val (enSize, taSize) = sizes.value
+            assertTrue(enSize > 0, "English weekday array resolved empty")
+            // No Tamil array authored -> falls back to the default array (same size).
+            assertEquals(enSize, taSize, "array resolution should fall back to the default")
+        }
+    }
+}

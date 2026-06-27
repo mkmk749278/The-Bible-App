@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Malayalam (ml) translations for the 3AM / Crisis Mode + Persecution Comfort + Crisis AI
+  surfaces (PR #80 AI features). Machine-translated, pending native-speaker review
+  (see app/src/test/resources/localization/translation-provenance.json). Placeholders preserved.
+-->
+<resources>
+    <!-- 3AM / Crisis Mode -->
+    <string name="crisis_title">നിങ്ങൾ ഒറ്റയ്ക്കല്ല</string>
+    <string name="crisis_back">തിരികെ</string>
+    <string name="crisis_tool_entry">എനിക്ക് ഇപ്പോൾ സുഖമില്ല</string>
+    <string name="crisis_menu_entry">എനിക്ക് സുഖമില്ല</string>
+    <string name="crisis_heading">ദൈവം ഇപ്പോൾ നിങ്ങളെ കാണുന്നു.</string>
+    <string name="crisis_reassurance">ഇന്ന് രാത്രി നിങ്ങൾ ചുമക്കുന്നത് എന്തായാലും, അത് ഒറ്റയ്ക്ക് ചുമക്കേണ്ടതില്ല. ശ്വാസം എടുക്കൂ. കുറച്ച് നേരം ഇവിടെ വിശ്രമിക്കൂ.</string>
+    <string name="crisis_listen">വെറുതെ കേൾക്കൂ</string>
+    <string name="crisis_prayer_title">വാക്കുകൾ ഇല്ലാത്തപ്പോൾ ഒരു പ്രാർത്ഥന</string>
+    <string name="crisis_prayer_body">കർത്താവേ, ഞാൻ ക്ഷീണിതനും ഭയപ്പെട്ടവനുമാണ്. ഇപ്പോൾ എന്റെ അടുത്ത് ഇരിക്കണമേ. എന്റെ ഹൃദയത്തെ ശാന്തമാക്കി, ഈ രാത്രി മുഴുവൻ എന്നെ താങ്ങി, ഞാൻ അങ്ങയുടേതാണെന്ന് ഓർമ്മിപ്പിക്കണമേ. ആമേൻ.</string>
+
+    <!-- Persecution-Aware Comfort (F-06) -->
+    <string name="crisis_persecution_heading">ഞാൻ പീഡനം നേരിടുന്നു</string>
+    <string name="crisis_persecution_subheading">നിങ്ങൾ നേരിടുന്നത് തിരഞ്ഞെടുത്താൽ അതിനോട് ചേർന്ന തിരുവെഴുത്ത് ലഭിക്കും.</string>
+    <string name="crisis_persecution_family">കുടുംബ സമ്മർദ്ദം</string>
+    <string name="crisis_persecution_livelihood">ജോലി അല്ലെങ്കിൽ ഉപജീവനം</string>
+    <string name="crisis_persecution_danger">ശാരീരിക അപകടം</string>
+    <string name="crisis_persecution_exclusion">സാമൂഹിക ഒറ്റപ്പെടുത്തൽ</string>
+    <string name="crisis_persecution_faith">സംശയത്തിലെ വിശ്വാസം</string>
+
+    <!-- Crisis AI Companion (F-03) -->
+    <string name="crisis_ai_placeholder">എന്താണ് സംഭവിക്കുന്നതെന്ന് എന്നോട് പറയൂ…</string>
+    <string name="crisis_ai_offline_hint">AI പ്രതികരണത്തിന് ഇന്റർനെറ്റ് ആവശ്യമാണ്. താഴെയുള്ള വാക്യങ്ങൾ ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും.</string>
+    <string name="crisis_ai_submit">അയയ്ക്കുക</string>
+    <string name="crisis_ai_thinking">നിങ്ങൾക്കായി ഒരു ഭാഗം തിരയുന്നു…</string>
+</resources>
