@@ -254,8 +254,13 @@ dependencies {
 // runner) fails fast with a diagnostic instead of wedging the Gradle build indefinitely.
 // Per design.md > Testing Strategy > Hang-safety. Per-test @Timeout annotations on the
 // remaining rendering tests provide the finer-grained, fail-fast bound, so this ceiling
-// only needs to bound genuine hangs, not the legitimate full-suite runtime. 20m clipped
-// a healthy CI run (no daemon, cold cache) before it finished; 40m gives headroom.
+// only needs to bound genuine hangs, not the legitimate full-suite runtime.
+//
+// The suite was timing out even at 40m with zero per-test @Timeout firing, which rules
+// out a hang (those would cap a stuck test at 60s, not 40m) — it's ~100 test classes
+// running serially in a single fork. Spread them across half the runner's cores so
+// wall-clock scales with parallelism instead of raw test count.
 tasks.withType<Test>().configureEach {
     timeout.set(Duration.ofMinutes(40))
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
 }
