@@ -33,7 +33,7 @@ class LiturgyAssetReaderTest {
     """.trimIndent()
 
     @Test
-    fun `missing manifest yields null and an empty library`() = runBlocking {
+    fun `missing manifest yields null and an empty library`(): Unit = runBlocking {
         val reader = LiturgyAssetReader(FakeSource(manifestJson = null, assets = emptyMap()), json)
         assertNull(reader.manifest())
         assertTrue(reader.readAll().isEmpty())
@@ -41,7 +41,7 @@ class LiturgyAssetReaderTest {
     }
 
     @Test
-    fun `a missing listed asset becomes a descriptive Failure while others are retained`() = runBlocking {
+    fun `a missing listed asset becomes a descriptive Failure while others are retained`(): Unit = runBlocking {
         val manifest = """
             {"liturgies":[
               {"id":"a","title":"A","tradition":"TA","assetFile":"a.json"},
@@ -68,7 +68,7 @@ class LiturgyAssetReaderTest {
     }
 
     @Test
-    fun `a malformed listed asset becomes a Failure without affecting valid entries`() = runBlocking {
+    fun `a malformed listed asset becomes a Failure without affecting valid entries`(): Unit = runBlocking {
         val manifest = """
             {"liturgies":[
               {"id":"good","title":"G","tradition":"TG","assetFile":"good.json"},
@@ -84,7 +84,7 @@ class LiturgyAssetReaderTest {
     }
 
     @Test
-    fun `repository caches the parsed liturgies (parse once)`() = runBlocking {
+    fun `repository caches the parsed liturgies (parse once)`(): Unit = runBlocking {
         val manifest = """{"liturgies":[{"id":"a","title":"A","tradition":"TA","assetFile":"a.json"}]}"""
         val reader = LiturgyAssetReader(FakeSource(manifest, mapOf("a.json" to validJson("a"))), json)
         val repository = LiturgyRepository(reader)

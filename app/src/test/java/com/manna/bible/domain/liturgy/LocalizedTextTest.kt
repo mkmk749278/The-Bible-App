@@ -29,7 +29,7 @@ class LocalizedTextTest {
     private val tagArb: Arb<String> = Arb.of("en", "ta", "te", "hi", "ml", "fr", "xx", "pt-BR")
 
     @Test
-    fun `resolve returns authored value when present and English otherwise, and English is always present`() = runBlocking {
+    fun `resolve returns authored value when present and English otherwise, and English is always present`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 7: For any LocalizedText and any requested language tag, resolve(tag) returns the authored value when present and the English value otherwise; English is always present.
         checkAll(250, valuesArb, tagArb) { values, tag ->
             val text = LocalizedText(values)

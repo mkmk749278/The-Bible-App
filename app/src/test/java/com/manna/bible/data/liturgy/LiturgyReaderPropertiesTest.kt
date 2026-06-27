@@ -50,7 +50,7 @@ class LiturgyReaderPropertiesTest {
         )
 
     @Test
-    fun `the reader opens only asset files listed in the manifest`() = runBlocking {
+    fun `the reader opens only asset files listed in the manifest`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 4: For any Liturgy_Manifest, the set of asset files the reader opens is a subset of the assetFile values listed in that manifest (no unlisted file is loaded).
         checkAll(200, Arb.int(0..5), Arb.set(Arb.int(0..20), 0..6)) { listedCount, extraIndices ->
             val entries = (0 until listedCount).map { entryFor(it) }
@@ -75,7 +75,7 @@ class LiturgyReaderPropertiesTest {
     }
 
     @Test
-    fun `malformed assets fail safely and valid entries are retained`() = runBlocking {
+    fun `malformed assets fail safely and valid entries are retained`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 3: For any input that is malformed JSON or fails schema validation, the parser/reader returns a descriptive failure result and does not throw, and the resulting Liturgy_Library excludes that entry while retaining all valid entries.
         val malformed = listOf(
             "{",
@@ -120,7 +120,7 @@ class LiturgyReaderPropertiesTest {
     }
 
     @Test
-    fun `complete manifest entries carry id, title, tradition, denominations, and en languages`() = runBlocking {
+    fun `complete manifest entries carry id, title, tradition, denominations, and en languages`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 5: For any bundled liturgy referenced by the library, its manifest entry carries a non-blank id, title, tradition, a denominations field, and a non-empty languages list including en.
         checkAll(250, manifestEntryArb) { (entry, complete) ->
             val isComplete = LiturgyMapper.validateManifestEntry(entry).isEmpty()

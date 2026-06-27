@@ -40,7 +40,7 @@ class AssetLiturgyProviderTest {
         Arb.set(Arb.of(idPool), 0..idPool.size).map { ids -> ids.map(::liturgy) }
 
     @Test
-    fun `forDenomination surfaces mapped orders first, then the rest, covering the whole library`() = runBlocking {
+    fun `forDenomination surfaces mapped orders first, then the rest, covering the whole library`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 14: For any Denomination and any bundled library, forDenomination returns, as a prefix, exactly the available liturgies mapped to that denomination, followed by the remaining available liturgies, and the returned set equals the full set of available liturgies (SHOW_EVERYTHING selects the entire library).
         checkAll(250, Arb.enum<Denomination>(), availableArb) { denomination, available ->
             val result = AssetLiturgyProvider.orderedFor(denomination, available)
@@ -64,7 +64,7 @@ class AssetLiturgyProviderTest {
     }
 
     @Test
-    fun `resolvedDefaultFor is total with fallback while the full listing exposes everything`() = runBlocking {
+    fun `resolvedDefaultFor is total with fallback while the full listing exposes everything`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 15: For any Denomination, whenever the library has at least one valid liturgy, resolvedDefaultFor returns a non-null selectable liturgy (falling back to an available entry when the mapped default is absent), while the full listing still exposes every available liturgy.
         checkAll(250, Arb.enum<Denomination>(), availableArb) { denomination, available ->
             val resolved = AssetLiturgyProvider.resolvedDefaultFor(denomination, available)

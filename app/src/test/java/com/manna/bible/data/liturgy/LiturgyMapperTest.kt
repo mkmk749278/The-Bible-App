@@ -23,7 +23,7 @@ class LiturgyMapperTest {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     @Test
-    fun `serialize then parse yields an equivalent liturgy`() = runBlocking {
+    fun `serialize then parse yields an equivalent liturgy`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 1: For any valid Liturgy, serializing to asset JSON and parsing the result produces an equivalent Liturgy (same id, title, tradition, source note, denominations, languages, and same sections/parts — role, localized title/text/rubric, osisRef, needsOfficialText — in the same order).
         checkAll(200, LiturgyArbs.liturgy) { liturgy ->
             val parsed = LiturgyMapper.parse(json, LiturgyMapper.serialize(json, liturgy))
@@ -32,7 +32,7 @@ class LiturgyMapperTest {
     }
 
     @Test
-    fun `parse preserves authored section and part order`() = runBlocking {
+    fun `parse preserves authored section and part order`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 2: For any valid liturgy asset, parsing yields its sections in authored order and, within each section, its parts in authored order.
         checkAll(200, LiturgyArbs.liturgy) { liturgy ->
             val parsed = LiturgyMapper.parse(json, LiturgyMapper.serialize(json, liturgy))
@@ -51,7 +51,7 @@ class LiturgyMapperTest {
     }
 
     @Test
-    fun `validation flags a liturgy inconsistent iff declared languages differ from present languages`() = runBlocking {
+    fun `validation flags a liturgy inconsistent iff declared languages differ from present languages`(): Unit = runBlocking {
         // Feature: mass-liturgy-and-localization, Property 6: For any liturgy asset, validation flags it inconsistent if and only if the set of declared languages differs from the set of languages actually present across its parts' localized fields.
         val presentArb: Arb<Set<String>> =
             Arb.set(Arb.of("ta", "te", "hi", "ml"), 0..4).let { extras ->

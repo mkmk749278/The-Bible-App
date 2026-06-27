@@ -33,7 +33,7 @@ class LiturgyAssetReaderRobolectricTest {
     }
 
     @Test
-    fun `reads the bundled manifest and both orders through the Android AssetManager`() = runBlocking {
+    fun `reads the bundled manifest and both orders through the Android AssetManager`(): Unit = runBlocking {
         val reader = reader()
 
         val manifest = reader.manifest()
