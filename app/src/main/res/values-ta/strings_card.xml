@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tamil (ta) translations for the Scripture Card Generator + Context-Aware Verse Cards
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Scripture Card Generator -->
+    <string name="card_title">வசனத்தைப் பகிரவும்</string>
+    <string name="card_back">பின்செல்</string>
+    <string name="card_tool_entry">இன்றைய வசனத்தை அட்டையாகப் பகிரவும்</string>
+    <string name="card_share">பகிர்</string>
+    <string name="card_share_image">படமாகப் பகிர்</string>
+    <string name="card_share_text">உரையாகப் பகிர்</string>
+    <string name="card_theme_description">அட்டை நிறம்</string>
+    <string name="card_unavailable">அட்டையை உருவாக்க ஒரு மொழிபெயர்ப்பைப் பதிவிறக்கவும்.</string>
+    <string name="card_preview_description">வசன அட்டையின் முன்னோட்டம்</string>
+
+    <!-- Context-Aware Verse Cards (F-05) -->
+    <string name="verse_rec_title">பகிர்வதற்கு ஒரு வசனத்தைக் கண்டறியவும்</string>
+    <string name="verse_rec_entry">பகிர்வதற்கு ஒரு வசனத்தைக் கண்டறியவும்</string>
+    <string name="verse_rec_back">பின்செல்</string>
+    <string name="verse_rec_prompt">சந்தர்ப்பம் அல்லது சூழ்நிலை என்ன?</string>
+    <string name="verse_rec_placeholder">எ.கா. ஒரு நண்பர் தேர்வில் தோல்வியடைந்தார், புதிய குழந்தை, திருமணம்</string>
+    <string name="verse_rec_recommend">ஒரு வசனத்தைப் பரிந்துரைக்கவும்</string>
+    <string name="verse_rec_thinking">உங்களுக்கான வசனத்தைத் தேடுகிறேன்…</string>
+    <string name="verse_rec_offline_hint">வசனப் பரிந்துரைகளுக்கு இணையம் தேவை. நீங்கள் இன்னும் வசனங்களை உலாவி பகிரலாம்.</string>
+    <string name="verse_rec_message_label">நீங்கள் அனுப்பக்கூடிய ஒரு குறிப்பு</string>
+    <string name="verse_rec_share">இந்த வசனத்தைப் பகிரவும்</string>
+    <string name="verse_rec_try_again">வசனத்தைக் கண்டறிய முடியவில்லை. வேறு விளக்கத்தை முயற்சிக்கவும்.</string>
+</resources>

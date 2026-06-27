@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) translations for the Liturgy / Order-of-Worship framing strings.
+  Machine-translated, pending native-speaker review. The "%1$s" placeholder in
+  church_library_open is preserved exactly.
+-->
+<resources>
+    <!-- Church Mode — guided order of worship -->
+    <string name="church_title">ఆరాధన క్రమం</string>
+    <string name="church_entry">ఆరాధన క్రమం</string>
+    <string name="church_back">వెనుకకు</string>
+    <string name="church_role_presider">గురువు</string>
+    <string name="church_role_people">ప్రజలు</string>
+    <string name="church_role_all">అందరూ</string>
+    <string name="church_role_reader">పఠించేవారు</string>
+    <string name="church_needs_official">నేటికి సంబంధించిన ప్రార్థన — మీ పారిష్ పుస్తకం / మిస్సల్‌ను అనుసరించండి.</string>
+    <string name="church_open_reading">సందర్భంలో చదవండి</string>
+    <string name="church_source">మూలం</string>
+    <string name="church_unavailable">మీ సంప్రదాయానికి పూర్తి ఆరాధన క్రమం సిద్ధం చేయబడుతోంది. ఇప్పుడు అందుబాటులో ఉన్న క్రమాలు ఇవి:</string>
+    <!-- Liturgy Library (browse) -->
+    <string name="church_library_title">ఆరాధన క్రమాలు</string>
+    <string name="church_library_preparing">మీ సంప్రదాయానికి ఒక క్రమం సిద్ధం చేయబడుతోంది. ఇప్పుడు అందుబాటులో ఉన్న క్రమాలు ఇవి:</string>
+    <string name="church_library_open">%1$s తెరువు</string>
+</resources>

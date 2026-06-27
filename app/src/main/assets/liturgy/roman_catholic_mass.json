@@ -1,0 +1,513 @@
+{
+    "id": "roman_catholic_mass",
+    "title": {
+        "en": "The Holy Mass"
+    },
+    "tradition": "Roman Catholic",
+    "denominations": [
+        "catholic"
+    ],
+    "sourceNote": {
+        "en": "Order of Mass, Roman Rite — structure per the USCCB Order of Mass. Ordinary texts in traditional / ecumenical (ICET) English. The prayers proper to the day (Collect, Preface, Eucharistic Prayer, Prayer after Communion) follow the parish Missal."
+    },
+    "sections": [
+        {
+            "title": {
+                "en": "Introductory Rites"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "All stand. The Mass begins with an entrance hymn as the Priest and ministers approach the altar."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Sign of the Cross"
+                    },
+                    "text": {
+                        "en": "In the name of the Father, and of the Son, and of the Holy Spirit."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Greeting"
+                    },
+                    "text": {
+                        "en": "The grace of our Lord Jesus Christ, and the love of God, and the communion of the Holy Spirit be with you all."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with your spirit."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Penitential Act"
+                    },
+                    "rubric": {
+                        "en": "All recall their sins and ask God's mercy."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Kyrie"
+                    },
+                    "text": {
+                        "en": "Lord, have mercy. Christ, have mercy. Lord, have mercy."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Gloria"
+                    },
+                    "text": {
+                        "en": "Glory to God in the highest, and on earth peace to people of good will…"
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "(The Gloria continues, and is sung on Sundays, solemnities and feasts.)"
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Collect"
+                    },
+                    "rubric": {
+                        "en": "The Priest sings or says the Collect — the opening prayer proper to the day."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "Liturgy of the Word"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "First Reading"
+                    },
+                    "rubric": {
+                        "en": "All sit. The appointed readings are proclaimed — see the day's readings in the Calendar."
+                    }
+                },
+                {
+                    "role": "READER",
+                    "text": {
+                        "en": "The word of the Lord."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Thanks be to God."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "The Responsorial Psalm is sung or said, with the people responding."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Second Reading"
+                    },
+                    "rubric": {
+                        "en": "On Sundays and solemnities a Second Reading follows, ending: “The word of the Lord.” — “Thanks be to God.”"
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Gospel Acclamation"
+                    },
+                    "text": {
+                        "en": "Alleluia, alleluia."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Gospel"
+                    },
+                    "rubric": {
+                        "en": "All stand for the Gospel."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "The Lord be with you."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with your spirit."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "A reading from the holy Gospel according to N."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Glory to you, O Lord."
+                    }
+                },
+                {
+                    "role": "READER",
+                    "text": {
+                        "en": "The Gospel of the Lord."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Praise to you, Lord Jesus Christ."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Homily"
+                    },
+                    "rubric": {
+                        "en": "All sit. The Priest preaches, opening up the readings and applying them to life."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "The Nicene Creed"
+                    },
+                    "text": {
+                        "en": "I believe in one God, the Father almighty, maker of heaven and earth, of all things visible and invisible…"
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "(All stand and profess the Creed in full on Sundays and solemnities.)"
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Universal Prayer"
+                    },
+                    "rubric": {
+                        "en": "Intercessions are offered for the Church and the world."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Lord, hear our prayer."
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "Liturgy of the Eucharist"
+            },
+            "parts": [
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Presentation of the Gifts"
+                    },
+                    "rubric": {
+                        "en": "Bread and wine are brought to the altar; an offertory hymn may be sung."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "Blessed are you, Lord God of all creation, for through your goodness we have received the bread we offer you…"
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Blessed be God for ever."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Prayer over the Offerings"
+                    },
+                    "rubric": {
+                        "en": "The Priest prays over the gifts, proper to the day."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Eucharistic Prayer"
+                    },
+                    "text": {
+                        "en": "The Lord be with you."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with your spirit."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "Lift up your hearts."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "We lift them up to the Lord."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "Let us give thanks to the Lord our God."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "It is right and just."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Preface"
+                    },
+                    "rubric": {
+                        "en": "The Priest sings the Preface of thanksgiving, proper to the day."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Holy, Holy, Holy (Sanctus)"
+                    },
+                    "text": {
+                        "en": "Holy, Holy, Holy Lord God of hosts. Heaven and earth are full of your glory. Hosanna in the highest. Blessed is he who comes in the name of the Lord. Hosanna in the highest."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Consecration"
+                    },
+                    "rubric": {
+                        "en": "The Priest continues the Eucharistic Prayer; recalling the Last Supper, the bread and wine become the Body and Blood of Christ."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Mystery of Faith"
+                    },
+                    "text": {
+                        "en": "The mystery of faith."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "text": {
+                        "en": "We proclaim your Death, O Lord, and profess your Resurrection until you come again."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "The Eucharistic Prayer concludes with the Doxology: “…through him, with him, in him… for ever and ever.”"
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "The Lord's Prayer"
+                    },
+                    "rubric": {
+                        "en": "At the Saviour's command and formed by divine teaching, we dare to say:"
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "text": {
+                        "en": "Our Father, who art in heaven, hallowed be thy name; thy kingdom come, thy will be done, on earth as it is in heaven. Give us this day our daily bread, and forgive us our trespasses, as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "The Sign of Peace"
+                    },
+                    "text": {
+                        "en": "The peace of the Lord be with you always."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with your spirit."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "rubric": {
+                        "en": "All offer one another a sign of peace."
+                    }
+                },
+                {
+                    "role": "ALL",
+                    "title": {
+                        "en": "Lamb of God (Agnus Dei)"
+                    },
+                    "text": {
+                        "en": "Lamb of God, you take away the sins of the world, have mercy on us. Lamb of God, you take away the sins of the world, have mercy on us. Lamb of God, you take away the sins of the world, grant us peace."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Communion"
+                    },
+                    "rubric": {
+                        "en": "The faithful come forward to receive Holy Communion."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "The Body of Christ."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "RUBRIC",
+                    "title": {
+                        "en": "Prayer after Communion"
+                    },
+                    "rubric": {
+                        "en": "The Priest prays the Prayer after Communion, proper to the day."
+                    },
+                    "needsOfficialText": true
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                }
+            ]
+        },
+        {
+            "title": {
+                "en": "Concluding Rites"
+            },
+            "parts": [
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Greeting & Blessing"
+                    },
+                    "text": {
+                        "en": "The Lord be with you."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "And with your spirit."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "text": {
+                        "en": "May almighty God bless you, the Father, and the Son, and the Holy Spirit."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Amen."
+                    }
+                },
+                {
+                    "role": "PRESIDER",
+                    "title": {
+                        "en": "Dismissal"
+                    },
+                    "text": {
+                        "en": "Go forth, the Mass is ended."
+                    }
+                },
+                {
+                    "role": "PEOPLE",
+                    "text": {
+                        "en": "Thanks be to God."
+                    }
+                }
+            ]
+        }
+    ]
+}

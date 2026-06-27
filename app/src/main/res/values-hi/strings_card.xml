@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) translations for the Scripture Card Generator + Context-Aware Verse Cards
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Scripture Card Generator -->
+    <string name="card_title">एक वचन साझा करें</string>
+    <string name="card_back">वापस</string>
+    <string name="card_tool_entry">आज का वचन कार्ड के रूप में साझा करें</string>
+    <string name="card_share">साझा करें</string>
+    <string name="card_share_image">छवि के रूप में साझा करें</string>
+    <string name="card_share_text">पाठ के रूप में साझा करें</string>
+    <string name="card_theme_description">कार्ड का रंग</string>
+    <string name="card_unavailable">कार्ड बनाने के लिए एक अनुवाद डाउनलोड करें।</string>
+    <string name="card_preview_description">वचन कार्ड का पूर्वावलोकन</string>
+
+    <!-- Context-Aware Verse Cards (F-05) -->
+    <string name="verse_rec_title">साझा करने के लिए एक वचन खोजें</string>
+    <string name="verse_rec_entry">साझा करने के लिए एक वचन खोजें</string>
+    <string name="verse_rec_back">वापस</string>
+    <string name="verse_rec_prompt">अवसर या परिस्थिति क्या है?</string>
+    <string name="verse_rec_placeholder">जैसे किसी मित्र की परीक्षा में असफलता, नया शिशु, विवाह</string>
+    <string name="verse_rec_recommend">एक वचन सुझाएँ</string>
+    <string name="verse_rec_thinking">आपके लिए एक वचन ढूँढ़ रहा हूँ…</string>
+    <string name="verse_rec_offline_hint">वचन सुझावों के लिए इंटरनेट चाहिए। आप अभी भी वचन देख और साझा कर सकते हैं।</string>
+    <string name="verse_rec_message_label">एक संदेश जो आप भेज सकते हैं</string>
+    <string name="verse_rec_share">यह वचन साझा करें</string>
+    <string name="verse_rec_try_again">वचन नहीं मिला। कोई अलग विवरण आज़माएँ।</string>
+</resources>

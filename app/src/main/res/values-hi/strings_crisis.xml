@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) translations for the 3AM / Crisis Mode + Persecution Comfort + Crisis AI
+  surfaces (PR #80 AI features). Machine-translated, pending native-speaker review
+  (see app/src/test/resources/localization/translation-provenance.json). Placeholders preserved.
+-->
+<resources>
+    <!-- 3AM / Crisis Mode -->
+    <string name="crisis_title">आप अकेले नहीं हैं</string>
+    <string name="crisis_back">वापस</string>
+    <string name="crisis_tool_entry">मैं अभी ठीक नहीं हूँ</string>
+    <string name="crisis_menu_entry">मैं ठीक नहीं हूँ</string>
+    <string name="crisis_heading">परमेश्वर इस समय आपको देख रहा है।</string>
+    <string name="crisis_reassurance">आज रात आप जो कुछ भी सह रहे हैं, उसे अकेले सहने की ज़रूरत नहीं है। साँस लें। कुछ देर यहाँ विश्राम करें।</string>
+    <string name="crisis_listen">बस सुनिए</string>
+    <string name="crisis_prayer_title">जब शब्द न हों तब की एक प्रार्थना</string>
+    <string name="crisis_prayer_body">हे प्रभु, मैं थका हुआ और भयभीत हूँ। इस समय मेरे पास रह। मेरे मन को शांत कर, इस रात भर मुझे थामे रख, और मुझे याद दिला कि मैं तेरा हूँ। आमीन।</string>
+
+    <!-- Persecution-Aware Comfort (F-06) -->
+    <string name="crisis_persecution_heading">मैं उत्पीड़न का सामना कर रहा हूँ</string>
+    <string name="crisis_persecution_subheading">आप जिसका सामना कर रहे हैं उसे चुनें ताकि उससे जुड़ा वचन मिले।</string>
+    <string name="crisis_persecution_family">पारिवारिक दबाव</string>
+    <string name="crisis_persecution_livelihood">नौकरी या आजीविका</string>
+    <string name="crisis_persecution_danger">शारीरिक खतरा</string>
+    <string name="crisis_persecution_exclusion">सामाजिक बहिष्कार</string>
+    <string name="crisis_persecution_faith">संदेह में विश्वास</string>
+
+    <!-- Crisis AI Companion (F-03) -->
+    <string name="crisis_ai_placeholder">मुझे बताइए क्या हो रहा है…</string>
+    <string name="crisis_ai_offline_hint">AI उत्तर के लिए इंटरनेट चाहिए। नीचे दिए गए वचन ऑफ़लाइन काम करते हैं।</string>
+    <string name="crisis_ai_submit">भेजें</string>
+    <string name="crisis_ai_thinking">आपके लिए एक अंश ढूँढ़ रहा हूँ…</string>
+</resources>

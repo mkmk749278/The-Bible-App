@@ -43,6 +43,17 @@ fun rememberLocalizedContext(languageTag: String): Context {
 fun stringResourceIn(languageTag: String, @StringRes id: Int): String =
     rememberLocalizedContext(languageTag).getString(id)
 
+/**
+ * Resolves a formatted string [id] in [languageTag] (the Bible language), substituting
+ * [formatArgs] into the resource's positional placeholders (e.g. `%1$s`). Mirrors
+ * `stringResource(id, vararg)` but against the Bible-language context rather than the UI
+ * locale, so AI-feature surfaces can render templated copy (e.g. "Open %1$s") in the
+ * user's chosen Bible language while preserving the placeholder substitution.
+ */
+@Composable
+fun stringResourceIn(languageTag: String, @StringRes id: Int, vararg formatArgs: Any): String =
+    rememberLocalizedContext(languageTag).getString(id, *formatArgs)
+
 /** Resolves a string-array [id] in [languageTag] (the Bible language). */
 @Composable
 fun stringArrayResourceIn(languageTag: String, @ArrayRes id: Int): Array<String> =

@@ -10,6 +10,26 @@ import com.manna.bible.domain.model.Denomination
 enum class LiturgyRole { PRESIDER, PEOPLE, ALL, READER, RUBRIC }
 
 /**
+ * Authored, multilingual sacred text. English (`"en"`) is always present; other
+ * languages appear only where an authoritative published translation exists — the app
+ * never auto-translates liturgical text. [resolve] falls back to English deterministically
+ * so a missing vernacular value can never leave the surface blank (Req 8.1/8.2).
+ */
+data class LocalizedText(private val values: Map<String, String>) {
+
+    init { require(values.containsKey("en")) { "LocalizedText must contain 'en'" } }
+
+    /** The required English value, used as the fallback for any missing language. */
+    val english: String get() = values.getValue("en")
+
+    /** The authored value for [languageTag] if present, else the English fallback. */
+    fun resolve(languageTag: String): String = values[languageTag] ?: english
+
+    /** The set of language tags this text was authored in (always includes `"en"`). */
+    val languages: Set<String> get() = values.keys
+}
+
+/**
  * One step of an order of worship.
  *
  * @property role who says or does this part.
@@ -23,16 +43,16 @@ enum class LiturgyRole { PRESIDER, PEOPLE, ALL, READER, RUBRIC }
  */
 data class LiturgyPart(
     val role: LiturgyRole,
-    val title: String? = null,
-    val text: String? = null,
-    val rubric: String? = null,
+    val title: LocalizedText? = null,
+    val text: LocalizedText? = null,
+    val rubric: LocalizedText? = null,
     val osisRef: String? = null,
     val needsOfficialText: Boolean = false
 )
 
 /** A major division of the service (e.g. "Introductory Rites"). */
 data class LiturgySection(
-    val title: String,
+    val title: LocalizedText,
     val parts: List<LiturgyPart>
 )
 
@@ -43,20 +63,24 @@ data class LiturgySection(
  * the longer presidential prayers are left as flagged rubrics so the official book is
  * followed (see [LiturgyPart.needsOfficialText]). [sourceNote] records where the order
  * comes from.
+ *
+ * @property denominations the traditions this order is mapped to (for surfacing it first).
+ * @property languages the content languages authored across this order (always includes `"en"`).
  */
 data class Liturgy(
     val id: String,
-    val title: String,
+    val title: LocalizedText,
     val tradition: String,
     val sections: List<LiturgySection>,
-    val sourceNote: String
+    val sourceNote: LocalizedText,
+    val denominations: List<Denomination> = emptyList(),
+    val languages: Set<String> = setOf("en")
 )
 
 /**
- * Supplies the order(s) of worship the app can guide a congregation through (Church
- * Mode, Phase 3). The order shown is chosen from the tradition the user picked at
- * setup; where a tradition's order isn't available yet the caller can still offer the
- * ones that are.
+ * Supplies the order(s) of worship the app can guide a congregation through. The order
+ * shown is chosen from the tradition the user picked at setup; where a tradition's order
+ * isn't available yet the caller can still offer the ones that are.
  *
  * Pure Kotlin — no Android dependencies — so the content is JVM-testable.
  */
@@ -64,6 +88,26 @@ interface LiturgyProvider {
     /** Every available order of worship. */
     fun all(): List<Liturgy>
 
-    /** The order that matches [denomination], or null when none is available yet. */
+    /** The order explicitly mapped to [denomination], or null when none is mapped/available. */
     fun defaultFor(denomination: Denomination): Liturgy?
+
+    /**
+     * Every available order, with the ones mapped to [denomination] surfaced first
+     * (Req 5.3, 11.1). The returned list always contains the full library so a user
+     * can still browse every order (Req 11.6). The default implementation orders by the
+     * single [defaultFor] entry; asset-backed providers override it with a richer mapping.
+     */
+    fun forDenomination(denomination: Denomination): List<Liturgy> {
+        val all = all()
+        val default = defaultFor(denomination) ?: return all
+        return listOf(default) + all.filter { it.id != default.id }
+    }
+
+    /**
+     * A non-null selectable order whenever the library is non-empty: the mapped default,
+     * else the first available order (Req 11.3, 11.6). Never returns null when [all] is
+     * non-empty, so a denomination without an explicit mapping still gets an order.
+     */
+    fun resolvedDefaultFor(denomination: Denomination): Liturgy? =
+        defaultFor(denomination) ?: all().firstOrNull()
 }

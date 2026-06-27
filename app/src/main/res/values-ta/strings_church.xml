@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Tamil (ta) translations for the Liturgy / Order-of-Worship framing strings
+  (Liturgy_Detail / Liturgy_Library chrome). Machine-translated, pending native-speaker
+  review. The "%1$s" placeholder in church_library_open is preserved exactly.
+-->
+<resources>
+    <!-- Church Mode — guided order of worship -->
+    <string name="church_title">ஆராதனை ஒழுங்கு</string>
+    <string name="church_entry">ஆராதனை ஒழுங்கு</string>
+    <string name="church_back">பின்செல்</string>
+    <string name="church_role_presider">குரு</string>
+    <string name="church_role_people">மக்கள்</string>
+    <string name="church_role_all">அனைவரும்</string>
+    <string name="church_role_reader">வாசகர்</string>
+    <string name="church_needs_official">இன்றைக்குரிய ஜெபம் — உங்கள் தேவாலயப் புத்தகம் / திருப்பலி நூலைப் பின்பற்றவும்.</string>
+    <string name="church_open_reading">சூழலில் வாசிக்கவும்</string>
+    <string name="church_source">ஆதாரம்</string>
+    <string name="church_unavailable">உங்கள் பாரம்பரியத்திற்கான முழு ஆராதனை ஒழுங்கு தயாரிக்கப்படுகிறது. இப்போது கிடைக்கும் ஒழுங்குகள் இதோ:</string>
+    <!-- Liturgy Library (browse) -->
+    <string name="church_library_title">ஆராதனை ஒழுங்குகள்</string>
+    <string name="church_library_preparing">உங்கள் பாரம்பரியத்திற்கான ஒழுங்கு தயாரிக்கப்படுகிறது. இப்போது கிடைக்கும் ஒழுங்குகள் இதோ:</string>
+    <string name="church_library_open">%1$s ஐ திறக்கவும்</string>
+</resources>

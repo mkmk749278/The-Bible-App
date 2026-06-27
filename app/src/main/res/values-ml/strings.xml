@@ -8,4 +8,19 @@
     <string name="nav_calendar">കലണ്ടർ</string>
     <string name="nav_more">കൂടുതൽ</string>
     <string name="reader_search_hint">ബൈബിളിൽ തിരയുക</string>
+
+    <!-- Explain this passage + Oral Bible AI (F-02). Machine-translated, pending review.
+         The "%1$s" placeholders in explain_title and explain_diagnostic are preserved. -->
+    <string name="explain_action">ഈ വാക്യം വിശദീകരിക്കുക</string>
+    <string name="explain_title">വിശദീകരണം · %1$s</string>
+    <string name="explain_depth_plain">ലളിതം</string>
+    <string name="explain_depth_preaching">പ്രസംഗത്തിനായി</string>
+    <string name="explain_loading">ഭാഗത്തെക്കുറിച്ച് ധ്യാനിക്കുന്നു…</string>
+    <string name="explain_unavailable_key">AI വിശദീകരണങ്ങൾ ഇതുവരെ സജ്ജമാക്കിയിട്ടില്ല. അവ പ്രവർത്തനക്ഷമമാക്കാൻ ഒരു Gemini API കീ ചേർക്കുക.</string>
+    <string name="explain_unavailable_offline">നിങ്ങൾ ഓഫ്‌ലൈനാണ്. ഒരു പുതിയ ഭാഗം വിശദീകരിക്കാൻ ഇന്റർനെറ്റിലേക്ക് കണക്റ്റ് ചെയ്യുക; വിശദീകരിച്ചുകഴിഞ്ഞാൽ, അത് ഓഫ്‌ലൈൻ വായനയ്ക്കായി സംരക്ഷിക്കപ്പെടും.</string>
+    <string name="explain_unavailable_error">ഇപ്പോൾ ഒരു വിശദീകരണം ലോഡ് ചെയ്യാനായില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
+    <string name="explain_diagnostic">വിശദാംശങ്ങൾ: %1$s</string>
+    <string name="explain_speak">വിശദീകരണം വായിച്ചുകേൾപ്പിക്കുക</string>
+    <string name="explain_stop_speaking">വിശദീകരണം വായിക്കുന്നത് നിർത്തുക</string>
+    <string name="explain_voice_unavailable">കേൾക്കാൻ, Android ക്രമീകരണങ്ങളിൽ ബൈബിൾ-ഭാഷാ TTS ശബ്ദം ഇൻസ്റ്റാൾ ചെയ്യുക.</string>
 </resources>

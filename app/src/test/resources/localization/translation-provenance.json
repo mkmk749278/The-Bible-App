@@ -1,0 +1,25 @@
+{
+  "_note": "Machine-readable translation provenance for Manna's Bible-language locales (Concern 1). Consumed only by the localization inventory test (LocalizationInventoryTest) and the provenance property tests; never shipped as app logic. 'provenance' records how a locale's values were produced; 'reviewed' lists keys whose translations have been confirmed by a native speaker (these are accepted by the placeholder check even if tokens differ); 'deferred' maps a key to the reason it is intentionally not yet translated in that locale (such keys are not reported as gaps). The PR #80 AI feature strings + liturgy framing + explain strings were translated for all four locales in this batch and are awaiting native-speaker review, hence provenance 'machine-pending-review' with an empty 'reviewed' list.",
+  "locales": {
+    "ta": {
+      "provenance": "machine-pending-review",
+      "reviewed": [],
+      "deferred": {}
+    },
+    "te": {
+      "provenance": "machine-pending-review",
+      "reviewed": [],
+      "deferred": {}
+    },
+    "hi": {
+      "provenance": "machine-pending-review",
+      "reviewed": [],
+      "deferred": {}
+    },
+    "ml": {
+      "provenance": "machine-pending-review",
+      "reviewed": [],
+      "deferred": {}
+    }
+  }
+}

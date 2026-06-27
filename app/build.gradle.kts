@@ -1,3 +1,4 @@
+import java.time.Duration
 import java.util.Properties
 
 plugins {
@@ -8,6 +9,9 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
     alias(libs.plugins.play.publisher)
+    // Enables JUnit Platform launcher interceptors so the JUnit 5 Robolectric extension can
+    // set up Robolectric's environment under the existing useJUnitPlatform() configuration.
+    alias(libs.plugins.robolectric.junit5)
 }
 
 // Build-time secrets: read from the environment (CI injects them from GitHub
@@ -114,6 +118,10 @@ android {
     testOptions {
         unitTests.all { it.useJUnitPlatform() }
         unitTests.isReturnDefaultValues = true
+        // Make merged Android resources and assets/ visible to JVM unit tests so
+        // Robolectric-backed tests can resolve values-*/ string resources and read
+        // bundled assets/liturgy/*.json the same way the app does at runtime.
+        unitTests.isIncludeAndroidResources = true
     }
     lint {
         // Localization is incremental: a locale (e.g. values-ta) may translate the
@@ -220,8 +228,46 @@ dependencies {
     testImplementation(libs.turbine)
     testImplementation(libs.mockk)
 
+    // Property-based testing (Kotest property + matchers) used inside JUnit 5 tests.
+    testImplementation(libs.kotest.property)
+    testImplementation(libs.kotest.assertions.core)
+
+    // Robolectric + JUnit 5 extension so Android-resource / Compose-rendering tests
+    // run on the JVM under useJUnitPlatform(). Compose UI-test artifacts are added to
+    // the unit-test classpath (in addition to androidTest) so rendering property tests
+    // can drive Compose under Robolectric.
+    testImplementation(libs.robolectric)
+    testImplementation(libs.junit5.robolectric.extension)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
+    testImplementation(libs.androidx.compose.ui.test.manifest)
+
     // Instrumented / Compose UI tests
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+
+// Hang-safety (CI reliability): put a hard ceiling on every Test task so a stalled run
+// (e.g. a Compose/Robolectric render whose waitForIdle never settles in a headless CI
+// runner) fails fast with a diagnostic instead of wedging the Gradle build indefinitely.
+// Per design.md > Testing Strategy > Hang-safety. Per-test @Timeout annotations on the
+// remaining rendering tests provide the finer-grained, fail-fast bound, so this ceiling
+// only needs to bound genuine hangs, not the legitimate full-suite runtime.
+//
+// The suite was timing out even at 40m with zero per-test @Timeout firing, which rules
+// out a hang (those would cap a stuck test at 60s, not 40m) — it's ~100 test classes
+// running serially in a single fork. Spread them across half the runner's cores so
+// wall-clock scales with parallelism instead of raw test count.
+tasks.withType<Test>().configureEach {
+    timeout.set(Duration.ofMinutes(40))
+    maxParallelForks = (Runtime.getRuntime().availableProcessors() / 2).coerceAtLeast(1)
+    // Gradle prints zero per-test progress by default, so a CI hang gives no clue which
+    // test is stuck — this is how the GraphicsMode mismatch (robolectric/robolectric#8073)
+    // that hung this task for 40+ minutes with zero output got pinpointed. Cheap enough to
+    // keep on permanently for the next time something hangs.
+    testLogging {
+        events("started", "skipped", "failed")
+    }
 }

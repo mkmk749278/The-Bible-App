@@ -7,6 +7,8 @@ import com.manna.bible.data.TranslationLocalDataSource
 import com.manna.bible.data.TranslationRemoteDataSource
 import com.manna.bible.data.canon.AssetCanonDefinitionDataSource
 import com.manna.bible.data.canon.CanonDefinitionDataSource
+import com.manna.bible.data.liturgy.AndroidLiturgyAssetSource
+import com.manna.bible.data.liturgy.LiturgyAssetSource
 import com.manna.bible.data.download.AndroidDownloadForegroundController
 import com.manna.bible.data.download.DefaultDownloadManager
 import com.manna.bible.data.local.RoomAnnotationLocalDataSource
@@ -77,7 +79,7 @@ import com.manna.bible.domain.download.DownloadForegroundController
 import com.manna.bible.domain.download.DownloadManager
 import com.manna.bible.domain.lectionary.DefaultLectionaryProvider
 import com.manna.bible.domain.lectionary.LectionaryProvider
-import com.manna.bible.domain.liturgy.DefaultLiturgyProvider
+import com.manna.bible.domain.liturgy.AssetLiturgyProvider
 import com.manna.bible.domain.liturgy.LiturgyProvider
 import com.manna.bible.domain.repository.AnnotationRepository
 import com.manna.bible.domain.repository.BibleContentRepository
@@ -133,7 +135,12 @@ abstract class BindingsModule {
     abstract fun bindLectionaryProvider(impl: DefaultLectionaryProvider): LectionaryProvider
 
     @Binds
-    abstract fun bindLiturgyProvider(impl: DefaultLiturgyProvider): LiturgyProvider
+    @Singleton
+    abstract fun bindLiturgyAssetSource(impl: AndroidLiturgyAssetSource): LiturgyAssetSource
+
+    @Binds
+    @Singleton
+    abstract fun bindLiturgyProvider(impl: AssetLiturgyProvider): LiturgyProvider
 
     // --- preferences ---------------------------------------------------------
 

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) translations for the Village Pastor Sermon Helper + AI Sermon Builder
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Village Pastor Sermon Helper -->
+    <string name="sermon_title">ప్రసంగ సహాయకుడు</string>
+    <string name="sermon_tool_entry">ప్రసంగ సహాయకుడు</string>
+    <string name="sermon_new">కొత్త ప్రసంగం</string>
+    <string name="sermon_edit">ప్రసంగాన్ని సవరించు</string>
+    <string name="sermon_empty">ఇంకా ప్రసంగాలు లేవు. మీ మొదటి ప్రసంగాన్ని సిద్ధం చేయడానికి + నొక్కండి.</string>
+    <string name="sermon_field_title">శీర్షిక</string>
+    <string name="sermon_field_reference">లేఖనం (ఉదా. యోహాను 3:16)</string>
+    <string name="sermon_field_notes">రూపురేఖ మరియు గమనికలు</string>
+    <string name="sermon_save">భద్రపరచు</string>
+    <string name="sermon_delete">తొలగించు</string>
+    <string name="sermon_back">వెనుకకు</string>
+    <string name="sermon_close">మూసివేయి</string>
+
+    <!-- AI Sermon Builder (F-04) -->
+    <string name="sermon_congregation_label">సంఘం</string>
+    <string name="sermon_congregation_general">సాధారణ</string>
+    <string name="sermon_congregation_youth">యువత</string>
+    <string name="sermon_congregation_grief">దుఃఖం</string>
+    <string name="sermon_build_outline">రూపురేఖను రూపొందించు</string>
+    <string name="sermon_outline_generating">రూపురేఖను రూపొందిస్తోంది…</string>
+    <string name="sermon_outline_error_offline">రూపురేఖ రూపొందించడానికి ఇంటర్నెట్ అవసరం.</string>
+    <string name="sermon_outline_error_generic">రూపురేఖను రూపొందించలేకపోయాం. దయచేసి మళ్లీ ప్రయత్నించండి.</string>
+</resources>

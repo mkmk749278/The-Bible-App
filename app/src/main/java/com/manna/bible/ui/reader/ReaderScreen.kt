@@ -79,6 +79,8 @@ import com.manna.bible.domain.explain.ExplanationUnavailableReason
 import com.manna.bible.domain.reader.CanonBookOrdering
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -946,7 +948,7 @@ private fun AnnotationSheet(
 
             if (onExplain != null) {
                 AnnotationAction(
-                    label = stringResource(R.string.explain_action),
+                    label = stringResourceIn(rememberBibleLanguage(), R.string.explain_action),
                     onClick = onExplain
                 )
             }
@@ -1019,6 +1021,7 @@ private fun ExplainSheet(
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        val bibleLanguage = rememberBibleLanguage()
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1028,7 +1031,7 @@ private fun ExplainSheet(
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             Text(
-                text = stringResource(R.string.explain_title, explain.reference),
+                text = stringResourceIn(bibleLanguage, R.string.explain_title, explain.reference),
                 style = androidx.compose.material3.MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(top = 8.dp)
             )
@@ -1037,12 +1040,12 @@ private fun ExplainSheet(
                 FilterChip(
                     selected = explain.depth == ExplainDepth.PLAIN,
                     onClick = { onDepthChange(ExplainDepth.PLAIN) },
-                    label = { Text(stringResource(R.string.explain_depth_plain)) }
+                    label = { Text(stringResourceIn(bibleLanguage, R.string.explain_depth_plain)) }
                 )
                 FilterChip(
                     selected = explain.depth == ExplainDepth.PREACHING,
                     onClick = { onDepthChange(ExplainDepth.PREACHING) },
-                    label = { Text(stringResource(R.string.explain_depth_preaching)) }
+                    label = { Text(stringResourceIn(bibleLanguage, R.string.explain_depth_preaching)) }
                 )
             }
 
@@ -1054,7 +1057,7 @@ private fun ExplainSheet(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {
                         CircularProgressIndicator(modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
-                        Text(stringResource(R.string.explain_loading))
+                        Text(stringResourceIn(bibleLanguage, R.string.explain_loading))
                     }
                 }
                 is ExplainStatus.Ready -> {
@@ -1074,15 +1077,15 @@ private fun ExplainSheet(
                                     Icons.Filled.VolumeUp
                                 },
                                 contentDescription = if (explanationSpeaking) {
-                                    stringResource(R.string.explain_stop_speaking)
+                                    stringResourceIn(bibleLanguage, R.string.explain_stop_speaking)
                                 } else {
-                                    stringResource(R.string.explain_speak)
+                                    stringResourceIn(bibleLanguage, R.string.explain_speak)
                                 }
                             )
                         }
                         if (!canSpeakExplanation && !explanationSpeaking) {
                             Text(
-                                text = stringResource(R.string.explain_voice_unavailable),
+                                text = stringResourceIn(bibleLanguage, R.string.explain_voice_unavailable),
                                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
                                 color = MannaTheme.colors.muted
                             )
@@ -1092,11 +1095,11 @@ private fun ExplainSheet(
                 is ExplainStatus.Unavailable -> {
                     val message = when (status.reason) {
                         ExplanationUnavailableReason.NOT_CONFIGURED ->
-                            stringResource(R.string.explain_unavailable_key)
+                            stringResourceIn(bibleLanguage, R.string.explain_unavailable_key)
                         ExplanationUnavailableReason.OFFLINE ->
-                            stringResource(R.string.explain_unavailable_offline)
+                            stringResourceIn(bibleLanguage, R.string.explain_unavailable_offline)
                         ExplanationUnavailableReason.ERROR ->
-                            stringResource(R.string.explain_unavailable_error)
+                            stringResourceIn(bibleLanguage, R.string.explain_unavailable_error)
                     }
                     Text(
                         text = message,
@@ -1108,7 +1111,7 @@ private fun ExplainSheet(
                         Spacer(Modifier.height(8.dp))
                         SelectionContainer {
                             Text(
-                                text = stringResource(R.string.explain_diagnostic, detail),
+                                text = stringResourceIn(bibleLanguage, R.string.explain_diagnostic, detail),
                                 style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
                                 color = MannaTheme.colors.muted
                             )

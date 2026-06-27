@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Telugu (te) translations for the 3AM / Crisis Mode + Persecution Comfort + Crisis AI
+  surfaces (PR #80 AI features). Machine-translated, pending native-speaker review
+  (see app/src/test/resources/localization/translation-provenance.json). Placeholders preserved.
+-->
+<resources>
+    <!-- 3AM / Crisis Mode -->
+    <string name="crisis_title">మీరు ఒంటరిగా లేరు</string>
+    <string name="crisis_back">వెనుకకు</string>
+    <string name="crisis_tool_entry">నాకు ఇప్పుడు బాగాలేదు</string>
+    <string name="crisis_menu_entry">నాకు బాగాలేదు</string>
+    <string name="crisis_heading">దేవుడు ఇప్పుడు మిమ్మల్ని చూస్తున్నాడు.</string>
+    <string name="crisis_reassurance">ఈ రాత్రి మీరు మోస్తున్నది ఏదైనా, దానిని ఒంటరిగా మోయవలసిన అవసరం లేదు. ఊపిరి తీసుకోండి. కాసేపు ఇక్కడ విశ్రాంతి తీసుకోండి.</string>
+    <string name="crisis_listen">కేవలం వినండి</string>
+    <string name="crisis_prayer_title">మాటలు లేనప్పుడు ఒక ప్రార్థన</string>
+    <string name="crisis_prayer_body">ప్రభువా, నేను అలసిపోయి భయపడుతున్నాను. ఇప్పుడు నా దగ్గర ఉండు. నా హృదయాన్ని శాంతపరచి, ఈ రాత్రంతా నన్ను పట్టుకొని, నేను నీవాడినని నాకు గుర్తు చేయి. ఆమేన్.</string>
+
+    <!-- Persecution-Aware Comfort (F-06) -->
+    <string name="crisis_persecution_heading">నేను హింసను ఎదుర్కొంటున్నాను</string>
+    <string name="crisis_persecution_subheading">మీరు ఎదుర్కొంటున్నది ఎంచుకుంటే, దానికి తగిన లేఖనం లభిస్తుంది.</string>
+    <string name="crisis_persecution_family">కుటుంబ ఒత్తిడి</string>
+    <string name="crisis_persecution_livelihood">ఉద్యోగం లేదా జీవనోపాధి</string>
+    <string name="crisis_persecution_danger">శారీరక ప్రమాదం</string>
+    <string name="crisis_persecution_exclusion">సామాజిక బహిష్కరణ</string>
+    <string name="crisis_persecution_faith">సందేహంలో విశ్వాసం</string>
+
+    <!-- Crisis AI Companion (F-03) -->
+    <string name="crisis_ai_placeholder">ఏం జరుగుతోందో నాకు చెప్పండి…</string>
+    <string name="crisis_ai_offline_hint">AI ప్రతిస్పందనకు ఇంటర్నెట్ అవసరం. క్రింది వచనాలు ఆఫ్‌లైన్‌లో పనిచేస్తాయి.</string>
+    <string name="crisis_ai_submit">పంపు</string>
+    <string name="crisis_ai_thinking">మీ కోసం ఒక భాగాన్ని వెతుకుతున్నాను…</string>
+</resources>

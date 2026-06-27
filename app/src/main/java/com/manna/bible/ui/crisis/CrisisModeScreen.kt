@@ -32,7 +32,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -46,6 +45,8 @@ import com.manna.bible.domain.crisis.CrisisAiResult
 import com.manna.bible.domain.crisis.PersecutionCategory
 import com.manna.bible.ui.theme.MannaTheme
 import com.manna.bible.ui.theme.ScriptureFontFamily
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -68,13 +69,14 @@ fun CrisisModeScreen(
     onOpenVerse: (String) -> Unit = {}
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val backDescription = stringResource(R.string.crisis_back)
+    val bibleLanguage = rememberBibleLanguage()
+    val backDescription = stringResourceIn(bibleLanguage, R.string.crisis_back)
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.crisis_title), fontWeight = FontWeight.SemiBold) },
+                title = { Text(stringResourceIn(bibleLanguage, R.string.crisis_title), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
@@ -110,13 +112,13 @@ fun CrisisModeScreen(
             item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
-                        text = stringResource(R.string.crisis_heading),
+                        text = stringResourceIn(bibleLanguage, R.string.crisis_heading),
                         style = MaterialTheme.typography.headlineSmall,
                         color = MannaTheme.colors.ink,
                         fontWeight = FontWeight.SemiBold
                     )
                     Text(
-                        text = stringResource(R.string.crisis_reassurance),
+                        text = stringResourceIn(bibleLanguage, R.string.crisis_reassurance),
                         style = MaterialTheme.typography.bodyLarge,
                         color = MannaTheme.colors.soft
                     )
@@ -131,7 +133,7 @@ fun CrisisModeScreen(
                             .fillMaxWidth()
                             .heightIn(min = 56.dp)
                     ) {
-                        Text(stringResource(R.string.crisis_listen))
+                        Text(stringResourceIn(bibleLanguage, R.string.crisis_listen))
                     }
                 }
             }
@@ -177,13 +179,13 @@ fun CrisisModeScreen(
                         verticalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
                         Text(
-                            text = stringResource(R.string.crisis_prayer_title),
+                            text = stringResourceIn(bibleLanguage, R.string.crisis_prayer_title),
                             style = MaterialTheme.typography.titleSmall,
                             color = MannaTheme.colors.gold,
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            text = stringResource(R.string.crisis_prayer_body),
+                            text = stringResourceIn(bibleLanguage, R.string.crisis_prayer_body),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MannaTheme.colors.soft
                         )
@@ -206,12 +208,13 @@ private fun CrisisAiSection(
     onOpenVerse: (String) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val bibleLanguage = rememberBibleLanguage()
         if (aiConfigured) {
-            val submitDescription = stringResource(R.string.crisis_ai_submit)
+            val submitDescription = stringResourceIn(bibleLanguage, R.string.crisis_ai_submit)
             OutlinedTextField(
                 value = situationText,
                 onValueChange = onSituationChange,
-                placeholder = { Text(stringResource(R.string.crisis_ai_placeholder)) },
+                placeholder = { Text(stringResourceIn(bibleLanguage, R.string.crisis_ai_placeholder)) },
                 trailingIcon = {
                     if (situationText.isNotBlank() && !isAiLoading) {
                         IconButton(
@@ -236,7 +239,7 @@ private fun CrisisAiSection(
                 ) {
                     CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                     Text(
-                        text = stringResource(R.string.crisis_ai_thinking),
+                        text = stringResourceIn(bibleLanguage, R.string.crisis_ai_thinking),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MannaTheme.colors.soft
                     )
@@ -249,7 +252,7 @@ private fun CrisisAiSection(
                     onClick = { onOpenVerse(response.osisRef) }
                 )
                 CrisisAiResult.Offline -> Text(
-                    text = stringResource(R.string.crisis_ai_offline_hint),
+                    text = stringResourceIn(bibleLanguage, R.string.crisis_ai_offline_hint),
                     style = MaterialTheme.typography.bodySmall,
                     color = MannaTheme.colors.muted
                 )
@@ -258,7 +261,7 @@ private fun CrisisAiSection(
             }
         } else {
             Text(
-                text = stringResource(R.string.crisis_ai_offline_hint),
+                text = stringResourceIn(bibleLanguage, R.string.crisis_ai_offline_hint),
                 style = MaterialTheme.typography.bodySmall,
                 color = MannaTheme.colors.muted
             )
@@ -268,7 +271,11 @@ private fun CrisisAiSection(
 
 @Composable
 private fun CrisisAiResponseCard(response: CrisisAiResult.Success, onClick: () -> Unit) {
-    val description = stringResource(R.string.a11y_open_in_reader, response.passageRef)
+    val description = stringResourceIn(
+        rememberBibleLanguage(),
+        R.string.a11y_open_in_reader,
+        response.passageRef
+    )
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(14.dp),
@@ -305,14 +312,15 @@ private fun PersecutionSection(
     onSelect: (PersecutionCategory) -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val bibleLanguage = rememberBibleLanguage()
         Text(
-            text = stringResource(R.string.crisis_persecution_heading),
+            text = stringResourceIn(bibleLanguage, R.string.crisis_persecution_heading),
             style = MaterialTheme.typography.titleMedium,
             color = MannaTheme.colors.ink,
             fontWeight = FontWeight.SemiBold
         )
         Text(
-            text = stringResource(R.string.crisis_persecution_subheading),
+            text = stringResourceIn(bibleLanguage, R.string.crisis_persecution_subheading),
             style = MaterialTheme.typography.bodyMedium,
             color = MannaTheme.colors.soft
         )
@@ -338,7 +346,8 @@ private fun PersecutionSection(
 }
 
 @Composable
-private fun persecutionLabel(category: PersecutionCategory): String = stringResource(
+private fun persecutionLabel(category: PersecutionCategory): String = stringResourceIn(
+    rememberBibleLanguage(),
     when (category) {
         PersecutionCategory.FAMILY_REJECTION -> R.string.crisis_persecution_family
         PersecutionCategory.JOB_LIVELIHOOD -> R.string.crisis_persecution_livelihood
@@ -350,7 +359,11 @@ private fun persecutionLabel(category: PersecutionCategory): String = stringReso
 
 @Composable
 private fun ComfortCard(verse: ComfortVerse, onClick: () -> Unit) {
-    val description = stringResource(R.string.a11y_open_in_reader, verse.reference)
+    val description = stringResourceIn(
+        rememberBibleLanguage(),
+        R.string.a11y_open_in_reader,
+        verse.reference
+    )
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(14.dp),

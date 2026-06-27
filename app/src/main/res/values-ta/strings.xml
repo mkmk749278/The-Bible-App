@@ -9,4 +9,19 @@
     <string name="nav_calendar">நாட்காட்டி</string>
     <string name="nav_more">மேலும்</string>
     <string name="reader_search_hint">வேதாகமத்தில் தேடுங்கள்</string>
+
+    <!-- Explain this passage + Oral Bible AI (F-02). Machine-translated, pending review.
+         The "%1$s" placeholders in explain_title and explain_diagnostic are preserved. -->
+    <string name="explain_action">இந்த வசனத்தை விளக்கு</string>
+    <string name="explain_title">விளக்கம் · %1$s</string>
+    <string name="explain_depth_plain">எளிமையான</string>
+    <string name="explain_depth_preaching">பிரசங்கத்திற்கு</string>
+    <string name="explain_loading">பகுதியைச் சிந்தித்துக்கொண்டிருக்கிறேன்…</string>
+    <string name="explain_unavailable_key">AI விளக்கங்கள் இன்னும் அமைக்கப்படவில்லை. அவற்றை இயக்க Gemini API விசையைச் சேர்க்கவும்.</string>
+    <string name="explain_unavailable_offline">நீங்கள் ஆஃப்லைனில் இருக்கிறீர்கள். புதிய பகுதியை விளக்க இணையத்துடன் இணையவும்; விளக்கப்பட்ட பிறகு, அது ஆஃப்லைன் வாசிப்புக்காகச் சேமிக்கப்படும்.</string>
+    <string name="explain_unavailable_error">இப்போது விளக்கத்தை ஏற்ற முடியவில்லை. மீண்டும் முயற்சிக்கவும்.</string>
+    <string name="explain_diagnostic">விவரங்கள்: %1$s</string>
+    <string name="explain_speak">விளக்கத்தை வாசிக்கவும்</string>
+    <string name="explain_stop_speaking">விளக்கத்தை வாசிப்பதை நிறுத்து</string>
+    <string name="explain_voice_unavailable">கேட்க, Android அமைப்புகளில் வேதமொழி TTS குரலை நிறுவவும்.</string>
 </resources>

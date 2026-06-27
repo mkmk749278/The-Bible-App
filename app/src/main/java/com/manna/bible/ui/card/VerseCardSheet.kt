@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -39,6 +38,8 @@ import androidx.compose.ui.unit.dp
 import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 /**
  * A bottom sheet that turns a single verse into a shareable image card — the preview
@@ -61,6 +62,7 @@ fun VerseCardSheet(
     onFindVerse: (() -> Unit)? = null
 ) {
     val context = LocalContext.current
+    val bibleLanguage = rememberBibleLanguage()
     var theme by remember { mutableStateOf(CardTheme.ALL.first()) }
 
     // Render the exact bitmap that will be shared, recomputed on theme change.
@@ -78,7 +80,7 @@ fun VerseCardSheet(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = stringResource(R.string.card_title),
+                text = stringResourceIn(bibleLanguage, R.string.card_title),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.SemiBold,
                 color = MannaTheme.colors.ink
@@ -86,14 +88,14 @@ fun VerseCardSheet(
 
             Image(
                 bitmap = bitmap.asImageBitmap(),
-                contentDescription = stringResource(R.string.card_preview_description),
+                contentDescription = stringResourceIn(bibleLanguage, R.string.card_preview_description),
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(1f)
                     .clip(RoundedCornerShape(16.dp))
             )
 
-            val themeDescription = stringResource(R.string.card_theme_description)
+            val themeDescription = stringResourceIn(bibleLanguage, R.string.card_theme_description)
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 CardTheme.ALL.forEach { option ->
                     val selected = option.id == theme.id
@@ -116,7 +118,7 @@ fun VerseCardSheet(
             Button(
                 onClick = { CardSharer.share(context, bitmap) },
                 modifier = Modifier.fillMaxWidth()
-            ) { Text(stringResource(R.string.card_share_image)) }
+            ) { Text(stringResourceIn(bibleLanguage, R.string.card_share_image)) }
 
             TextButton(
                 onClick = {
@@ -130,7 +132,7 @@ fun VerseCardSheet(
                     )
                 },
                 modifier = Modifier.fillMaxWidth()
-            ) { Text(stringResource(R.string.card_share_text)) }
+            ) { Text(stringResourceIn(bibleLanguage, R.string.card_share_text)) }
 
             if (FeatureFlags.VERSE_RECOMMENDATION_AI && onFindVerse != null) {
                 TextButton(
@@ -139,7 +141,7 @@ fun VerseCardSheet(
                         onFindVerse()
                     },
                     modifier = Modifier.fillMaxWidth()
-                ) { Text(stringResource(R.string.verse_rec_entry)) }
+                ) { Text(stringResourceIn(bibleLanguage, R.string.verse_rec_entry)) }
             }
         }
     }

@@ -36,7 +36,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -49,6 +48,8 @@ import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.domain.sermon.CongregationType
 import com.manna.bible.domain.sermon.SermonNote
 import com.manna.bible.ui.theme.MannaTheme
+import com.manna.bible.ui.util.rememberBibleLanguage
+import com.manna.bible.ui.util.stringResourceIn
 
 private val MinTouchTarget = 48.dp
 
@@ -108,13 +109,14 @@ private fun SermonList(
     onOpen: (SermonNote) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val backDescription = stringResource(R.string.sermon_back)
-    val newDescription = stringResource(R.string.sermon_new)
+    val bibleLanguage = rememberBibleLanguage()
+    val backDescription = stringResourceIn(bibleLanguage, R.string.sermon_back)
+    val newDescription = stringResourceIn(bibleLanguage, R.string.sermon_new)
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.sermon_title), fontWeight = FontWeight.SemiBold) },
+                title = { Text(stringResourceIn(bibleLanguage, R.string.sermon_title), fontWeight = FontWeight.SemiBold) },
                 navigationIcon = {
                     IconButton(
                         onClick = onBack,
@@ -138,7 +140,7 @@ private fun SermonList(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = stringResource(R.string.sermon_empty),
+                    text = stringResourceIn(bibleLanguage, R.string.sermon_empty),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MannaTheme.colors.soft
                 )
@@ -159,7 +161,7 @@ private fun SermonList(
 
 @Composable
 private fun SermonCard(sermon: SermonNote, onClick: () -> Unit) {
-    val description = stringResource(R.string.sermon_edit_cd, sermon.title)
+    val description = stringResourceIn(rememberBibleLanguage(), R.string.sermon_edit_cd, sermon.title)
     Surface(
         color = MannaTheme.colors.card,
         shape = RoundedCornerShape(12.dp),
@@ -213,12 +215,13 @@ private fun SermonEditor(
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val closeDescription = stringResource(R.string.sermon_close)
+    val bibleLanguage = rememberBibleLanguage()
+    val closeDescription = stringResourceIn(bibleLanguage, R.string.sermon_close)
     val snackbarHostState = remember { SnackbarHostState() }
 
     // Surface any outline failure as a Snackbar, then consume it so it shows only once.
-    val offlineMessage = stringResource(R.string.sermon_outline_error_offline)
-    val genericMessage = stringResource(R.string.sermon_outline_error_generic)
+    val offlineMessage = stringResourceIn(bibleLanguage, R.string.sermon_outline_error_offline)
+    val genericMessage = stringResourceIn(bibleLanguage, R.string.sermon_outline_error_generic)
     LaunchedEffect(outlineError) {
         if (outlineError != null) {
             val message = if (outlineError == OUTLINE_ERROR_OFFLINE) offlineMessage else genericMessage
@@ -234,7 +237,7 @@ private fun SermonEditor(
             TopAppBar(
                 title = {
                     val titleRes = if (draft.id > 0L) R.string.sermon_edit else R.string.sermon_new
-                    Text(stringResource(titleRes), fontWeight = FontWeight.SemiBold)
+                    Text(stringResourceIn(bibleLanguage, titleRes), fontWeight = FontWeight.SemiBold)
                 },
                 navigationIcon = {
                     IconButton(
@@ -246,11 +249,11 @@ private fun SermonEditor(
                 actions = {
                     if (draft.id > 0L) {
                         TextButton(onClick = onDelete) {
-                            Text(stringResource(R.string.sermon_delete), color = MannaTheme.colors.red)
+                            Text(stringResourceIn(bibleLanguage, R.string.sermon_delete), color = MannaTheme.colors.red)
                         }
                     }
                     TextButton(onClick = onSave, enabled = draft.canSave) {
-                        Text(stringResource(R.string.sermon_save))
+                        Text(stringResourceIn(bibleLanguage, R.string.sermon_save))
                     }
                 }
             )
@@ -264,14 +267,14 @@ private fun SermonEditor(
             OutlinedTextField(
                 value = draft.title,
                 onValueChange = onTitleChange,
-                label = { Text(stringResource(R.string.sermon_field_title)) },
+                label = { Text(stringResourceIn(bibleLanguage, R.string.sermon_field_title)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
                 value = draft.reference,
                 onValueChange = onReferenceChange,
-                label = { Text(stringResource(R.string.sermon_field_reference)) },
+                label = { Text(stringResourceIn(bibleLanguage, R.string.sermon_field_reference)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -290,7 +293,7 @@ private fun SermonEditor(
             OutlinedTextField(
                 value = draft.content,
                 onValueChange = onContentChange,
-                label = { Text(stringResource(R.string.sermon_field_notes)) },
+                label = { Text(stringResourceIn(bibleLanguage, R.string.sermon_field_notes)) },
                 modifier = Modifier.fillMaxWidth().weight(1f)
             )
         }
@@ -313,8 +316,9 @@ private fun SermonOutlineBuilder(
     onGenerateOutline: () -> Unit
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        val bibleLanguage = rememberBibleLanguage()
         Text(
-            text = stringResource(R.string.sermon_congregation_label),
+            text = stringResourceIn(bibleLanguage, R.string.sermon_congregation_label),
             style = MaterialTheme.typography.labelLarge,
             color = MannaTheme.colors.soft
         )
@@ -336,7 +340,7 @@ private fun SermonOutlineBuilder(
             ) {
                 CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
                 Text(
-                    text = stringResource(R.string.sermon_outline_generating),
+                    text = stringResourceIn(bibleLanguage, R.string.sermon_outline_generating),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MannaTheme.colors.soft
                 )
@@ -346,14 +350,15 @@ private fun SermonOutlineBuilder(
                 onClick = onGenerateOutline,
                 modifier = Modifier.fillMaxWidth().heightIn(min = MinTouchTarget)
             ) {
-                Text(stringResource(R.string.sermon_build_outline))
+                Text(stringResourceIn(bibleLanguage, R.string.sermon_build_outline))
             }
         }
     }
 }
 
 @Composable
-private fun congregationLabel(type: CongregationType): String = stringResource(
+private fun congregationLabel(type: CongregationType): String = stringResourceIn(
+    rememberBibleLanguage(),
     when (type) {
         CongregationType.GENERAL -> R.string.sermon_congregation_general
         CongregationType.YOUTH -> R.string.sermon_congregation_youth

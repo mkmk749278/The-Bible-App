@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Malayalam (ml) translations for the Village Pastor Sermon Helper + AI Sermon Builder
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Village Pastor Sermon Helper -->
+    <string name="sermon_title">പ്രസംഗ സഹായി</string>
+    <string name="sermon_tool_entry">പ്രസംഗ സഹായി</string>
+    <string name="sermon_new">പുതിയ പ്രസംഗം</string>
+    <string name="sermon_edit">പ്രസംഗം എഡിറ്റ് ചെയ്യുക</string>
+    <string name="sermon_empty">ഇതുവരെ പ്രസംഗങ്ങളില്ല. നിങ്ങളുടെ ആദ്യ പ്രസംഗം തയ്യാറാക്കാൻ + അമർത്തുക.</string>
+    <string name="sermon_field_title">തലക്കെട്ട്</string>
+    <string name="sermon_field_reference">തിരുവെഴുത്ത് (ഉദാ. യോഹന്നാൻ 3:16)</string>
+    <string name="sermon_field_notes">രൂപരേഖയും കുറിപ്പുകളും</string>
+    <string name="sermon_save">സംരക്ഷിക്കുക</string>
+    <string name="sermon_delete">ഇല്ലാതാക്കുക</string>
+    <string name="sermon_back">തിരികെ</string>
+    <string name="sermon_close">അടയ്ക്കുക</string>
+
+    <!-- AI Sermon Builder (F-04) -->
+    <string name="sermon_congregation_label">സഭ</string>
+    <string name="sermon_congregation_general">പൊതുവായത്</string>
+    <string name="sermon_congregation_youth">യുവജനങ്ങൾ</string>
+    <string name="sermon_congregation_grief">ദുഃഖം</string>
+    <string name="sermon_build_outline">രൂപരേഖ ഉണ്ടാക്കുക</string>
+    <string name="sermon_outline_generating">രൂപരേഖ ഉണ്ടാക്കുന്നു…</string>
+    <string name="sermon_outline_error_offline">രൂപരേഖ ഉണ്ടാക്കാൻ ഇന്റർനെറ്റ് ആവശ്യമാണ്.</string>
+    <string name="sermon_outline_error_generic">രൂപരേഖ ഉണ്ടാക്കാൻ കഴിഞ്ഞില്ല. വീണ്ടും ശ്രമിക്കുക.</string>
+</resources>

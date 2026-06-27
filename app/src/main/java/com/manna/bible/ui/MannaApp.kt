@@ -33,10 +33,12 @@ import com.manna.bible.ui.util.rememberSimplifiedMode
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.manna.bible.R
 import com.manna.bible.domain.FeatureFlags
 import com.manna.bible.ui.attribution.AttributionScreen
@@ -58,7 +60,10 @@ import com.manna.bible.ui.prayers.sramanikal.SramanikalScreen
 import com.manna.bible.ui.prayers.stations.StationsScreen
 import com.manna.bible.ui.reader.ReaderScreen
 import com.manna.bible.ui.reminder.ReminderSettingsScreen
-import com.manna.bible.ui.church.ChurchModeScreen
+import com.manna.bible.ui.church.LITURGY_ID_ARG
+import com.manna.bible.ui.church.LiturgyDetailScreen
+import com.manna.bible.ui.church.LiturgyLibraryScreen
+import com.manna.bible.ui.church.LiturgyNavigation
 import com.manna.bible.ui.library.LibraryScreen
 import com.manna.bible.ui.search.SearchScreen
 import com.manna.bible.ui.sermon.SermonHelperScreen
@@ -96,7 +101,9 @@ private object Routes {
     const val CARD = "card"
     const val CARD_RECOMMEND = "card_recommend"
     const val SERMON = "sermon"
-    const val CHURCH = "church"
+    const val LITURGY_LIBRARY = LiturgyNavigation.LIBRARY_ROUTE
+    const val LITURGY_DETAIL = LiturgyNavigation.DETAIL_ROUTE
+    fun liturgyDetail(id: String): String = LiturgyNavigation.detailRoute(id)
     const val LIBRARY = "library"
     const val SETTINGS = "settings"
     const val DENOMINATION = "denomination"
@@ -297,8 +304,8 @@ fun MannaApp(
                             onOpenSermon = if (FeatureFlags.SERMON_HELPER) {
                                 { navController.navigate(Routes.SERMON) }
                             } else null,
-                            onOpenChurch = if (FeatureFlags.CHURCH_MODE) {
-                                { navController.navigate(Routes.CHURCH) }
+                            onOpenChurch = if (LiturgyNavigation.isEntryVisible()) {
+                                { navController.navigate(Routes.LITURGY_LIBRARY) }
                             } else null,
                             onOpenAttribution = { navController.navigate(Routes.ATTRIBUTION) }
                         )
@@ -407,9 +414,22 @@ fun MannaApp(
                             )
                         }
                     }
-                    if (FeatureFlags.CHURCH_MODE) {
-                        composable(Routes.CHURCH) {
-                            ChurchModeScreen(
+                    if (LiturgyNavigation.isEntryVisible()) {
+                        composable(Routes.LITURGY_LIBRARY) {
+                            LiturgyLibraryScreen(
+                                onBack = { navController.popBackStack() },
+                                onOpenLiturgy = { id ->
+                                    navController.navigate(Routes.liturgyDetail(id))
+                                }
+                            )
+                        }
+                        composable(
+                            route = Routes.LITURGY_DETAIL,
+                            arguments = listOf(
+                                navArgument(LITURGY_ID_ARG) { type = NavType.StringType }
+                            )
+                        ) {
+                            LiturgyDetailScreen(
                                 onBack = { navController.popBackStack() },
                                 onOpenVerse = { ref -> openInReader(ref, false) }
                             )

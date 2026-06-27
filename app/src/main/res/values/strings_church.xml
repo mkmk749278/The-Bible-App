@@ -12,4 +12,8 @@
     <string name="church_open_reading">Read in context</string>
     <string name="church_source">Source</string>
     <string name="church_unavailable">A full order of worship for your tradition is being prepared. Here are the orders available now:</string>
+    <!-- Liturgy Library (browse) -->
+    <string name="church_library_title">Orders of Worship</string>
+    <string name="church_library_preparing">An order for your tradition is being prepared. Here are the orders available now:</string>
+    <string name="church_library_open">Open %1$s</string>
 </resources>

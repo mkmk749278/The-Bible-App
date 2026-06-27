@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Hindi (hi) translations for the Village Pastor Sermon Helper + AI Sermon Builder
+  (PR #80). Machine-translated, pending native-speaker review. Placeholders preserved.
+-->
+<resources>
+    <!-- Village Pastor Sermon Helper -->
+    <string name="sermon_title">उपदेश सहायक</string>
+    <string name="sermon_tool_entry">उपदेश सहायक</string>
+    <string name="sermon_new">नया उपदेश</string>
+    <string name="sermon_edit">उपदेश संपादित करें</string>
+    <string name="sermon_empty">अभी कोई उपदेश नहीं। अपना पहला उपदेश तैयार करने के लिए + दबाएँ।</string>
+    <string name="sermon_field_title">शीर्षक</string>
+    <string name="sermon_field_reference">वचन (जैसे यूहन्ना 3:16)</string>
+    <string name="sermon_field_notes">रूपरेखा और टिप्पणियाँ</string>
+    <string name="sermon_save">सहेजें</string>
+    <string name="sermon_delete">हटाएँ</string>
+    <string name="sermon_back">वापस</string>
+    <string name="sermon_close">बंद करें</string>
+
+    <!-- AI Sermon Builder (F-04) -->
+    <string name="sermon_congregation_label">मंडली</string>
+    <string name="sermon_congregation_general">सामान्य</string>
+    <string name="sermon_congregation_youth">युवा</string>
+    <string name="sermon_congregation_grief">शोक</string>
+    <string name="sermon_build_outline">रूपरेखा बनाएँ</string>
+    <string name="sermon_outline_generating">रूपरेखा बनाई जा रही है…</string>
+    <string name="sermon_outline_error_offline">रूपरेखा बनाने के लिए इंटरनेट आवश्यक है।</string>
+    <string name="sermon_outline_error_generic">रूपरेखा नहीं बन सकी। कृपया पुनः प्रयास करें।</string>
+</resources>

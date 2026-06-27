@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Malayalam (ml) translations for the Liturgy / Order-of-Worship framing strings.
+  Machine-translated, pending native-speaker review. The "%1$s" placeholder in
+  church_library_open is preserved exactly.
+-->
+<resources>
+    <!-- Church Mode — guided order of worship -->
+    <string name="church_title">ആരാധനാ ക്രമം</string>
+    <string name="church_entry">ആരാധനാ ക്രമം</string>
+    <string name="church_back">തിരികെ</string>
+    <string name="church_role_presider">പുരോഹിതൻ</string>
+    <string name="church_role_people">ജനങ്ങൾ</string>
+    <string name="church_role_all">എല്ലാവരും</string>
+    <string name="church_role_reader">വായനക്കാരൻ</string>
+    <string name="church_needs_official">ഇന്നത്തേക്കുള്ള പ്രാർത്ഥന — നിങ്ങളുടെ ഇടവക പുസ്തകം / മിസ്സൽ പിന്തുടരുക.</string>
+    <string name="church_open_reading">സന്ദർഭത്തിൽ വായിക്കുക</string>
+    <string name="church_source">ഉറവിടം</string>
+    <string name="church_unavailable">നിങ്ങളുടെ പാരമ്പര്യത്തിനായുള്ള പൂർണ്ണമായ ആരാധനാ ക്രമം തയ്യാറാക്കിക്കൊണ്ടിരിക്കുന്നു. ഇപ്പോൾ ലഭ്യമായ ക്രമങ്ങൾ ഇതാ:</string>
+    <!-- Liturgy Library (browse) -->
+    <string name="church_library_title">ആരാധനാ ക്രമങ്ങൾ</string>
+    <string name="church_library_preparing">നിങ്ങളുടെ പാരമ്പര്യത്തിനായുള്ള ഒരു ക്രമം തയ്യാറാക്കിക്കൊണ്ടിരിക്കുന്നു. ഇപ്പോൾ ലഭ്യമായ ക്രമങ്ങൾ ഇതാ:</string>
+    <string name="church_library_open">%1$s തുറക്കുക</string>
+</resources>
