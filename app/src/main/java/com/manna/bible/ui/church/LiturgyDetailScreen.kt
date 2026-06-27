@@ -196,7 +196,7 @@ private fun PartView(
     // falls through to the labelled card layout below (which still assigns it no speaker
     // label, as RUBRIC has none) so its official-text notice is never dropped (Req 7.4, 12.2).
     if (part.role == LiturgyRole.RUBRIC && part.title == null && part.text == null &&
-        !part.needsOfficialText
+        !shouldShowOfficialNotice(part)
     ) {
         Column(modifier = Modifier.padding(vertical = 4.dp)) {
             Text(
@@ -260,7 +260,7 @@ private fun PartView(
             }
             // An official-text part points to the parish book; its proper text is never
             // fabricated here (Req 7.4, 12.2).
-            if (part.needsOfficialText) {
+            if (shouldShowOfficialNotice(part)) {
                 Text(
                     text = stringResourceIn(bibleLanguage, R.string.church_needs_official),
                     style = MaterialTheme.typography.labelSmall,
@@ -280,7 +280,7 @@ private fun ReadInContextAction(
     bibleLanguage: String,
     onOpenVerse: (String) -> Unit
 ) {
-    val osisRef = part.osisRef ?: return
+    val osisRef = openVerseRefFor(part) ?: return
     val label = stringResourceIn(bibleLanguage, R.string.church_open_reading)
     Text(
         text = label,

@@ -18,9 +18,12 @@ import io.kotest.property.checkAll
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.Timeout
 import org.junit.jupiter.api.extension.ExtendWith
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
 import tech.apter.junit.jupiter.robolectric.RobolectricExtension
+import java.util.concurrent.TimeUnit
 
 /**
  * Rendering property test for the Liturgy Library list, rendered under Robolectric/Compose.
@@ -28,9 +31,13 @@ import tech.apter.junit.jupiter.robolectric.RobolectricExtension
  * Sets the content once and drives the generated states through recomposition (fast),
  * rather than re-creating the Compose environment per iteration. As a RENDERING property
  * test it runs at the design's reduced 20-iteration budget.
+ *
+ * Hang-safety (design.md > Testing Strategy): carries a per-test [Timeout], uses
+ * [GraphicsMode] NATIVE, and a **bounded** `waitUntil` rather than an unbounded `waitForIdle`.
  */
 @ExtendWith(RobolectricExtension::class)
 @OptIn(ExperimentalKotest::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
 @Config(sdk = [34], qualifiers = "w2000dp-h4000dp")
 class LiturgyLibraryRenderPropertyTest {
 
@@ -52,6 +59,7 @@ class LiturgyLibraryRenderPropertyTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
+    @Timeout(60, unit = TimeUnit.SECONDS)
     fun `every library row contains its title and tradition`() {
         // Feature: mass-liturgy-and-localization, Property 9: For any listed entry in Liturgy_Library, the row contains its title and tradition.
         runComposeUiTest {
@@ -70,7 +78,12 @@ class LiturgyLibraryRenderPropertyTest {
             runBlocking {
                 checkAll(PropTestConfig(iterations = 20), stateArb) { state ->
                     stateHolder.value = state
-                    waitForIdle()
+                    // Bounded wait: block only until the first row's title for this generated
+                    // state is composed, with an explicit timeout (no unbounded waitForIdle).
+                    val firstTitle = state.entries.first().title
+                    waitUntil(timeoutMillis = 5_000) {
+                        onAllNodesWithText(firstTitle).fetchSemanticsNodes().isNotEmpty()
+                    }
                     state.entries.forEach { entry ->
                         assertTrue(
                             onAllNodesWithText(entry.title).fetchSemanticsNodes().isNotEmpty(),

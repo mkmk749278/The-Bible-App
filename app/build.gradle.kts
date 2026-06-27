@@ -1,3 +1,4 @@
+import java.time.Duration
 import java.util.Properties
 
 plugins {
@@ -245,4 +246,14 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+
+// Hang-safety (CI reliability): put a hard ceiling on every Test task so a stalled run
+// (e.g. a Compose/Robolectric render whose waitForIdle never settles in a headless CI
+// runner) fails fast with a diagnostic instead of wedging the Gradle build indefinitely.
+// Per design.md > Testing Strategy > Hang-safety. Per-test @Timeout annotations on the
+// remaining rendering tests provide the finer-grained, fail-fast bound.
+tasks.withType<Test>().configureEach {
+    timeout.set(Duration.ofMinutes(20))
 }
