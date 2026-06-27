@@ -253,7 +253,9 @@ dependencies {
 // (e.g. a Compose/Robolectric render whose waitForIdle never settles in a headless CI
 // runner) fails fast with a diagnostic instead of wedging the Gradle build indefinitely.
 // Per design.md > Testing Strategy > Hang-safety. Per-test @Timeout annotations on the
-// remaining rendering tests provide the finer-grained, fail-fast bound.
+// remaining rendering tests provide the finer-grained, fail-fast bound, so this ceiling
+// only needs to bound genuine hangs, not the legitimate full-suite runtime. 20m clipped
+// a healthy CI run (no daemon, cold cache) before it finished; 40m gives headroom.
 tasks.withType<Test>().configureEach {
-    timeout.set(Duration.ofMinutes(20))
+    timeout.set(Duration.ofMinutes(40))
 }
