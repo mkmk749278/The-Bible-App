@@ -34,6 +34,16 @@ import java.util.concurrent.TimeUnit
  * renderer to ever report — `waitForIdle()` could block forever. Fixed the same way as every
  * other Compose/Robolectric test in the suite: emit a marker [Text] node and wait on a
  * **bounded** `waitUntil`, backed by a per-test [Timeout] as a fail-fast safety net.
+ *
+ * A third hang surfaced even after that: this was the only Compose/Robolectric test class in
+ * the suite with **two** separate `@Test` methods each calling `runComposeUiTest` — every other
+ * class (see [com.manna.bible.ui.church.LiturgyLibraryRenderPropertyTest],
+ * [com.manna.bible.ui.church.LiturgyDetailRenderPropertyTest], `BibleLanguageResolverPropertyTest`)
+ * calls it exactly once per class. Robolectric does not reliably isolate sequential Compose
+ * compositions within one JVM fork (robolectric/robolectric#7055, #9043 — accumulating
+ * Looper/Choreographer state across consecutive Compose tests), and the second invocation here
+ * hung on `waitUntil` past even its own bound, only stopped by the outer JUnit 5 [Timeout].
+ * Consolidated to a single `runComposeUiTest` call, matching every other class in the suite.
  */
 @ExtendWith(RobolectricExtension::class)
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
@@ -43,9 +53,10 @@ class StringResolverExampleTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     @Timeout(60, unit = TimeUnit.SECONDS)
-    fun `stringResourceIn resolves a values-ta key in Tamil and falls back to English when absent`() {
+    fun `stringResourceIn and stringArrayResourceIn resolve in the requested language with English fallback`() {
         runComposeUiTest {
             val captured = HashMap<String, String>()
+            val sizes = mutableStateOf(0 to 0)
             setContent {
                 // A key translated in values-ta (crisis_title) resolves differently per language.
                 captured["ta_translated"] = stringResourceIn("ta", R.string.crisis_title)
@@ -53,6 +64,11 @@ class StringResolverExampleTest {
                 // A key with no Tamil value (nav_home) must fall back to the English default.
                 captured["ta_fallback"] = stringResourceIn("ta", R.string.nav_home)
                 captured["en_fallback"] = stringResourceIn("en", R.string.nav_home)
+
+                val en = stringArrayResourceIn("en", R.array.calendar_weekdays)
+                val ta = stringArrayResourceIn("ta", R.array.calendar_weekdays)
+                sizes.value = en.size to ta.size
+
                 // Marker node: setContent above renders nothing visible on its own, so give the
                 // bounded waitUntil below an actual node to key on instead of an unbounded wait.
                 Text("seen")
@@ -75,25 +91,7 @@ class StringResolverExampleTest {
                 captured["en_fallback"], captured["ta_fallback"],
                 "nav_home should fall back to the English value under tag 'ta'"
             )
-        }
-    }
 
-    @OptIn(ExperimentalTestApi::class)
-    @Test
-    @Timeout(60, unit = TimeUnit.SECONDS)
-    fun `stringArrayResourceIn resolves a string-array in the requested language`() {
-        runComposeUiTest {
-            val sizes = mutableStateOf(0 to 0)
-            setContent {
-                val en = stringArrayResourceIn("en", R.array.calendar_weekdays)
-                val ta = stringArrayResourceIn("ta", R.array.calendar_weekdays)
-                sizes.value = en.size to ta.size
-                // Marker node: see the first test above for why a bounded waitUntil needs one.
-                Text("seen")
-            }
-            waitUntil(timeoutMillis = 5_000) {
-                onAllNodesWithText("seen").fetchSemanticsNodes().isNotEmpty()
-            }
             val (enSize, taSize) = sizes.value
             assertTrue(enSize > 0, "English weekday array resolved empty")
             // No Tamil array authored -> falls back to the default array (same size).
