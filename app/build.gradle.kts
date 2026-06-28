@@ -38,8 +38,8 @@ android {
         applicationId = "com.manna.bible"
         minSdk = 26
         targetSdk = 35
-        versionCode = 208
-        versionName = "0.2.8"
+        versionCode = 209
+        versionName = "0.2.9"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables { useSupportLibrary = true }
