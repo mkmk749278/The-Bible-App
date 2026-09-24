@@ -83,13 +83,12 @@ The Bible App/
 | Serialization  | **Kotlinx Serialization** (JSON)                   |
 | Testing        | JUnit 5, Turbine (Flow testing), Compose Test      |
 | Min SDK        | **26** (Android 8.0) — covers 95%+ of India        |
-| Target SDK     | **35** today; **36** planned (needs a newer AGP)   |
-| Compile SDK    | **35** today; **36** planned                       |
+| Target SDK     | **36** (Android 16) — required by Google Play for updates since 31 Aug 2026 |
+| Compile SDK    | **36** (AGP 8.10.x on Gradle 8.11.1)               |
 
-> The shipped build uses compile/target SDK **35** with AGP 8.7.x (see the notes in
-> `app/build.gradle.kts` and `gradle/libs.versions.toml`). On-device Gemini Nano already
-> works through the AICore library, gated at runtime; SDK 36 is a toolchain upgrade, not a
-> feature blocker. Play requires a new target SDK every August — plan the bump.
+> Google Play raises the required target SDK every August (new apps *and* updates); plan
+> each year's bump before then. On-device Gemini Nano works through the AICore library,
+> gated at runtime.
 
 ### PWA / Web (Future)
 

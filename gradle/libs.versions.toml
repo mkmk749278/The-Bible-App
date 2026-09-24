@@ -1,10 +1,9 @@
 [versions]
 # Toolchain — stable, CI-verified versions.
-# NOTE: CLAUDE.md targets compile/target SDK 36 for Gemini Nano. That requires
-# bleeding-edge AGP and is risky in CI; we use SDK 35 + AGP 8.7.x here for
-# reliable GitHub Actions builds. Bump to 36 once that toolchain is stable and
-# the Gemini Nano feature lands.
-agp = "8.7.3"
+# AGP 8.10.x is the newest line that still runs on Gradle 8.11.1 (the wrapper and CI
+# version) and supports compile/target SDK 36, which Google Play has required for app
+# updates since 31 Aug 2026.
+agp = "8.10.1"
 kotlin = "2.1.0"
 ksp = "2.1.0-1.0.29"
 # Gradle Play Publisher — uploads the AAB to Play Console (CD). 3.12.x supports AGP 8.x.

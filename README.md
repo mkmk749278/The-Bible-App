@@ -19,7 +19,7 @@ the illiterate, the elderly, the persecuted, and the rural.
 
 Kotlin · Jetpack Compose (Material 3) · Room · Hilt · DataStore · Retrofit/OkHttp ·
 Media3/ExoPlayer · Glance widgets. Bible content comes from the key-less, MIT-licensed
-[Free Use Bible API](https://bible.helloao.org/). Min SDK 26, target/compile SDK 35.
+[Free Use Bible API](https://bible.helloao.org/). Min SDK 26, target/compile SDK 36.
 
 ## Build
 

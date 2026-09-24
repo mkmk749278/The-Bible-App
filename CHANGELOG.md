@@ -32,6 +32,10 @@ All notable changes to Manna are documented here. Versions follow
 - The Crisis AI companion says plainly that what you type is sent to Google Gemini, and it
   shows a gentle message instead of nothing if an answer can't be found.
 
+### Changed
+- **Targets Android 16 (API 36)** with Android Gradle Plugin 8.10.1 — Google Play has
+  required this for app updates since 31 August 2026.
+
 ### Security
 - The Gemini API key is sent in a request header instead of the URL, and requests carry
   the app's package/certificate identity so the key can be restricted to Manna in Google

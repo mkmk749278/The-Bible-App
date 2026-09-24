@@ -29,15 +29,14 @@ fun buildSecret(name: String): String =
 
 android {
     namespace = "com.manna.bible"
-    // NOTE: CLAUDE.md specifies compile/target SDK 36 (for Gemini Nano). We use 35
-    // here for reliable CI builds with AGP 8.7.x. Bump to 36 when that toolchain
-    // is stable and the on-device AI feature lands.
-    compileSdk = 35
+    // Android 16. Google Play rejects app updates targeting a lower API level since
+    // 31 Aug 2026 (see the target-API requirement in the Play Console help).
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.manna.bible"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 209
         versionName = "0.2.9"
 
