@@ -30,4 +30,15 @@
     <string name="crisis_ai_offline_hint">AI उत्तर के लिए इंटरनेट चाहिए। नीचे दिए गए वचन ऑफ़लाइन काम करते हैं।</string>
     <string name="crisis_ai_submit">भेजें</string>
     <string name="crisis_ai_thinking">आपके लिए एक अंश ढूँढ़ रहा हूँ…</string>
+
+    <!-- Talk to someone now: human help is always one tap away in Crisis Mode. -->
+    <string name="crisis_helpline_title">अभी किसी से बात करें</string>
+    <string name="crisis_helpline_body">अगर आपके मन में अपनी जान लेने के विचार आ रहे हैं, या आप खतरे में हैं, तो कृपया फ़ोन करें। आपसे एक असली व्यक्ति बात करेगा।</string>
+    <string name="crisis_helpline_telemanas">टेली-मानस · 14416</string>
+    <string name="crisis_helpline_telemanas_detail">मुफ़्त, 24 घंटे, आपकी भाषा में</string>
+    <string name="crisis_helpline_emergency">आपातकाल · 112</string>
+    <string name="crisis_helpline_call_telemanas">टेली-मानस को 14416 पर कॉल करें</string>
+    <string name="crisis_helpline_call_emergency">आपातकालीन सेवा को 112 पर कॉल करें</string>
+    <string name="crisis_ai_privacy_note">आप जो लिखते हैं वह एक वचन खोजने के लिए Google Gemini को भेजा जाता है। यह Manna में सहेजा नहीं जाता। कृपया किसी का नाम न लिखें।</string>
+    <string name="crisis_ai_unavailable">अभी मुझे कोई वचन नहीं मिल सका। नीचे दिए गए वचन आपके लिए हैं।</string>
 </resources>

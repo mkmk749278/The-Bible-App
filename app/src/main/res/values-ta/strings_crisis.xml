@@ -31,4 +31,15 @@
     <string name="crisis_ai_offline_hint">AI பதிலுக்கு இணையம் தேவை. கீழே உள்ள வசனங்கள் ஆஃப்லைனில் வேலை செய்யும்.</string>
     <string name="crisis_ai_submit">அனுப்பு</string>
     <string name="crisis_ai_thinking">உங்களுக்கான பகுதியைத் தேடுகிறேன்…</string>
+
+    <!-- Talk to someone now: human help is always one tap away in Crisis Mode. -->
+    <string name="crisis_helpline_title">இப்போதே ஒருவரிடம் பேசுங்கள்</string>
+    <string name="crisis_helpline_body">உங்கள் உயிரை மாய்த்துக்கொள்ளும் எண்ணம் இருந்தால், அல்லது நீங்கள் ஆபத்தில் இருந்தால், தயவுசெய்து அழையுங்கள். ஒரு உண்மையான மனிதர் உங்களிடம் பேசுவார்.</string>
+    <string name="crisis_helpline_telemanas">டெலி-மனஸ் · 14416</string>
+    <string name="crisis_helpline_telemanas_detail">இலவசம், 24 மணி நேரம், உங்கள் மொழியில்</string>
+    <string name="crisis_helpline_emergency">அவசர உதவி · 112</string>
+    <string name="crisis_helpline_call_telemanas">டெலி-மனஸை 14416 இல் அழைக்கவும்</string>
+    <string name="crisis_helpline_call_emergency">அவசர சேவையை 112 இல் அழைக்கவும்</string>
+    <string name="crisis_ai_privacy_note">நீங்கள் எழுதுவது ஒரு வசனத்தைக் கண்டறிய Google Gemini-க்கு அனுப்பப்படுகிறது. அது Manna-வில் சேமிக்கப்படுவதில்லை. தயவுசெய்து பெயர்களைச் சேர்க்க வேண்டாம்.</string>
+    <string name="crisis_ai_unavailable">இப்போது ஒரு வசனத்தைக் கண்டறிய முடியவில்லை. கீழே உள்ள வசனங்கள் உங்களுக்காக இருக்கின்றன.</string>
 </resources>
