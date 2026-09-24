@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.data.stealth.PinHasher
+import com.manna.bible.di.DefaultDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /**
@@ -17,6 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class StealthLockViewModel @Inject constructor(
     preferencesStore: PreferencesStore,
+    @DefaultDispatcher private val cryptoDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     @Volatile
@@ -28,7 +32,14 @@ class StealthLockViewModel @Inject constructor(
         }
     }
 
-    /** True when [pin] matches the stored credential — the cue to reveal the app. */
-    fun check(pin: String): Boolean =
-        credential.isNotBlank() && PinHasher.verify(pin, credential)
+    /**
+     * True when [pin] matches the stored credential — the cue to reveal the app. The
+     * PBKDF2 derivation runs on [cryptoDispatcher], never the main thread, so the keypad
+     * stays responsive on low-end phones.
+     */
+    suspend fun check(pin: String): Boolean {
+        val stored = credential
+        if (stored.isBlank()) return false
+        return withContext(cryptoDispatcher) { PinHasher.verify(pin, stored) }
+    }
 }

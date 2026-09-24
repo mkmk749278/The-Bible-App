@@ -50,7 +50,29 @@ class DailyReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED -> rescheduleAfterBoot(context)
-            ACTION_FIRE -> postReminder(context)
+            ACTION_FIRE -> postReminderUnlessStealth(context)
+        }
+    }
+
+    /**
+     * Posts the reminder, except while Stealth (Persecution) Mode is armed: a "Manna ·
+     * Daily bread" notification on the lock screen would reveal exactly what the disguised
+     * lock is hiding. The alarm stays armed, so reminders resume when Stealth Mode is off.
+     */
+    private fun postReminderUnlessStealth(context: Context) {
+        val preferencesStore = EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            ReminderEntryPoint::class.java
+        ).preferencesStore()
+        val pending = goAsync()
+        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+            try {
+                val stealthArmed = preferencesStore.stealthEnabled.first() &&
+                    preferencesStore.stealthPinCredential.first().isNotBlank()
+                if (!stealthArmed) postReminder(context)
+            } finally {
+                pending.finish()
+            }
         }
     }
 

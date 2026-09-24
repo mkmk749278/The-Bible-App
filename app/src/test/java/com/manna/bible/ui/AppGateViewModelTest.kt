@@ -69,6 +69,68 @@ class AppGateViewModelTest {
     }
 
     @Test
+    @DisplayName("leaving the app re-locks an unlocked stealth session")
+    fun lockReArmsAfterUnlock() = runTest {
+        val store = FakePreferencesStore(
+            setupCompleted = true,
+            stealthEnabled = true,
+            stealthCredential = "salt:hash",
+        )
+        val vm = AppGateViewModel(store)
+        vm.gateState.test {
+            assertEquals(GateState.Loading, awaitItem())
+            assertEquals(GateState.Locked, awaitItem())
+
+            vm.unlock()
+            advanceUntilIdle()
+            assertEquals(GateState.Ready, awaitItem())
+
+            vm.lock()
+            advanceUntilIdle()
+            assertEquals(GateState.Locked, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("lock() is harmless when stealth mode is off")
+    fun lockWithoutStealthStaysReady() = runTest {
+        val vm = AppGateViewModel(FakePreferencesStore(setupCompleted = true))
+        vm.gateState.test {
+            assertEquals(GateState.Loading, awaitItem())
+            assertEquals(GateState.Ready, awaitItem())
+
+            vm.lock()
+            advanceUntilIdle()
+            expectNoEvents()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("stealthArmed is true only with stealth on and a PIN set")
+    fun stealthArmedReflectsCredential() = runTest {
+        val armed = AppGateViewModel(
+            FakePreferencesStore(setupCompleted = true, stealthEnabled = true, stealthCredential = "salt:hash")
+        )
+        armed.stealthArmed.test {
+            assertEquals(false, awaitItem())
+            assertEquals(true, awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+
+        val noPin = AppGateViewModel(
+            FakePreferencesStore(setupCompleted = true, stealthEnabled = true, stealthCredential = "")
+        )
+        noPin.stealthArmed.test {
+            assertEquals(false, awaitItem())
+            advanceUntilIdle()
+            expectNoEvents()
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     @DisplayName("stealth enabled but without a credential does not lock")
     fun noCredentialNoLock() = runTest {
         val store = FakePreferencesStore(

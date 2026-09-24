@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.data.stealth.PinHasher
+import com.manna.bible.di.DefaultDispatcher
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 /** Minimum PIN length accepted when arming Stealth Mode. */
@@ -36,10 +39,12 @@ enum class StealthMessage {
  * Backs the Stealth (Persecution) Mode settings: arm the mode with a PIN, change the
  * PIN, or disarm it (which requires the current PIN). The PIN is hashed with PBKDF2
  * via [PinHasher] before it ever reaches storage — the plaintext is never persisted.
+ * Hashing and verification run on [cryptoDispatcher] so the UI never freezes.
  */
 @HiltViewModel
 class StealthSettingsViewModel @Inject constructor(
     private val preferencesStore: PreferencesStore,
+    @DefaultDispatcher private val cryptoDispatcher: CoroutineDispatcher,
 ) : ViewModel() {
 
     private val messageFlow = kotlinx.coroutines.flow.MutableStateFlow<StealthMessage?>(null)
@@ -71,7 +76,7 @@ class StealthSettingsViewModel @Inject constructor(
             pin.length < STEALTH_MIN_PIN_LENGTH -> messageFlow.value = StealthMessage.PIN_TOO_SHORT
             pin != confirm -> messageFlow.value = StealthMessage.PIN_MISMATCH
             else -> viewModelScope.launch {
-                preferencesStore.setStealthCredential(PinHasher.hash(pin))
+                preferencesStore.setStealthCredential(hash(pin))
                 messageFlow.value = StealthMessage.ENABLED
             }
         }
@@ -79,11 +84,11 @@ class StealthSettingsViewModel @Inject constructor(
 
     /** Disarms Stealth Mode, but only when [pin] matches the current PIN. */
     fun disable(pin: String) {
-        if (!PinHasher.verify(pin, credential)) {
-            messageFlow.value = StealthMessage.WRONG_PIN
-            return
-        }
         viewModelScope.launch {
+            if (!verify(pin)) {
+                messageFlow.value = StealthMessage.WRONG_PIN
+                return@launch
+            }
             preferencesStore.clearStealth()
             messageFlow.value = StealthMessage.DISABLED
         }
@@ -91,15 +96,25 @@ class StealthSettingsViewModel @Inject constructor(
 
     /** Replaces the PIN: requires the [current] PIN, then sets [new] (confirmed by [confirm]). */
     fun changePin(current: String, new: String, confirm: String) {
-        when {
-            !PinHasher.verify(current, credential) -> messageFlow.value = StealthMessage.WRONG_PIN
-            new.length < STEALTH_MIN_PIN_LENGTH -> messageFlow.value = StealthMessage.PIN_TOO_SHORT
-            new != confirm -> messageFlow.value = StealthMessage.PIN_MISMATCH
-            else -> viewModelScope.launch {
-                preferencesStore.setStealthCredential(PinHasher.hash(new))
-                messageFlow.value = StealthMessage.PIN_CHANGED
+        viewModelScope.launch {
+            when {
+                !verify(current) -> messageFlow.value = StealthMessage.WRONG_PIN
+                new.length < STEALTH_MIN_PIN_LENGTH -> messageFlow.value = StealthMessage.PIN_TOO_SHORT
+                new != confirm -> messageFlow.value = StealthMessage.PIN_MISMATCH
+                else -> {
+                    preferencesStore.setStealthCredential(hash(new))
+                    messageFlow.value = StealthMessage.PIN_CHANGED
+                }
             }
         }
+    }
+
+    private suspend fun hash(pin: String): String =
+        withContext(cryptoDispatcher) { PinHasher.hash(pin) }
+
+    private suspend fun verify(pin: String): Boolean {
+        val stored = credential
+        return withContext(cryptoDispatcher) { PinHasher.verify(pin, stored) }
     }
 
     /** Clears any shown status message (e.g. after the user reads it). */

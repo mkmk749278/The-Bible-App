@@ -71,6 +71,13 @@ class DailyVerseWidget : GlanceAppWidget() {
         val fallbackTitle = context.getString(R.string.widget_title)
         val fallbackBody = context.getString(R.string.widget_tap_hint)
 
+        // Stealth (Persecution) Mode: scripture on the home screen would give away what the
+        // disguised lock hides, so the widget goes blank until Stealth Mode is turned off.
+        val preferencesStore = entryPoint.preferencesStore()
+        val stealthArmed = preferencesStore.stealthEnabled.first() &&
+            preferencesStore.stealthPinCredential.first().isNotBlank()
+        if (stealthArmed) return WidgetVerse(title = "", body = "")
+
         val ref = entryPoint.dailyVerseProvider().verseForDate(LocalDate.now())
         val translationId = resolveTranslation(entryPoint)
             ?: return WidgetVerse(fallbackTitle, fallbackBody)
