@@ -44,6 +44,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -211,6 +212,8 @@ class ReaderViewModel @Inject constructor(
     // the Indian Cultural Lens (F-01) can frame the explanation for that tradition.
     private var denomination: Denomination? = null
     private var explainJob: Job? = null
+    // Waits for the active translation's content to land (see awaitContent).
+    private var awaitContentJob: Job? = null
 
     init {
         observeSetup()
@@ -356,6 +359,7 @@ class ReaderViewModel @Inject constructor(
                 }
                 .distinctUntilChanged()
                 .collect { snapshot ->
+                    awaitContentJob?.cancel()
                     val denomination = snapshot.denomination
                     val language = snapshot.bibleLanguage
                     val translationId = snapshot.translationId
@@ -399,12 +403,38 @@ class ReaderViewModel @Inject constructor(
                 isEmptyContent = true,
                 books = emptyList()
             )
+            awaitContent(translationId)
             return
         }
         val books = getChapterUseCase.books(translationId).first()
         val start = restoreReadingPositionUseCase(profile, books)
         _uiState.value = _uiState.value.copy(books = books, isEmptyContent = false)
         loadChapter(start.osisId, start.chapter, targetVerse = start.verse)
+    }
+
+    /**
+     * Opens the reader as soon as [translationId]'s content appears, without the user
+     * having to do anything.
+     *
+     * On first launch the five bundled Bibles are installed into the database in the
+     * background, which takes a while on low-end phones; a reader opened before that
+     * finishes would otherwise sit on the "download this translation" prompt for a Bible
+     * that is already inside the app. The catalog emits whenever a translation is
+     * registered (the seeder does this after writing its content) or a download commits,
+     * so each emission re-checks for content — never busy-polling.
+     */
+    private fun awaitContent(translationId: String) {
+        awaitContentJob?.cancel()
+        awaitContentJob = viewModelScope.launch {
+            translationRepository.catalog()
+                .firstOrNull { bibleContentRepository.hasContent(translationId) }
+                ?: return@launch
+            val state = _uiState.value
+            val profile = state.profile ?: return@launch
+            if (state.activeTranslationId == translationId && state.isEmptyContent) {
+                loadInitial(profile, translationId)
+            }
+        }
     }
 
     /** Keeps verse annotation indicators current for the active canon (Req 8.3). */
@@ -758,7 +788,14 @@ class ReaderViewModel @Inject constructor(
             }
             val current = _uiState.value.explain
             if (current != null && current.verse == verse && current.depth == depth) {
-                _uiState.value = _uiState.value.copy(explain = current.copy(status = status))
+                // Re-check the voice now: the TTS engine initializes asynchronously, so the
+                // check made when the reader opened may have run before it was ready and
+                // left the speak control disabled for the whole session.
+                val canSpeak = speechEngine.isLanguageAvailable(bibleLanguageTag ?: DEFAULT_BIBLE_LANGUAGE)
+                _uiState.value = _uiState.value.copy(
+                    explain = current.copy(status = status),
+                    canSpeakExplanation = canSpeak
+                )
             }
         }
     }

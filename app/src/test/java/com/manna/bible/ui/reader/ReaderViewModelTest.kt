@@ -90,7 +90,8 @@ class ReaderViewModelTest {
         chapterAudioSource: ChapterAudioSource = FakeChapterAudioSource(),
         explanationRepository: com.manna.bible.domain.explain.ExplanationRepository =
             FakeExplanationRepository(),
-        speechEngine: FakeSpeechEngine = FakeSpeechEngine()
+        speechEngine: FakeSpeechEngine = FakeSpeechEngine(),
+        translations: FakeTranslationRepository = FakeTranslationRepository()
     ): ReaderViewModel {
         val getChapter = GetChapterUseCase(content)
         return ReaderViewModel(
@@ -103,7 +104,7 @@ class ReaderViewModelTest {
             preferencesStore = prefs,
             annotationRepository = annotations,
             bibleContentRepository = content,
-            translationRepository = FakeTranslationRepository(),
+            translationRepository = translations,
             downloadManager = FakeDownloadManager(),
             ttsReader = ttsReader,
             narratedPlayer = narratedPlayer,
@@ -256,6 +257,34 @@ class ReaderViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
         assertEquals("GEN.1.1", prefs.lastSaved)
+    }
+
+    @Test
+    @DisplayName("a reader opened while the bundled Bibles are installing opens once they land")
+    fun opensWhenBundledContentFinishesInstalling() = runTest {
+        val content = protestantContent().apply { available = false }
+        val web = Translation(
+            id = "web",
+            name = "World English Bible",
+            languageCode = "en",
+            canonType = CanonType.PROTESTANT_66,
+            hasDeuterocanon = false
+        )
+        val catalog = MutableStateFlow(listOf(web))
+        val vm = viewModel(content = content, translations = FakeTranslationRepository(catalog))
+
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.isEmptyContent, "nothing to show while the Bible is installing")
+
+        // The seeder finishes: content is written, then the catalog row is registered.
+        content.available = true
+        catalog.value = listOf(web.copy(isDownloaded = true, isBundled = true))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertFalse(state.isEmptyContent)
+        assertEquals("GEN", state.osisId)
+        assertEquals(listOf("In the beginning", "And the earth"), state.verses.map { it.text })
     }
 
     @Test
@@ -511,7 +540,10 @@ class ReaderViewModelTest {
             return ChapterContent(translationId, osisId, chapter, verses)
         }
 
-        override suspend fun hasContent(translationId: String): Boolean = books.isNotEmpty()
+        /** False simulates a translation whose content is not installed yet. */
+        var available: Boolean = true
+
+        override suspend fun hasContent(translationId: String): Boolean = available && books.isNotEmpty()
 
         override suspend fun search(translationId: String, query: String): List<VerseMatch> = emptyList()
     }
@@ -648,8 +680,10 @@ class ReaderViewModelTest {
         }
     }
 
-    private class FakeTranslationRepository : TranslationRepository {
-        override fun catalog(): Flow<List<Translation>> = flowOf(emptyList())
+    private class FakeTranslationRepository(
+        private val catalogFlow: Flow<List<Translation>> = flowOf(emptyList())
+    ) : TranslationRepository {
+        override fun catalog(): Flow<List<Translation>> = catalogFlow
         override suspend fun refreshCatalog() {}
         override suspend fun download(id: String): DownloadResult = DownloadResult.Success
         override suspend fun markPendingDownload(id: String) {}

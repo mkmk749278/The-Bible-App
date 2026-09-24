@@ -42,7 +42,11 @@ class DownloadForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (!started) {
             started = true
-            startForegroundCompat(buildNotification(null))
+            if (!startForegroundCompat(buildNotification(null))) {
+                // The OS refused foreground status; the download continues on the app scope.
+                stopSelf()
+                return START_NOT_STICKY
+            }
             observeProgress()
         }
         return START_NOT_STICKY
@@ -78,12 +82,19 @@ class DownloadForegroundService : Service() {
         stopSelf()
     }
 
-    private fun startForegroundCompat(notification: Notification) {
+    /** Enters the foreground; false if the OS refuses (e.g. a disallowed background start). */
+    private fun startForegroundCompat(notification: Notification): Boolean = try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
+        true
+    } catch (e: IllegalStateException) {
+        // ForegroundServiceStartNotAllowedException (API 31+) extends IllegalStateException.
+        false
+    } catch (e: SecurityException) {
+        false
     }
 
     private fun updateNotification(progress: DownloadProgress) {
