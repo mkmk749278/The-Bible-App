@@ -3,6 +3,97 @@
 All notable changes to Manna are documented here. Versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Fixed
+- **Your notes, highlights and prayers can no longer be wiped by an app update.** The
+  database used to be silently rebuilt from scratch if an upgrade ever lacked a schema
+  migration; it now always migrates in place (a migration test guards every upgrade).
+- **A damaged settings file no longer makes the app crash on every launch.** Settings
+  reset to defaults instead, so nobody has to "Clear data" and lose their notes.
+- **AI answers no longer come back empty or cut off.** Gemini 2.5 Flash spends part of
+  its answer budget on hidden "thinking"; the Crisis companion, verse cards, sermon
+  builder and passage explanations now switch thinking off so the budget goes to the answer.
+- **Stealth Mode re-locks when you leave the app.** Previously the disguised calculator
+  only came back after the app was fully closed. While Stealth Mode is on, Recents shows a
+  blank card instead of scripture, screenshots are blocked, the home-screen widget shows no
+  verse, and daily reminders are not shown.
+- Entering the Stealth PIN no longer freezes the screen on slower phones.
+- Read-aloud keeps going in the background from one chapter to the next with continuous play.
+- Tapping play on a slow connection starts on-device reading within a few seconds instead of
+  waiting up to half a minute for narrated audio.
+- The reader opens as soon as the built-in Bibles finish installing on first launch, instead of
+  showing a "download" prompt.
+- Notification icons show correctly (monochrome) in the status bar.
+
+### Added
+- **Crisis Mode now shows how to reach a person right away:** Tele-MANAS (14416, free, 24x7,
+  20+ languages) and the 112 emergency number, with one-tap dialling.
+- The Crisis AI companion says plainly that what you type is sent to Google Gemini, and it
+  shows a gentle message instead of nothing if an answer can't be found.
+
+### Security
+- The Gemini API key is sent in a request header instead of the URL, and requests carry
+  the app's package/certificate identity so the key can be restricted to Manna in Google
+  Cloud.
+
+## [0.2.9] — 2026-06-28
+
+### Added
+- **Church Mode liturgies from bundled data** — the Holy Mass and the CSI Holy Communion
+  now come from bundled, validated liturgy files, with the framing text localized.
+- **AI features speak your Bible language** — Crisis companion, sermon builder, verse cards
+  and "Explain this passage" labels are localized for Tamil, Telugu, Hindi and Malayalam.
+
+### Changed
+- Unit tests run in parallel with hard timeouts so CI can no longer hang.
+
+## [0.2.8] — 2026-06-26
+
+### Added
+- **Indian Cultural Lens** — "Explain this passage" frames its answer for your tradition.
+- **Persecution-Aware Comfort** — offline Scripture in Crisis Mode for family pressure,
+  livelihood threats, physical danger, social exclusion and doubt.
+- **Crisis AI companion** — describe what is happening and receive one relevant passage.
+- **Oral Bible AI** — hear an explanation read aloud.
+- **AI Sermon Builder** — a full, editable outline from a passage reference.
+- **Context-Aware Verse Cards** — describe an occasion and get a passage to share.
+
+### Changed
+- The in-app interface-language picker was removed: the interface follows the phone's
+  language, while scripture, prayers and AI answers follow your chosen Bible language.
+- "Explain this passage" answers in your Bible language.
+- All translations of the interface ship to every device (no Play Store language split).
+
+## [0.2.7] — 2026-06-25
+
+### Changed
+- The theme defaults to dark (still changeable in Settings → Appearance).
+- The verse of the day lives in the Calendar tab, shareable as a card.
+
+### Fixed
+- "Explain this passage" moved to a supported Gemini model after the old one was retired.
+
+## [0.2.6] — 2026-06-23
+
+### Added
+- **Stealth (Persecution) Mode** — a disguised calculator lock with a PBKDF2-hashed PIN.
+- Settings and Library screens; appearance preferences are remembered.
+
+### Changed
+- Releases can be cut with one click and upload to the Play Console internal track.
+
+## [0.2.5] — 2026-06-22
+
+### Added
+- Play Store listing assets, localized store descriptions and a hosted privacy policy.
+
+## [0.2.4] — 2026-06-22
+
+### Added
+- Elder / Simplified Mode text scaling across the whole app, including the book picker.
+- TalkBack labels on interactive elements.
+
 ## [0.2.3] — 2026-06-21
 
 ### Added

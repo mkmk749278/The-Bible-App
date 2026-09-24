@@ -46,6 +46,7 @@ The Bible App/
 │   │   │   └── AndroidManifest.xml
 │   │   ├── test/                      # Unit tests
 │   │   └── androidTest/               # Instrumented tests
+│   └── schemas/                       # Exported Room schema per DB version (committed)
 ├── buildSrc/                          # Custom Gradle tasks (prepareBundledBibles)
 ├── .github/
 │   └── workflows/
@@ -82,8 +83,13 @@ The Bible App/
 | Serialization  | **Kotlinx Serialization** (JSON)                   |
 | Testing        | JUnit 5, Turbine (Flow testing), Compose Test      |
 | Min SDK        | **26** (Android 8.0) — covers 95%+ of India        |
-| Target SDK     | **36** (Android 16) — required for Gemini Nano     |
-| Compile SDK    | **36**                                             |
+| Target SDK     | **35** today; **36** planned (needs a newer AGP)   |
+| Compile SDK    | **35** today; **36** planned                       |
+
+> The shipped build uses compile/target SDK **35** with AGP 8.7.x (see the notes in
+> `app/build.gradle.kts` and `gradle/libs.versions.toml`). On-device Gemini Nano already
+> works through the AICore library, gated at runtime; SDK 36 is a toolchain upgrade, not a
+> feature blocker. Play requires a new target SDK every August — plan the bump.
 
 ### PWA / Web (Future)
 
@@ -398,29 +404,20 @@ Per the **UX Master Design Directive**, Manna is a spiritual companion, not a pr
 
 ## Feature Flags
 
-Use a `FeatureFlags` object to gate in-progress features:
-
-```kotlin
-// domain/FeatureFlags.kt
-object FeatureFlags {
-    const val PASTOR_MODE = true
-    const val GEMINI_NANO_AI = true         // Requires Android 16+
-    const val STEALTH_MODE = false           // Phase 2
-    const val GRIEF_COMPANION = false        // Phase 2
-    const val SCRIPTURE_INHERITANCE = false   // Phase 2
-    const val CHURCH_MODE = false            // Phase 3
-    const val PRAYER_WALL = false            // Phase 3 — needs moderation system
-    const val FAMILY_DEVOTION = false        // Year 2
-    const val WEAR_OS = false                // Year 2
-    const val ANDROID_AUTO = false           // Year 2
-}
-```
+Use the `FeatureFlags` object (`domain/FeatureFlags.kt` — **the source of truth**; the
+list below is only a summary) to gate in-progress features. Every flag that exists today is
+`true` (shipped): the reader tools, Explain this passage, Gemini Nano, narrated audio,
+Crisis Mode + Persecution Comfort + Crisis AI, Oral AI, Sermon Helper + AI Sermon Builder,
+Verse Cards + AI recommendations, Grief, Prayer Journal, Fasting, Scripture Card, Stealth
+Mode, Church Mode and the Prayers hub (Stations, Rosary, Jesus Prayer, Paraloka,
+Sramanikal). Not-yet-built features (Prayer Wall, Scripture Inheritance, Family Devotion,
+Wear OS, Android Auto) have no flag yet — add one, default `false`, when work starts.
 
 Gate features in navigation and UI:
 
 ```kotlin
-if (FeatureFlags.PASTOR_MODE) {
-    composable<PastorModeRoute> { PastorModeScreen() }
+if (FeatureFlags.SERMON_HELPER) {
+    composable(Routes.SERMON) { SermonHelperScreen(onBack = { navController.popBackStack() }) }
 }
 ```
 
@@ -459,12 +456,25 @@ These are **non-negotiable**:
 
 1. **No analytics without consent** — analytics is opt-in during onboarding
 2. **No personal data leaves the device** by default — sync is explicit opt-in
-3. **Stealth Mode data** — all Bible data encrypted with AES-256 when stealth mode is active
+3. **Stealth Mode data** — *target:* user data encrypted with AES-256 when stealth mode is
+   active. **Not implemented yet:** `data/stealth/AesGcm.kt` exists but is unused; today
+   Stealth Mode is a disguise + PIN gate (re-locks on leaving the app, FLAG_SECURE, blank
+   widget, no reminders), and data at rest relies on Android's sandbox + file-based
+   encryption. Do not claim at-rest encryption in store listings or the privacy policy.
 4. **No third-party SDKs that phone home** — review every dependency
-5. **Prayer journal, notes, highlights** — stored in encrypted Room database when stealth mode is on
+5. **Prayer journal, notes, highlights** — *target:* encrypted Room database when stealth
+   mode is on (see 3 — not implemented yet)
 6. **Firebase** — configured with minimal data collection (`analyticsCollectionEnabled = false` by default)
-7. **API keys** — stored in GitHub Secrets, injected via BuildConfig, never in source code
+7. **API keys** — stored in GitHub Secrets, injected via BuildConfig, never in source code.
+   A key inside an APK is extractable, so restrict the Gemini key in Google Cloud to this
+   app (Android restriction: package `com.manna.bible` + the Play app-signing SHA-1 — the
+   client sends `X-Android-Package`/`X-Android-Cert`) and to the Generative Language API,
+   with a quota cap. Use a paid (billing-enabled) project so prompts — which can include
+   crisis and persecution text — are not used to train Google models.
 8. **Keystore** — never committed. Base64-encoded in GitHub Secrets, decoded during CI/CD only.
+9. **Never destroy user data to make an upgrade work** — no `fallbackToDestructiveMigration()`.
+   Every Room schema change bumps the version, adds a migration to `ALL_MIGRATIONS`, and
+   commits the exported schema (`app/schemas/`); `MigrationsTest` must pass.
 
 ---
 
@@ -473,7 +483,8 @@ These are **non-negotiable**:
 ### Unit Tests (JUnit 5 + Turbine)
 - All ViewModels: test state emissions for every user action
 - All Use Cases: test business logic with fake repositories
-- All Repositories: test with in-memory Room database
+- All Repositories: test with in-memory Room database (Robolectric — see
+  `TranslationCatalogMergeTest`, `MigrationsTest`)
 - Run with: `./gradlew testDebugUnitTest`
 
 ### UI Tests (Compose Test)
@@ -636,19 +647,19 @@ export KEY_PASSWORD=yourkeypassword
 - [x] Light-first theme per UX Master Design Directive
 
 ### Phase 2 — Soul Depth (Months 4–6)
-- [ ] 3AM Crisis Mode
-- [ ] Grief Companion (30-day journey)
-- [ ] Prayer journal + Faith Timeline
-- [ ] Scripture Card Generator (WhatsApp-ready)
-- [ ] Fasting Companion
+- [x] 3AM Crisis Mode (+ Persecution-Aware Comfort, Crisis AI companion, helpline card)
+- [x] Grief Companion (30-day journey)
+- [x] Prayer journal (Faith Timeline view still to come)
+- [x] Scripture Card Generator (WhatsApp-ready, + AI verse recommendations)
+- [x] Fasting Companion
 - [ ] Scripture Inheritance (Voice Legacy)
 - [x] Stealth / Persecution Mode — disguised calculator lock + PBKDF2 PIN (Settings → Privacy)
 
 ### Phase 3 — AI + Ministry (Months 7–10)
-- [ ] Gemini Nano offline AI theologian
-- [ ] Simplified Mode (Oral Bible + Elder Mode combined)
-- [ ] Village Pastor Sermon Helper
-- [ ] Church Mode (Sermon Companion)
+- [x] Gemini Nano on-device "Explain this passage" (cloud Gemini fallback)
+- [x] Simplified Mode (Elder Mode scaling, auto-read, giant controls; Oral AI read-aloud)
+- [x] Village Pastor Sermon Helper (+ AI Sermon Builder)
+- [x] Church Mode — denomination-aware order of worship (Mass / Holy Communion)
 - [ ] Anonymous Prayer Wall (with moderation)
 
 ### Phase 4 — Futuristic (Year 2)
@@ -661,5 +672,5 @@ export KEY_PASSWORD=yourkeypassword
 
 ---
 
-*Last updated: 2026-06-09*
+*Last updated: 2026-09-24*
 *Maintained by the Manna development team*
