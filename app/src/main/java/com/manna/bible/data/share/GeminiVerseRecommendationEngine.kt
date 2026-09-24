@@ -6,6 +6,7 @@ import com.manna.bible.data.remote.GeminiContentDto
 import com.manna.bible.data.remote.GeminiGenerationConfigDto
 import com.manna.bible.data.remote.GeminiPartDto
 import com.manna.bible.data.remote.GeminiRequestDto
+import com.manna.bible.data.remote.GeminiThinkingConfigDto
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
@@ -65,7 +66,8 @@ class GeminiVerseRecommendationEngine @Inject constructor(
                     ),
                     generationConfig = GeminiGenerationConfigDto(
                         temperature = 0.4f,
-                        maxOutputTokens = 256
+                        maxOutputTokens = 256,
+                        thinkingConfig = GeminiThinkingConfigDto.OFF
                     )
                 )
             )

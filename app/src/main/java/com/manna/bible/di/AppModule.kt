@@ -13,6 +13,7 @@ import com.manna.bible.data.local.PrayerDao
 import com.manna.bible.data.local.SermonDao
 import com.manna.bible.data.local.TranslationDao
 import com.manna.bible.data.remote.GeminiApi
+import com.manna.bible.data.remote.GoogleApiAppIdentityInterceptor
 import com.manna.bible.data.remote.HelloAoApi
 import dagger.Module
 import dagger.Provides
@@ -133,13 +134,24 @@ object AppModule {
 
     /**
      * The Gemini REST API. Built on its own base URL (reusing the shared JSON parser
-     * and OkHttp client) so it stays independent of the Bible-content Retrofit.
+     * and the shared OkHttp connection pool) so it stays independent of the
+     * Bible-content Retrofit. Its client adds the app-identity headers that let the API
+     * key be restricted to this app (see [GoogleApiAppIdentityInterceptor]); those
+     * headers are never sent to the Bible content host.
      */
     @Provides
     @Singleton
-    fun provideGeminiApi(json: Json, client: OkHttpClient): GeminiApi = Retrofit.Builder()
+    fun provideGeminiApi(
+        @ApplicationContext context: Context,
+        json: Json,
+        client: OkHttpClient
+    ): GeminiApi = Retrofit.Builder()
         .baseUrl(GEMINI_BASE_URL)
-        .client(client)
+        .client(
+            client.newBuilder()
+                .addInterceptor(GoogleApiAppIdentityInterceptor.forApp(context))
+                .build()
+        )
         .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE.toMediaType()))
         .build()
         .create(GeminiApi::class.java)
