@@ -113,7 +113,7 @@ class DownloadForegroundService : Service() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         val builder = Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(applicationInfo.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(getString(R.string.download_notification_title))
             .setOngoing(true)
             .setContentIntent(tapIntent)

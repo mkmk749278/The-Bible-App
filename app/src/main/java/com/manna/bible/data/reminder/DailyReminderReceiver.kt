@@ -126,7 +126,7 @@ class DailyReminderReceiver : BroadcastReceiver() {
         )
 
         val notification = Notification.Builder(context, CHANNEL_ID)
-            .setSmallIcon(context.applicationInfo.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(context.getString(R.string.reminder_notification_title))
             .setContentText(context.getString(R.string.reminder_notification_text))
             .setAutoCancel(true)

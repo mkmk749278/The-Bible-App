@@ -20,6 +20,7 @@
     <application
         android:name=".MannaApplication"
         android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -29,8 +30,9 @@
         <!--
           allowBackup is off by design: notes, prayers and highlights are private
           spiritual data (and a safety concern for persecuted users), so they are never
-          copied to Google cloud backup. Cross-device migration is handled by the future
-          opt-in encrypted sync, not by Android auto-backup.
+          copied to Google cloud backup. On Android 12+ the explicit dataExtractionRules
+          keep cloud backup off but let Android's phone-to-phone transfer carry the data
+          to a user's new device (see res/xml/data_extraction_rules.xml).
         -->
 
         <activity

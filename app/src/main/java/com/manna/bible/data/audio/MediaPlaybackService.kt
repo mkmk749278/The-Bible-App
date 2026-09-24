@@ -189,7 +189,7 @@ class MediaPlaybackService : Service() {
         val toggleLabel =
             if (playing) R.string.media_notification_pause else R.string.media_notification_play
         return Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(applicationInfo.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(getString(R.string.media_notification_title))
             .setContentText(getString(R.string.media_notification_text))
             .setOngoing(true)

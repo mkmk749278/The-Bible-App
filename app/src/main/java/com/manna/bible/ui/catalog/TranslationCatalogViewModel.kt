@@ -27,12 +27,16 @@ import javax.inject.Inject
  * @property name Human-readable edition name.
  * @property isDownloaded True when content is stored locally (bundled or downloaded).
  * @property isActive True when this is the active reading translation.
+ * @property isBundled True when the edition ships inside the app. Deleting it would free no
+ *   space (the asset stays in the APK) and it would be re-installed on the next launch, so
+ *   the screen offers no delete action for it.
  */
 data class CatalogItem(
     val id: String,
     val name: String,
     val isDownloaded: Boolean,
-    val isActive: Boolean
+    val isActive: Boolean,
+    val isBundled: Boolean = false
 )
 
 /**
@@ -114,7 +118,9 @@ class TranslationCatalogViewModel @Inject constructor(
                     }
                     val activeId = setup.bibleTranslationId
                     val items = inLanguage
-                        .map { CatalogItem(it.id, it.name, it.isDownloaded, it.id == activeId) }
+                        .map {
+                            CatalogItem(it.id, it.name, it.isDownloaded, it.id == activeId, it.isBundled)
+                        }
                         .sortedWith(
                             compareByDescending<CatalogItem> { it.isDownloaded }.thenBy { it.name }
                         )
