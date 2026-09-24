@@ -352,6 +352,44 @@ class ReaderViewModelTest {
     }
 
     @Test
+    @DisplayName("jumping to a verse the edition merged into its neighbour lands on that neighbour")
+    fun openAtMergedVerseLandsOnCarrier() = runTest {
+        // Like the Telugu IRV: verse 3 is printed inside verse 2, so there is no row 3.
+        val vm = viewModel(content = mergedContent())
+        advanceUntilIdle()
+
+        vm.openAt("GEN", 1, 3)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertEquals(2, state.highlightedVerse)
+        assertEquals(2, state.scrollToVerse)
+    }
+
+    @Test
+    @DisplayName("an annotation on a merged verse shows on, and is removed from, the carrying row")
+    fun annotationOnMergedVerseShowsOnCarrier() = runTest {
+        val annotations = FakeAnnotationRepository()
+        // e.g. highlighted in English, where verse 3 has its own row.
+        annotations.addHighlight("GEN.1.3", colorArgb = 1)
+        val vm = viewModel(content = mergedContent(), annotations = annotations)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            val rows = expectMostRecentItem().verses.associateBy { it.verse }
+            assertTrue(rows.getValue(2).hasHighlight, "verse 2 carries verse 3's highlight")
+            assertFalse(rows.getValue(1).hasHighlight)
+
+            // "Remove highlight" on the carrying row removes the merged verse's highlight
+            // instead of adding a second one.
+            vm.toggleHighlight(2)
+            advanceUntilIdle()
+            assertFalse(expectMostRecentItem().verses.first { it.verse == 2 }.hasHighlight)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
     @DisplayName("onAudioPlayPause starts read-aloud for the open chapter and reflects engine state (Req 9.1, 9.2)")
     fun audioPlayStartsAndReflectsState() = runTest {
         val tts = FakeTtsReader()
@@ -523,6 +561,22 @@ class ReaderViewModelTest {
             "GEN" to mapOf(
                 1 to listOf(VerseLine(1, "In the beginning"), VerseLine(2, "And the earth")),
                 2 to listOf(VerseLine(1, "Thus the heavens"))
+            )
+        )
+    )
+
+    /** Genesis 1 with verse 3 merged into verse 2 (no row 3), as some editions print it. */
+    private fun mergedContent() = FakeBibleContentRepository(
+        books = listOf(
+            BookSummary("GEN", "Genesis", Testament.OLD, orderIndex = 0, chapterCount = 1)
+        ),
+        chapters = mapOf(
+            "GEN" to mapOf(
+                1 to listOf(
+                    VerseLine(1, "In the beginning"),
+                    VerseLine(2, "And the earth ... And God said, Let there be light"),
+                    VerseLine(4, "And God saw the light")
+                )
             )
         )
     )

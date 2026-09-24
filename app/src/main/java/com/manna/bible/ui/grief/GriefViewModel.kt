@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.grief.GriefJourney
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -126,7 +127,7 @@ class GriefViewModel @Inject constructor(
         val content = runCatching {
             bibleContentRepository.chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull()
-        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+        val text = content?.lineCarrying(ref.verse)?.text
         val bookName = runCatching {
             bibleContentRepository.books(translationId).first()
                 .firstOrNull { it.osisId == ref.osisId }?.name

@@ -25,6 +25,12 @@ All notable changes to Manna are documented here. Versions follow
 - The reader opens as soon as the built-in Bibles finish installing on first launch, instead of
   showing a "download" prompt.
 - Notification icons show correctly (monochrome) in the status bar.
+- **Verses merged into a neighbour now resolve.** The Telugu IRV prints 103 verses inside
+  the verse before them (e.g. 1 Corinthians 4:15–16 is one verse numbered 15, 2 Timothy
+  3:16–17 is verse 16). Links to those verses — the daily verse and widget, devotions,
+  Crisis/Grief/Fasting companions, the calendar, cards, AI answers and search — now open
+  or show the verse that carries them, and highlights, bookmarks and notes made on them
+  (e.g. in English) appear on that verse in Telugu.
 
 ### Added
 - **Crisis Mode now shows how to reach a person right away:** Tele-MANAS (14416, free, 24x7,

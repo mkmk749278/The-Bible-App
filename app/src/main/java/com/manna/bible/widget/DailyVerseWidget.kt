@@ -26,6 +26,7 @@ import com.manna.bible.MainActivity
 import com.manna.bible.R
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import dagger.hilt.EntryPoint
@@ -85,7 +86,7 @@ class DailyVerseWidget : GlanceAppWidget() {
         val content = runCatching {
             entryPoint.bibleContentRepository().chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull()
-        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+        val text = content?.lineCarrying(ref.verse)?.text
             ?: return WidgetVerse(fallbackTitle, fallbackBody)
 
         val bookName = runCatching {

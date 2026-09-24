@@ -1,7 +1,10 @@
 package com.manna.bible.domain.usecase
 
 import com.manna.bible.data.preferences.PreferencesStore
+import com.manna.bible.domain.reader.MergedVerses
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
+import com.manna.bible.domain.repository.ChapterContent
 import com.manna.bible.domain.repository.TranslationRepository
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -30,8 +33,10 @@ data class ResolvedVerse(
  * resolution that the Grief, Crisis, and Fasting companions wrote inline; this use
  * case is the single shared implementation.
  *
- * Verses not present in the active translation resolve to null (single) or are
- * dropped (batch), so a partially-downloaded Bible never crashes a devotion.
+ * A verse the active translation merges into a neighbour (e.g. the Telugu IRV prints
+ * 1 Corinthians 4:15–16 as verse 15) resolves to that neighbour's text — see
+ * [MergedVerses]. Verses not present at all resolve to null (single) or are dropped
+ * (batch), so a partially-downloaded Bible never crashes a devotion.
  * Chapter loads are de-duplicated within a batch so a screen that lists many verses
  * from the same chapter reads it once.
  *
@@ -59,16 +64,16 @@ class ResolveVerseTextUseCase @Inject constructor(
             bibleContentRepository.books(translationId).first().associate { it.osisId to it.name }
         }.getOrDefault(emptyMap())
 
-        // Load each distinct (book, chapter) once, then index verses for fast lookup.
-        val chapterCache = mutableMapOf<Pair<String, Int>, Map<Int, String>>()
+        // Load each distinct (book, chapter) once.
+        val chapterCache = mutableMapOf<Pair<String, Int>, ChapterContent?>()
         return refs.mapNotNull { ref ->
             val key = ref.osisId to ref.chapter
-            val verses = chapterCache.getOrPut(key) {
+            val content = chapterCache.getOrPut(key) {
                 runCatching {
                     bibleContentRepository.chapter(translationId, ref.osisId, ref.chapter)
-                }.getOrNull()?.verses?.associate { it.verse to it.text } ?: emptyMap()
+                }.getOrNull()
             }
-            val text = verses[ref.verse] ?: return@mapNotNull null
+            val text = content?.lineCarrying(ref.verse)?.text ?: return@mapNotNull null
             val name = bookNames[ref.osisId] ?: ref.osisId
             ResolvedVerse(
                 ref = ref,

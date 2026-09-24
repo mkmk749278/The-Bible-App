@@ -6,6 +6,7 @@ import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.FeatureFlags
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.topical.Topic
@@ -132,7 +133,7 @@ class SearchViewModel @Inject constructor(
         val content = runCatching {
             bibleContentRepository.chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull() ?: return@mapNotNull null
-        val text = content.verses.firstOrNull { it.verse == ref.verse }?.text ?: return@mapNotNull null
+        val text = content.lineCarrying(ref.verse)?.text ?: return@mapNotNull null
         val name = bookNames[ref.osisId] ?: ref.osisId
         SearchResult(
             osisId = ref.osisId,

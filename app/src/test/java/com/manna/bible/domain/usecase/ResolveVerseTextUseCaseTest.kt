@@ -64,6 +64,22 @@ class ResolveVerseTextUseCaseTest {
     }
 
     @Test
+    @DisplayName("a verse the edition merges into its neighbour resolves to the neighbour's text")
+    fun resolvesMergedVerse() = runTest {
+        // Like the Telugu IRV, which prints 2 Timothy 3:16-17 as one verse numbered 16 (a
+        // merge at the chapter's end) and 1 Corinthians 4:15-16 as verse 15 (inside it).
+        val useCase = ResolveVerseTextUseCase(
+            preferencesStore = FakePreferencesStore(activeId = "tel_irv"),
+            translationRepository = FakeTranslationRepository(listOf(translation("tel_irv"))),
+            bibleContentRepository = FakeContentRepository(versesPerChapter = 17, merged = setOf(5, 17))
+        )
+        val result = useCase(listOf(ReadingRef("2TI", 3, 17), ReadingRef("1CO", 4, 5)))
+        assertEquals(listOf("2TI 3:16", "1CO 4:4"), result.map { it.text })
+        // The reference still names the verse that was asked for; its text is inside the shown verse.
+        assertEquals("2TI.3.17", result[0].osisRef)
+    }
+
+    @Test
     @DisplayName("loads each chapter only once across a batch")
     fun deduplicatesChapterLoads() = runTest {
         val repo = FakeContentRepository()
@@ -105,7 +121,9 @@ class ResolveVerseTextUseCaseTest {
     )
 
     private class FakeContentRepository(
-        private val versesPerChapter: Int = 200
+        private val versesPerChapter: Int = 200,
+        /** Verse numbers the edition merges into the verse before (no row of their own). */
+        private val merged: Set<Int> = emptySet()
     ) : BibleContentRepository {
         var chapterLoads = 0
             private set
@@ -120,7 +138,7 @@ class ResolveVerseTextUseCaseTest {
             chapterLoads++
             return ChapterContent(
                 translationId, osisId, chapter,
-                (1..versesPerChapter).map { VerseLine(it, "$osisId $chapter:$it") }
+                (1..versesPerChapter).filterNot { it in merged }.map { VerseLine(it, "$osisId $chapter:$it") }
             )
         }
 
