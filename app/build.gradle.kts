@@ -217,7 +217,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.converter)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
 
     // Media3 (ExoPlayer) — streams human-narrated chapter audio (Req 9.8).
     implementation(libs.androidx.media3.exoplayer)

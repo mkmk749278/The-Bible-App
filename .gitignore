@@ -5,9 +5,12 @@ local.properties
 google-services.json
 play-service-account.json
 
-# Build outputs
+# Build outputs (anchored per module — an unanchored `build/` would also hide the
+# buildSrc source package `com/manna/bible/build/`)
 /build/
 /app/build/
+/buildSrc/build/
+/buildSrc/.gradle/
 *.apk
 *.aab
 
@@ -21,3 +24,6 @@ captures/
 # OS
 .DS_Store
 Thumbs.db
+
+# Scratch files left by tooling
+.__*
