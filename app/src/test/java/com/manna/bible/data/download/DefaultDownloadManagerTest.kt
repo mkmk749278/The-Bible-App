@@ -145,6 +145,8 @@ class DefaultDownloadManagerTest {
             translations.forEach { rows[it.id] = it }
         }
 
+        override suspend fun getAll(): List<TranslationEntity> = rows.values.toList()
+
         override suspend fun setDownloaded(id: String, sizeBytes: Long) {
             rows[id]?.let { rows[id] = it.copy(isDownloaded = true, sizeBytes = sizeBytes) }
         }
@@ -232,12 +234,21 @@ class DefaultDownloadManagerTest {
         content: FakeContentDao = FakeContentDao(),
         translations: FakeTranslationDao = FakeTranslationDao(),
         pending: FakePending = FakePending(),
-        connectivity: FakeConnectivity = FakeConnectivity(online = true)
-    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity, NoopForeground, scope)
+        connectivity: FakeConnectivity = FakeConnectivity(online = true),
+        foreground: com.manna.bible.domain.download.DownloadForegroundController = NoopForeground
+    ) = DefaultDownloadManager(remote, content, translations, pending, connectivity, foreground, scope)
 
-    /** Foreground promotion is an Android concern; the JVM tests don't exercise it. */
+    /** Foreground promotion is an Android concern; most JVM tests don't exercise it. */
     private object NoopForeground : com.manna.bible.domain.download.DownloadForegroundController {
         override fun ensureRunning() {}
+    }
+
+    /** Counts foreground-service promotions. */
+    private class CountingForeground : com.manna.bible.domain.download.DownloadForegroundController {
+        var starts = 0
+        override fun ensureRunning() {
+            starts++
+        }
     }
 
     // --- offline (Req 5.6) ---------------------------------------------------
@@ -474,5 +485,28 @@ class DefaultDownloadManagerTest {
         assertTrue(translations.getById("a")!!.isDownloaded, "pending id a must be downloaded")
         assertTrue(translations.getById("b")!!.isDownloaded, "pending id b must be downloaded")
         assertTrue(pending.all().isEmpty(), "successful retries clear the queue")
+    }
+
+    @Test
+    fun `a user download is promoted to a foreground service but an automatic retry is not`() = runTest {
+        val foreground = CountingForeground()
+        val translations = FakeTranslationDao(listOf(entity("a"), entity("b")))
+        val pending = FakePending().apply { add("b") }
+        val mgr = manager(
+            scope = backgroundScope,
+            remote = FakeRemote(listOf(book("GEN", 1, 0))),
+            translations = translations,
+            pending = pending,
+            foreground = foreground
+        )
+
+        mgr.download("a")
+        assertEquals(1, foreground.starts, "a user-initiated download keeps running as a foreground service")
+
+        // Retries run at process start (possibly boot, with no UI), where Android refuses
+        // a dataSync foreground-service start — so they must not attempt one.
+        mgr.retryPending()
+        assertEquals(1, foreground.starts, "an automatic retry must not start a foreground service")
+        assertTrue(translations.getById("b")!!.isDownloaded, "the retried download still completes")
     }
 }

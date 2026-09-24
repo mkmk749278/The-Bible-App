@@ -161,6 +161,13 @@ play {
     resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.IGNORE)
 }
 
+// Room writes each database version's schema to app/schemas/ (committed). This keeps
+// schema changes visible in review and lets migrations be tested against the real
+// historical schema instead of a hand-reconstructed one.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 /**
  * Regenerates the committed offline Bible assets under `src/main/assets/bibles/`
  * from the Free Use Bible API. Developer/CI tool only — the assets are committed,

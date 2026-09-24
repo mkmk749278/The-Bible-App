@@ -3,13 +3,10 @@ package com.manna.bible.di
 import android.content.Context
 import androidx.room.Room
 import com.manna.bible.BuildConfig
+import com.manna.bible.data.local.ALL_MIGRATIONS
 import com.manna.bible.data.local.AnnotationDao
 import com.manna.bible.data.local.BibleContentDao
 import com.manna.bible.data.local.ExplanationDao
-import com.manna.bible.data.local.MIGRATION_2_3
-import com.manna.bible.data.local.MIGRATION_3_4
-import com.manna.bible.data.local.MIGRATION_4_5
-import com.manna.bible.data.local.MIGRATION_5_6
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
 import com.manna.bible.data.local.PrayerDao
@@ -67,16 +64,20 @@ object AppModule {
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     /**
-     * The app's [MannaDatabase]. Applies the additive [MIGRATION_2_3] (offline
-     * content tables) and keeps destructive fallback as a last resort so an
-     * unexpected schema mismatch never hard-crashes startup.
+     * The app's [MannaDatabase], upgraded through the additive [ALL_MIGRATIONS].
+     *
+     * There is deliberately no blanket `fallbackToDestructiveMigration()`: it would
+     * silently delete every highlight, note, bookmark, prayer and sermon note the moment
+     * a future schema bump forgot its migration — and with backup disabled, that data
+     * would be gone for good. Only v1 (a pre-release schema with no user data tables)
+     * may be recreated from scratch.
      */
     @Provides
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
-            .fallbackToDestructiveMigration()
+            .addMigrations(*ALL_MIGRATIONS)
+            .fallbackToDestructiveMigrationFrom(1)
             .build()
 
     @Provides

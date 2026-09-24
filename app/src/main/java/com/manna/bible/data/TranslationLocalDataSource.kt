@@ -14,8 +14,12 @@ interface TranslationLocalDataSource {
     /** Observes the cached translation catalog. */
     fun catalog(): Flow<List<Translation>>
 
-    /** Inserts or updates the cached catalog. */
-    suspend fun upsertAll(translations: List<Translation>)
+    /**
+     * Merges a remote catalog into the cache: new editions are added, known ones get
+     * refreshed descriptive fields, and on-device state (downloaded, bundled, content
+     * version) is never overwritten by the network.
+     */
+    suspend fun mergeRemoteCatalog(translations: List<Translation>)
 
     /** Marks a translation downloaded and records its size. */
     suspend fun setDownloaded(id: String, sizeBytes: Long)

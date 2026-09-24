@@ -34,7 +34,7 @@ class DefaultTranslationRepositoryTest {
         val downloaded = mutableMapOf<String, Long>()
 
         override fun catalog(): Flow<List<Translation>> = state
-        override suspend fun upsertAll(translations: List<Translation>) {
+        override suspend fun mergeRemoteCatalog(translations: List<Translation>) {
             state.value = translations
         }
 

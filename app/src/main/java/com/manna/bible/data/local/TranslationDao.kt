@@ -2,6 +2,7 @@ package com.manna.bible.data.local
 
 import androidx.room.Dao
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -15,9 +16,48 @@ interface TranslationDao {
     @Query("SELECT * FROM translations")
     fun observeAll(): Flow<List<TranslationEntity>>
 
-    /** Inserts or updates the given catalog rows. */
+    /** Inserts or updates the given catalog rows (replacing every column). */
     @Upsert
     suspend fun upsertAll(translations: List<TranslationEntity>)
+
+    /** Returns the whole catalog as a one-shot snapshot. */
+    @Query("SELECT * FROM translations")
+    suspend fun getAll(): List<TranslationEntity>
+
+    /**
+     * Merges a freshly fetched remote catalog without losing what is on the device.
+     *
+     * New editions are inserted as-is (not downloaded). For editions already known, only
+     * the descriptive fields from the network are refreshed; the on-device state — whether
+     * it is downloaded, its size, content version and verse count, bundled and default
+     * flags — is kept. Bundled editions are left untouched entirely: the in-app manifest is
+     * their source of truth.
+     *
+     * A plain [upsertAll] of the remote rows would reset every known edition to "not
+     * downloaded, 0 verses" — which is what used to happen on every online launch, making
+     * the downloaded Bibles look missing and forcing all five bundled Bibles to be
+     * re-installed on the next start.
+     */
+    @Transaction
+    suspend fun mergeRemoteCatalog(remote: List<TranslationEntity>) {
+        val local = getAll().associateBy { it.id }
+        val merged = remote.mapNotNull { incoming ->
+            val existing = local[incoming.id] ?: return@mapNotNull incoming
+            if (existing.isBundled) {
+                null
+            } else {
+                incoming.copy(
+                    isDownloaded = existing.isDownloaded,
+                    sizeBytes = existing.sizeBytes,
+                    isDefaultForCanon = existing.isDefaultForCanon,
+                    isBundled = existing.isBundled,
+                    contentVersion = existing.contentVersion,
+                    verseCount = existing.verseCount
+                )
+            }
+        }
+        if (merged.isNotEmpty()) upsertAll(merged)
+    }
 
     /** Marks a translation as downloaded and records its on-disk size. */
     @Query("UPDATE translations SET isDownloaded = 1, sizeBytes = :sizeBytes WHERE id = :id")

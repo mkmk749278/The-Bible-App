@@ -77,7 +77,20 @@ class DefaultDownloadManager @Inject constructor(
 
     override fun progress(): StateFlow<DownloadProgress?> = progressState.asStateFlow()
 
-    override suspend fun download(translationId: String): DownloadOutcome {
+    override suspend fun download(translationId: String): DownloadOutcome =
+        start(translationId, promoteToForeground = true)
+
+    /**
+     * Starts (or joins) the download of [translationId].
+     *
+     * [promoteToForeground] is true only for a download the user just asked for while the
+     * app is on screen. Automatic retries run at process start — which may be a reboot,
+     * an alarm or a widget update, with no UI — where Android refuses (and on Android 15
+     * crashes) a `dataSync` foreground-service start. Those retries run on the app scope
+     * without a notification; if the process is reclaimed, the per-book resume picks up
+     * where they stopped next time.
+     */
+    private suspend fun start(translationId: String, promoteToForeground: Boolean): DownloadOutcome {
         if (!connectivity.isOnline()) {
             pending.add(translationId)
             return DownloadOutcome.Offline
@@ -88,7 +101,7 @@ class DefaultDownloadManager @Inject constructor(
 
         // Keep the work alive (and visible) while the app is backgrounded by promoting it
         // to a foreground service. Never lets a notification failure break the download.
-        foregroundController.ensureRunning()
+        if (promoteToForeground) foregroundController.ensureRunning()
 
         // Run on the app-lifetime [scope] so leaving the screen or backgrounding the
         // app does NOT cancel and discard the in-flight download. A second call for
@@ -254,7 +267,7 @@ class DefaultDownloadManager @Inject constructor(
 
     override suspend fun retryPending() {
         if (!connectivity.isOnline()) return
-        pending.all().forEach { id -> download(id) }
+        pending.all().forEach { id -> start(id, promoteToForeground = false) }
     }
 
     private companion object {

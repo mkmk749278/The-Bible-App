@@ -2,10 +2,12 @@ package com.manna.bible.data.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
+import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.floatPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -19,8 +21,18 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-/** Single DataStore<Preferences> instance for the app, backed by the `manna_prefs` file. */
-private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "manna_prefs")
+/**
+ * Single DataStore<Preferences> instance for the app, backed by the `manna_prefs` file.
+ *
+ * A corrupted file (e.g. a write torn by power loss) is replaced with empty preferences
+ * instead of throwing on every read. Without the handler the app would crash on every
+ * launch, and the only way out for the user would be "Clear data", which also erases
+ * their notes, highlights and prayers in Room. Resetting preferences only re-runs setup.
+ */
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
+    name = "manna_prefs",
+    corruptionHandler = ReplaceFileCorruptionHandler { emptyPreferences() }
+)
 
 /**
  * Persists the user's setup choices ([SetupState]) to local storage (Req 10), without requiring
