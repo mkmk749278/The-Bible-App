@@ -18,7 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.StopCircle
-import androidx.compose.material.icons.filled.VolumeUp
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -1074,7 +1074,7 @@ private fun ExplainSheet(
                                 imageVector = if (explanationSpeaking) {
                                     Icons.Filled.StopCircle
                                 } else {
-                                    Icons.Filled.VolumeUp
+                                    Icons.AutoMirrored.Filled.VolumeUp
                                 },
                                 contentDescription = if (explanationSpeaking) {
                                     stringResourceIn(bibleLanguage, R.string.explain_stop_speaking)

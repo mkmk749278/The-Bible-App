@@ -1,5 +1,7 @@
 package com.manna.bible.ui.crisis
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -32,6 +35,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -125,6 +129,8 @@ fun CrisisModeScreen(
                 }
             }
 
+            item { HelplineCard() }
+
             state.listenRef?.let { ref ->
                 item {
                     Button(
@@ -196,6 +202,79 @@ fun CrisisModeScreen(
     }
 }
 
+/**
+ * "Talk to someone now" — a calm, always-visible route to a human being. Scripture and AI
+ * are no substitute for a trained listener when someone is thinking of ending their life.
+ * Tele-MANAS (14416) is India's free, 24x7 national mental-health helpline, answering in
+ * 20+ languages; 112 is the national emergency number. Dialling opens the phone app with
+ * the number filled in (no call permission needed); nothing is recorded.
+ */
+@Composable
+private fun HelplineCard() {
+    val bibleLanguage = rememberBibleLanguage()
+    val context = LocalContext.current
+    fun dial(number: String) {
+        // A device without telephony (some tablets) has no dialer — fail silently.
+        runCatching {
+            context.startActivity(Intent(Intent.ACTION_DIAL, Uri.parse("tel:$number")))
+        }
+    }
+    val telemanasDescription = stringResourceIn(bibleLanguage, R.string.crisis_helpline_call_telemanas)
+    val emergencyDescription = stringResourceIn(bibleLanguage, R.string.crisis_helpline_call_emergency)
+    Surface(
+        color = MannaTheme.colors.card,
+        shape = RoundedCornerShape(14.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text(
+                text = stringResourceIn(bibleLanguage, R.string.crisis_helpline_title),
+                style = MaterialTheme.typography.titleSmall,
+                color = MannaTheme.colors.ink,
+                fontWeight = FontWeight.SemiBold
+            )
+            Text(
+                text = stringResourceIn(bibleLanguage, R.string.crisis_helpline_body),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MannaTheme.colors.soft
+            )
+            OutlinedButton(
+                onClick = { dial(TELE_MANAS_NUMBER) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 56.dp)
+                    .semantics { contentDescription = telemanasDescription }
+            ) {
+                Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+                    Text(stringResourceIn(bibleLanguage, R.string.crisis_helpline_telemanas))
+                    Text(
+                        text = stringResourceIn(bibleLanguage, R.string.crisis_helpline_telemanas_detail),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            }
+            OutlinedButton(
+                onClick = { dial(EMERGENCY_NUMBER) },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = MinTouchTarget)
+                    .semantics { contentDescription = emergencyDescription }
+            ) {
+                Text(stringResourceIn(bibleLanguage, R.string.crisis_helpline_emergency))
+            }
+        }
+    }
+}
+
+/** Tele-MANAS, India's national tele-mental-health helpline (free, 24x7, 20+ languages). */
+private const val TELE_MANAS_NUMBER = "14416"
+
+/** India's single national emergency number. */
+private const val EMERGENCY_NUMBER = "112"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun CrisisAiSection(
@@ -231,6 +310,11 @@ private fun CrisisAiSection(
                 enabled = !isAiLoading,
                 modifier = Modifier.fillMaxWidth()
             )
+            Text(
+                text = stringResourceIn(bibleLanguage, R.string.crisis_ai_privacy_note),
+                style = MaterialTheme.typography.bodySmall,
+                color = MannaTheme.colors.muted
+            )
 
             if (isAiLoading) {
                 Row(
@@ -256,7 +340,13 @@ private fun CrisisAiSection(
                     style = MaterialTheme.typography.bodySmall,
                     color = MannaTheme.colors.muted
                 )
-                is CrisisAiResult.Unavailable -> Unit
+                // Never answer someone in crisis with silence: say so gently and point
+                // to the offline verses below.
+                is CrisisAiResult.Unavailable -> Text(
+                    text = stringResourceIn(bibleLanguage, R.string.crisis_ai_unavailable),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MannaTheme.colors.soft
+                )
                 null -> Unit
             }
         } else {

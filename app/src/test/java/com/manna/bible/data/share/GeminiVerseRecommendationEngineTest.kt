@@ -7,6 +7,7 @@ import com.manna.bible.data.remote.GeminiContentDto
 import com.manna.bible.data.remote.GeminiPartDto
 import com.manna.bible.data.remote.GeminiRequestDto
 import com.manna.bible.data.remote.GeminiResponseDto
+import com.manna.bible.data.remote.GeminiThinkingConfigDto
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.CanonType
 import com.manna.bible.domain.model.Denomination
@@ -176,6 +177,24 @@ class GeminiVerseRecommendationEngineTest {
         canonType = CanonType.PROTESTANT_66, hasDeuterocanon = false,
         isDownloaded = true, isBundled = true
     )
+
+    @Test
+    @DisplayName("Thinking is disabled so the 256-token budget goes to the answer")
+    fun thinkingDisabled() = runTest {
+        var sent: GeminiRequestDto? = null
+        val api = object : GeminiApi {
+            override suspend fun generate(
+                model: String,
+                key: String,
+                body: GeminiRequestDto
+            ): GeminiResponseDto {
+                sent = body
+                return successDto("REF: EPH.5.25\nDISPLAY: Ephesians 5:25\nMESSAGE: Grace.")
+            }
+        }
+        engine(api).recommend(request())
+        assertEquals(GeminiThinkingConfigDto.OFF, sent?.generationConfig?.thinkingConfig)
+    }
 
     private class FakeApi(
         private val behavior: suspend () -> GeminiResponseDto

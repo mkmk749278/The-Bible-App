@@ -22,6 +22,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -68,7 +70,11 @@ class MediaPlaybackService : Service() {
         }
         if (!started) {
             started = true
-            startForegroundCompat(buildNotification())
+            if (!startForegroundCompat(buildNotification())) {
+                // The OS refused foreground status; playback continues without it.
+                stopSelf()
+                return START_NOT_STICKY
+            }
             requestAudioFocus()
             observe()
         }
@@ -79,8 +85,18 @@ class MediaPlaybackService : Service() {
         scope.launch {
             combine(ttsReader.state, narratedPlayer.state) { tts, narrated ->
                 tts.status != TtsStatus.IDLE || narrated.status != TtsStatus.IDLE
-            }.collect { active ->
-                if (active) updateNotification() else stopNow()
+            }.collectLatest { active ->
+                if (active) {
+                    updateNotification()
+                } else {
+                    // Continuous play passes through idle between chapters (the next chapter
+                    // loads, and may look up narrated audio). Stopping here would drop
+                    // foreground status, and Android won't let a backgrounded app start it
+                    // again — so the screen-off listener would lose audio after one chapter.
+                    // Wait briefly; a new chapter starting cancels this stop.
+                    delay(IDLE_STOP_GRACE_MS)
+                    stopNow()
+                }
             }
         }
     }
@@ -147,12 +163,19 @@ class MediaPlaybackService : Service() {
         stopSelf()
     }
 
-    private fun startForegroundCompat(notification: Notification) {
+    /** Enters the foreground; false if the OS refuses (e.g. a disallowed background start). */
+    private fun startForegroundCompat(notification: Notification): Boolean = try {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK)
         } else {
             startForeground(NOTIFICATION_ID, notification)
         }
+        true
+    } catch (e: IllegalStateException) {
+        // ForegroundServiceStartNotAllowedException (API 31+) extends IllegalStateException.
+        false
+    } catch (e: SecurityException) {
+        false
     }
 
     private fun updateNotification() {
@@ -166,7 +189,7 @@ class MediaPlaybackService : Service() {
         val toggleLabel =
             if (playing) R.string.media_notification_pause else R.string.media_notification_play
         return Notification.Builder(this, CHANNEL_ID)
-            .setSmallIcon(applicationInfo.icon)
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(getString(R.string.media_notification_title))
             .setContentText(getString(R.string.media_notification_text))
             .setOngoing(true)
@@ -218,5 +241,8 @@ class MediaPlaybackService : Service() {
         const val NOTIFICATION_ID = 2003
         const val ACTION_STOP = "com.manna.bible.action.STOP_AUDIO"
         const val ACTION_TOGGLE = "com.manna.bible.action.TOGGLE_AUDIO"
+
+        /** How long playback may sit idle before the service stops (spans chapter changes). */
+        const val IDLE_STOP_GRACE_MS = 8_000L
     }
 }

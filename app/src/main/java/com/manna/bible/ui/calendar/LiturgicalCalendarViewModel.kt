@@ -14,6 +14,7 @@ import com.manna.bible.domain.canon.CanonEngine
 import com.manna.bible.domain.daily.DailyVerseProvider
 import com.manna.bible.domain.model.CanonProfile
 import com.manna.bible.domain.model.Denomination
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.ShareReferenceFormatter
@@ -239,7 +240,7 @@ class LiturgicalCalendarViewModel @Inject constructor(
         val content = runCatching {
             bibleContentRepository.chapter(translation.id, ref.osisId, ref.chapter)
         }.getOrNull()
-        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text ?: return null
+        val text = content?.lineCarrying(ref.verse)?.text ?: return null
         val reference = referenceFormatter.formatReference(
             ctx.profile, ctx.language, ref.osisId, ref.chapter, ref.verse
         )

@@ -32,9 +32,10 @@ sealed interface GateState {
  * Stealth-Mode credential.
  *
  * Starts as [GateState.Loading] until DataStore emits. When setup is complete but Stealth Mode
- * is armed with a PIN, the gate is [GateState.Locked] until [unlock] is called for the session
- * (after the disguised lock screen accepts the PIN); otherwise it resolves to [GateState.Ready]
- * or [GateState.NeedsSetup].
+ * is armed with a PIN, the gate is [GateState.Locked] until [unlock] is called (after the
+ * disguised lock screen accepts the PIN); otherwise it resolves to [GateState.Ready] or
+ * [GateState.NeedsSetup]. The host calls [lock] whenever the app leaves the screen, so an
+ * unlocked session never survives the phone being handed to — or taken by — someone else.
  */
 @HiltViewModel
 class AppGateViewModel @Inject constructor(
@@ -62,8 +63,31 @@ class AppGateViewModel @Inject constructor(
             initialValue = GateState.Loading,
         )
 
-    /** Clears the stealth lock for this session after the correct PIN is entered. */
+    /**
+     * True while Stealth Mode is armed with a PIN. The host uses it to keep scripture out of
+     * the Recents thumbnail and screenshots (`FLAG_SECURE`).
+     */
+    val stealthArmed: StateFlow<Boolean> =
+        combine(
+            preferencesStore.stealthEnabled,
+            preferencesStore.stealthPinCredential,
+        ) { stealthOn, credential -> stealthOn && credential.isNotBlank() }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = false,
+            )
+
+    /** Clears the stealth lock after the correct PIN is entered. */
     fun unlock() {
         unlocked.value = true
+    }
+
+    /**
+     * Re-arms the stealth lock (called when the app goes to the background). A no-op in
+     * effect when Stealth Mode is off, since the gate only consults the lock while armed.
+     */
+    fun lock() {
+        unlocked.value = false
     }
 }

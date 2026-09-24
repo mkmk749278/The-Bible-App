@@ -6,7 +6,9 @@ import com.manna.bible.data.remote.GeminiContentDto
 import com.manna.bible.data.remote.GeminiGenerationConfigDto
 import com.manna.bible.data.remote.GeminiPartDto
 import com.manna.bible.data.remote.GeminiRequestDto
+import com.manna.bible.data.remote.GeminiThinkingConfigDto
 import com.manna.bible.domain.model.Denomination
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.share.VerseRecommendation
@@ -65,7 +67,8 @@ class GeminiVerseRecommendationEngine @Inject constructor(
                     ),
                     generationConfig = GeminiGenerationConfigDto(
                         temperature = 0.4f,
-                        maxOutputTokens = 256
+                        maxOutputTokens = 256,
+                        thinkingConfig = GeminiThinkingConfigDto.OFF
                     )
                 )
             )
@@ -140,7 +143,7 @@ class GeminiVerseRecommendationEngine @Inject constructor(
         val content = runCatching {
             bibleContentRepository.chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull()
-        val verseText = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+        val verseText = content?.lineCarrying(ref.verse)?.text
             ?: return VerseRecommendation.Unavailable(VERSE_NOT_FOUND)
 
         // Prefer a reference built from the active translation's book name; fall back to

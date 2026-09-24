@@ -28,7 +28,7 @@ class DefaultTranslationRepository @Inject constructor(
 
     override suspend fun refreshCatalog() {
         if (connectivity.isOnline()) {
-            local.upsertAll(remote.fetchCatalog())
+            local.mergeRemoteCatalog(remote.fetchCatalog())
         }
     }
 

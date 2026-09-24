@@ -9,6 +9,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 
@@ -51,18 +52,32 @@ class HelloAoChapterAudioSourceTest {
         assertNull(source.audioUrl("web", "JHN", 3))
     }
 
+    @Test
+    @DisplayName("gives up on a slow lookup so on-device reading can start promptly")
+    fun slowLookupTimesOut() = runTest {
+        val source = HelloAoChapterAudioSource(
+            FakeRemote(url = "https://audio.example/jhn3.mp3", delayMs = 30_000),
+            FakeConnectivity(true),
+            lookupTimeoutMs = 4_000
+        )
+        assertNull(source.audioUrl("web", "JHN", 3))
+        assertTrue(testScheduler.currentTime <= 4_000, "must not wait for the full network timeout")
+    }
+
     private class FakeConnectivity(private val online: Boolean) : ConnectivityChecker {
         override fun isOnline(): Boolean = online
     }
 
     private class FakeRemote(
         private val url: String? = null,
-        private val throwOnAudio: Boolean = false
+        private val throwOnAudio: Boolean = false,
+        private val delayMs: Long = 0
     ) : HelloAoRemoteDataSource {
         var audioRequested = false
 
         override suspend fun chapterAudioUrl(id: String, osisId: String, chapter: Int): String? {
             audioRequested = true
+            if (delayMs > 0) kotlinx.coroutines.delay(delayMs)
             if (throwOnAudio) throw RuntimeException("boom")
             return url
         }

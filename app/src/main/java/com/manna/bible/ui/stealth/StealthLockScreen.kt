@@ -16,12 +16,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 
 /**
  * The disguised Stealth (Persecution) Mode lock. To anyone glancing at the device it
@@ -47,14 +49,16 @@ fun StealthLockScreen(
  * The stateless calculator-disguise keypad. Split out from [StealthLockScreen] so it
  * can be driven directly in UI tests (it takes a plain [verify] predicate instead of a
  * ViewModel). Entering digits and pressing "=" calls [verify]; a true result unlocks.
+ * [verify] may suspend (the real check runs PBKDF2 off the main thread).
  */
 @Composable
 fun StealthCalculator(
-    verify: (String) -> Boolean,
+    verify: suspend (String) -> Boolean,
     onUnlock: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var display by remember { mutableStateOf("0") }
+    val scope = rememberCoroutineScope()
 
     fun append(digit: String) {
         display = if (display == "0") digit else (display + digit).take(MAX_DIGITS)
@@ -69,11 +73,14 @@ fun StealthCalculator(
     }
 
     fun equals() {
-        if (verify(display)) {
-            onUnlock()
-        } else {
-            // Behave like a calculator that simply finished: reset, reveal nothing.
-            display = "0"
+        val entered = display
+        scope.launch {
+            if (verify(entered)) {
+                onUnlock()
+            } else {
+                // Behave like a calculator that simply finished: reset, reveal nothing.
+                display = "0"
+            }
         }
     }
 

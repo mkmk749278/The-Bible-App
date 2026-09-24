@@ -90,6 +90,25 @@ class TranslationCatalogViewModelTest {
     }
 
     @Test
+    @DisplayName("bundled editions are flagged so the screen offers no pointless delete")
+    fun flagsBundledEditions() = runTest {
+        val prefs = FakePreferencesStore(bibleLanguage = "te", activeId = "tel_irv")
+        val vm = viewModel(
+            catalog = listOf(
+                translation("tel_irv", "te", downloaded = true).copy(isBundled = true),
+                translation("te_dl", "te", downloaded = true)
+            ),
+            prefs = prefs
+        )
+
+        advanceUntilIdle()
+
+        val items = vm.uiState.value.items.associateBy { it.id }
+        assertTrue(items.getValue("tel_irv").isBundled)
+        assertFalse(items.getValue("te_dl").isBundled)
+    }
+
+    @Test
     @DisplayName("download success makes the edition active when none is active yet")
     fun downloadSetsActiveWhenNone() = runTest {
         val prefs = FakePreferencesStore(bibleLanguage = "te", activeId = null)

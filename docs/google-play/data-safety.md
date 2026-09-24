@@ -4,6 +4,25 @@ Use these answers in **Play Console → App content → Data safety**. They refl
 app's actual behaviour (verified in code: no analytics, no ads, no account, local-only
 user data; network only to `bible.helloao.org` and, optionally, the Gemini API).
 
+> **⚠️ Updated 2026-09-24 — the "no data collected" answer is no longer correct.**
+> Since v0.2.8 the optional AI features send user-provided data to Google's Gemini API:
+> the text a user types into the **Crisis companion** and the **verse-card occasion**
+> box, and the **church tradition** chosen at setup (added to every AI prompt). Declare it:
+>
+> | Data type (Play category) | Collected | Shared | Ephemeral | Optional | Purpose |
+> |---|---|---|---|---|---|
+> | App activity → **Other user-generated content** (crisis / occasion text) | Yes | No — Google acts as a service provider | Yes* | Yes | App functionality |
+> | Personal info → **Religious or political beliefs** (church tradition in AI prompts) | Yes | No — service provider | Yes* | Yes | App functionality |
+>
+> Scripture text, references and the Bible language are not user data. Everything else
+> below (notes, highlights, prayers, settings on-device only) still holds.
+>
+> \* Answer "processed ephemerally" **only if the Gemini API key belongs to a paid
+> (billing-enabled) Google Cloud project.** On the free tier Google may retain prompts and
+> use them to improve its products (with human review), which is not ephemeral and must be
+> disclosed — and is a poor fit for crisis and persecution text. Move the key to a paid
+> project before relying on this answer.
+
 ## Overview questions
 
 - **Does your app collect or share any of the required user data types?** → **No.**

@@ -90,7 +90,8 @@ class ReaderViewModelTest {
         chapterAudioSource: ChapterAudioSource = FakeChapterAudioSource(),
         explanationRepository: com.manna.bible.domain.explain.ExplanationRepository =
             FakeExplanationRepository(),
-        speechEngine: FakeSpeechEngine = FakeSpeechEngine()
+        speechEngine: FakeSpeechEngine = FakeSpeechEngine(),
+        translations: FakeTranslationRepository = FakeTranslationRepository()
     ): ReaderViewModel {
         val getChapter = GetChapterUseCase(content)
         return ReaderViewModel(
@@ -103,7 +104,7 @@ class ReaderViewModelTest {
             preferencesStore = prefs,
             annotationRepository = annotations,
             bibleContentRepository = content,
-            translationRepository = FakeTranslationRepository(),
+            translationRepository = translations,
             downloadManager = FakeDownloadManager(),
             ttsReader = ttsReader,
             narratedPlayer = narratedPlayer,
@@ -259,6 +260,41 @@ class ReaderViewModelTest {
     }
 
     @Test
+    @DisplayName("a reader opened while the bundled Bibles are installing opens once they land")
+    fun opensWhenBundledContentFinishesInstalling() = runTest {
+        val content = protestantContent().apply { available = false }
+        val web = Translation(
+            id = "web",
+            name = "World English Bible",
+            languageCode = "en",
+            canonType = CanonType.PROTESTANT_66,
+            hasDeuterocanon = false
+        )
+        val catalog = MutableStateFlow(listOf(web))
+        val vm = viewModel(content = content, translations = FakeTranslationRepository(catalog))
+
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.isEmptyContent, "nothing to show while the Bible is installing")
+
+        // Content appearing without the translation being marked downloaded (e.g. a download
+        // that has written its first books) must not open a partial Bible.
+        content.available = true
+        catalog.value = listOf(web.copy(name = "World English Bible (refreshed)"))
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.isEmptyContent, "a partially written Bible must not open")
+
+        // The seeder finishes: content is written, then the catalog row is registered.
+        content.available = true
+        catalog.value = listOf(web.copy(isDownloaded = true, isBundled = true))
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertFalse(state.isEmptyContent)
+        assertEquals("GEN", state.osisId)
+        assertEquals(listOf("In the beginning", "And the earth"), state.verses.map { it.text })
+    }
+
+    @Test
     @DisplayName("nextChapter advances within the book (Req 3.1)")
     fun nextChapterAdvances() = runTest {
         val vm = viewModel()
@@ -311,6 +347,44 @@ class ReaderViewModelTest {
             vm.toggleHighlight(1)
             advanceUntilIdle()
             assertFalse(expectMostRecentItem().verses.first { it.verse == 1 }.hasHighlight)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    @DisplayName("jumping to a verse the edition merged into its neighbour lands on that neighbour")
+    fun openAtMergedVerseLandsOnCarrier() = runTest {
+        // Like the Telugu IRV: verse 3 is printed inside verse 2, so there is no row 3.
+        val vm = viewModel(content = mergedContent())
+        advanceUntilIdle()
+
+        vm.openAt("GEN", 1, 3)
+        advanceUntilIdle()
+
+        val state = vm.uiState.value
+        assertEquals(2, state.highlightedVerse)
+        assertEquals(2, state.scrollToVerse)
+    }
+
+    @Test
+    @DisplayName("an annotation on a merged verse shows on, and is removed from, the carrying row")
+    fun annotationOnMergedVerseShowsOnCarrier() = runTest {
+        val annotations = FakeAnnotationRepository()
+        // e.g. highlighted in English, where verse 3 has its own row.
+        annotations.addHighlight("GEN.1.3", colorArgb = 1)
+        val vm = viewModel(content = mergedContent(), annotations = annotations)
+
+        vm.uiState.test {
+            advanceUntilIdle()
+            val rows = expectMostRecentItem().verses.associateBy { it.verse }
+            assertTrue(rows.getValue(2).hasHighlight, "verse 2 carries verse 3's highlight")
+            assertFalse(rows.getValue(1).hasHighlight)
+
+            // "Remove highlight" on the carrying row removes the merged verse's highlight
+            // instead of adding a second one.
+            vm.toggleHighlight(2)
+            advanceUntilIdle()
+            assertFalse(expectMostRecentItem().verses.first { it.verse == 2 }.hasHighlight)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -491,6 +565,22 @@ class ReaderViewModelTest {
         )
     )
 
+    /** Genesis 1 with verse 3 merged into verse 2 (no row 3), as some editions print it. */
+    private fun mergedContent() = FakeBibleContentRepository(
+        books = listOf(
+            BookSummary("GEN", "Genesis", Testament.OLD, orderIndex = 0, chapterCount = 1)
+        ),
+        chapters = mapOf(
+            "GEN" to mapOf(
+                1 to listOf(
+                    VerseLine(1, "In the beginning"),
+                    VerseLine(2, "And the earth ... And God said, Let there be light"),
+                    VerseLine(4, "And God saw the light")
+                )
+            )
+        )
+    )
+
     private fun psalmContent() = FakeBibleContentRepository(
         books = listOf(
             BookSummary("PSA", "Psalms", Testament.OLD, orderIndex = 0, chapterCount = 150)
@@ -511,7 +601,10 @@ class ReaderViewModelTest {
             return ChapterContent(translationId, osisId, chapter, verses)
         }
 
-        override suspend fun hasContent(translationId: String): Boolean = books.isNotEmpty()
+        /** False simulates a translation whose content is not installed yet. */
+        var available: Boolean = true
+
+        override suspend fun hasContent(translationId: String): Boolean = available && books.isNotEmpty()
 
         override suspend fun search(translationId: String, query: String): List<VerseMatch> = emptyList()
     }
@@ -648,8 +741,10 @@ class ReaderViewModelTest {
         }
     }
 
-    private class FakeTranslationRepository : TranslationRepository {
-        override fun catalog(): Flow<List<Translation>> = flowOf(emptyList())
+    private class FakeTranslationRepository(
+        private val catalogFlow: Flow<List<Translation>> = flowOf(emptyList())
+    ) : TranslationRepository {
+        override fun catalog(): Flow<List<Translation>> = catalogFlow
         override suspend fun refreshCatalog() {}
         override suspend fun download(id: String): DownloadResult = DownloadResult.Success
         override suspend fun markPendingDownload(id: String) {}

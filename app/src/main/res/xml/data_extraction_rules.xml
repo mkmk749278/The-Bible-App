@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 12+ backup policy, made explicit (android:allowBackup="false" alone no longer
+  covers device-to-device transfer on these versions).
+
+  - Cloud backup: nothing. Notes, prayers, highlights and Stealth Mode settings are private
+    spiritual data — and a safety concern for persecuted users — so they never go to a
+    Google account backup.
+  - Device-to-device transfer (setting up a new phone from the old one, over cable or
+    local Wi-Fi): everything moves across, so a user who changes phones keeps their notes.
+    Manna has no sync server, so this is the only way that data can follow the user.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="root" path="." />
+        <exclude domain="file" path="." />
+        <exclude domain="database" path="." />
+        <exclude domain="sharedpref" path="." />
+        <exclude domain="external" path="." />
+    </cloud-backup>
+    <device-transfer />
+</data-extraction-rules>

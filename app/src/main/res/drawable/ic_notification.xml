@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Status-bar / notification small icon: the Manna "M" mark as a single-colour silhouette.
+  Android renders small icons from their alpha channel only, so the full-colour launcher
+  icon shows up as a blank square; this glyph stays legible.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="44"
+    android:viewportHeight="44">
+    <group
+        android:translateX="-32"
+        android:translateY="-34">
+        <path
+            android:fillColor="#FFFFFFFF"
+            android:pathData="M36,42 L46,42 L54,58 L62,42 L72,42 L72,70 L64,70 L64,54 L56,68 L52,68 L44,54 L44,70 L36,70 Z" />
+    </group>
+</vector>

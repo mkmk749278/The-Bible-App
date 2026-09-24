@@ -35,7 +35,7 @@ class StealthSettingsViewModelTest {
     @DisplayName("enabling with a valid, confirmed PIN arms the mode and stores a hash")
     fun enableArms() = runTest {
         val store = FakePreferencesStore()
-        val vm = StealthSettingsViewModel(store)
+        val vm = StealthSettingsViewModel(store, dispatcher)
         backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("4821", "4821")
@@ -53,7 +53,7 @@ class StealthSettingsViewModelTest {
     @DisplayName("a too-short PIN is rejected without persisting")
     fun rejectsShortPin() = runTest {
         val store = FakePreferencesStore()
-        val vm = StealthSettingsViewModel(store)
+        val vm = StealthSettingsViewModel(store, dispatcher)
         backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("12", "12")
@@ -67,7 +67,7 @@ class StealthSettingsViewModelTest {
     @DisplayName("a mismatched confirmation is rejected")
     fun rejectsMismatch() = runTest {
         val store = FakePreferencesStore()
-        val vm = StealthSettingsViewModel(store)
+        val vm = StealthSettingsViewModel(store, dispatcher)
         backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("4821", "9999")
@@ -81,7 +81,7 @@ class StealthSettingsViewModelTest {
     @DisplayName("disabling requires the correct PIN")
     fun disableRequiresPin() = runTest {
         val store = FakePreferencesStore()
-        val vm = StealthSettingsViewModel(store)
+        val vm = StealthSettingsViewModel(store, dispatcher)
         backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("4821", "4821")
@@ -101,7 +101,7 @@ class StealthSettingsViewModelTest {
     @DisplayName("changing the PIN requires the current PIN and updates the credential")
     fun changePin() = runTest {
         val store = FakePreferencesStore()
-        val vm = StealthSettingsViewModel(store)
+        val vm = StealthSettingsViewModel(store, dispatcher)
         backgroundScope.launch { vm.uiState.collect {} }
 
         vm.enable("1111", "1111")

@@ -9,6 +9,7 @@ import com.manna.bible.domain.crisis.CrisisCompanion
 import com.manna.bible.domain.crisis.NightWindow
 import com.manna.bible.domain.crisis.PersecutionCategory
 import com.manna.bible.domain.crisis.PersecutionCompanion
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.usecase.ReadingRef
@@ -215,7 +216,7 @@ class CrisisModeViewModel @Inject constructor(
         val content = runCatching {
             bibleContentRepository.chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull()
-        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+        val text = content?.lineCarrying(ref.verse)?.text
             ?: return@mapNotNull null
         val name = bookNames[ref.osisId] ?: ref.osisId
         ComfortVerse(

@@ -35,6 +35,8 @@ class StealthCalculatorTest {
         composeRule.onNodeWithText("2").performClick()
         composeRule.onNodeWithText("1").performClick()
         composeRule.onNodeWithText("=").performClick()
+        // The PIN check suspends (PBKDF2 runs off the main thread in the app).
+        composeRule.waitForIdle()
 
         assertTrue("entering the correct PIN should unlock", unlocked)
     }
@@ -51,6 +53,7 @@ class StealthCalculatorTest {
         composeRule.onNodeWithText("9").performClick()
         composeRule.onNodeWithText("9").performClick()
         composeRule.onNodeWithText("=").performClick()
+        composeRule.waitForIdle()
 
         assertFalse("a wrong PIN must not unlock", unlocked)
         // The display reset to 0, revealing nothing about a hidden app.

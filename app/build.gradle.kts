@@ -29,15 +29,14 @@ fun buildSecret(name: String): String =
 
 android {
     namespace = "com.manna.bible"
-    // NOTE: CLAUDE.md specifies compile/target SDK 36 (for Gemini Nano). We use 35
-    // here for reliable CI builds with AGP 8.7.x. Bump to 36 when that toolchain
-    // is stable and the on-device AI feature lands.
-    compileSdk = 35
+    // Android 16. Google Play rejects app updates targeting a lower API level since
+    // 31 Aug 2026 (see the target-API requirement in the Play Console help).
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.manna.bible"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 209
         versionName = "0.2.9"
 
@@ -161,6 +160,13 @@ play {
     resolutionStrategy.set(com.github.triplet.gradle.androidpublisher.ResolutionStrategy.IGNORE)
 }
 
+// Room writes each database version's schema to app/schemas/ (committed). This keeps
+// schema changes visible in review and lets migrations be tested against the real
+// historical schema instead of a hand-reconstructed one.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 /**
  * Regenerates the committed offline Bible assets under `src/main/assets/bibles/`
  * from the Free Use Bible API. Developer/CI tool only — the assets are committed,
@@ -210,7 +216,6 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.kotlinx.converter)
     implementation(libs.okhttp)
-    implementation(libs.okhttp.logging)
 
     // Media3 (ExoPlayer) — streams human-narrated chapter audio (Req 9.8).
     implementation(libs.androidx.media3.exoplayer)

@@ -17,8 +17,8 @@ class RoomTranslationLocalDataSource @Inject constructor(
     override fun catalog(): Flow<List<Translation>> =
         dao.observeAll().map { rows -> rows.map { it.toDomain() } }
 
-    override suspend fun upsertAll(translations: List<Translation>) {
-        dao.upsertAll(translations.map { it.toEntity() })
+    override suspend fun mergeRemoteCatalog(translations: List<Translation>) {
+        dao.mergeRemoteCatalog(translations.map { it.toEntity() })
     }
 
     override suspend fun setDownloaded(id: String, sizeBytes: Long) {

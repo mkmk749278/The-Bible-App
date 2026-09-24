@@ -25,4 +25,15 @@
     <string name="crisis_ai_offline_hint">AI response needs internet. The verses below work offline.</string>
     <string name="crisis_ai_submit">Send</string>
     <string name="crisis_ai_thinking">Finding a passage for you…</string>
+
+    <!-- Talk to someone now: human help is always one tap away in Crisis Mode. -->
+    <string name="crisis_helpline_title">Talk to someone now</string>
+    <string name="crisis_helpline_body">If you are thinking of ending your life, or you are in danger, please call. A real person will answer.</string>
+    <string name="crisis_helpline_telemanas">Tele-MANAS · 14416</string>
+    <string name="crisis_helpline_telemanas_detail">Free, 24 hours, in your language</string>
+    <string name="crisis_helpline_emergency">Emergency · 112</string>
+    <string name="crisis_helpline_call_telemanas">Call Tele-MANAS on 14416</string>
+    <string name="crisis_helpline_call_emergency">Call emergency services on 112</string>
+    <string name="crisis_ai_privacy_note">What you type is sent to Google Gemini to find a passage. It is not saved in Manna. Please don\'t include names.</string>
+    <string name="crisis_ai_unavailable">I couldn\'t find a passage just now. The verses below are here for you.</string>
 </resources>

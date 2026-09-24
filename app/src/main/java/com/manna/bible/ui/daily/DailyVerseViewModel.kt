@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import com.manna.bible.domain.translation.Translation
@@ -69,7 +70,7 @@ class DailyVerseViewModel @Inject constructor(
             val content = runCatching {
                 bibleContentRepository.chapter(translation.id, ref.osisId, ref.chapter)
             }.getOrNull()
-            val verseText = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+            val verseText = content?.lineCarrying(ref.verse)?.text
             if (verseText == null) {
                 _uiState.value = DailyVerseUiState(isLoading = false, unavailable = true)
                 return@launch

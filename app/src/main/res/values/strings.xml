@@ -130,6 +130,9 @@
     <string name="catalog_cancel">Cancel</string>
     <string name="catalog_delete">Delete</string>
     <string name="catalog_use">Use</string>
+    <string name="catalog_built_in">Built in</string>
+    <string name="catalog_delete_confirm_title">Delete %1$s?</string>
+    <string name="catalog_delete_confirm_body">You can download it again later, but that needs an internet connection and can take a long time.</string>
     <string name="catalog_offline">You\'re offline. Downloaded translations still work; connect to add more.</string>
     <string name="catalog_error">Something went wrong. Please try again.</string>
     <string name="catalog_empty">No translations for this language yet. Connect to the internet to download one.</string>

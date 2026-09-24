@@ -19,10 +19,14 @@ import androidx.room.RoomDatabase
  *  - v5: adds the [ExplanationEntity] `explanations` cache table.
  *  - v6: adds the [SermonNoteEntity] `sermon_notes` table (Sermon Helper, Phase 3).
  *
- * The v2 -> v3 upgrade is fully additive and preserves all existing data: see
- * [MIGRATION_2_3]. Annotations live in Room and are left untouched; preferences
- * live in DataStore (outside Room) and are unaffected. The Hilt builder
- * (task 14.1) wires this migration via `.addMigrations(MIGRATION_2_3)`.
+ * Every upgrade from v2 is additive and preserves all existing data (see [ALL_MIGRATIONS]).
+ * Annotations live in Room and are left untouched; preferences live in DataStore (outside
+ * Room) and are unaffected.
+ *
+ * The schema is exported to `app/schemas/` so each version is reviewable in diffs and
+ * future migrations can be verified against the real historical schema. **Any schema
+ * change must bump [version] and add a migration** — the database is never wiped to make
+ * an upgrade "work", because highlights, notes and prayers exist nowhere else.
  */
 @Database(
     entities = [
@@ -40,7 +44,7 @@ import androidx.room.RoomDatabase
         SermonNoteEntity::class
     ],
     version = 6,
-    exportSchema = false
+    exportSchema = true
 )
 abstract class MannaDatabase : RoomDatabase() {
     abstract fun translationDao(): TranslationDao

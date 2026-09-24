@@ -3,8 +3,9 @@
 An **offline-first, India-focused Bible app** for the most underserved Christians —
 the illiterate, the elderly, the persecuted, and the rural.
 
-- **Dual-language** — the app UI language and the Bible text language are independent
-  (e.g. Tamil UI + English Bible).
+- **Dual-language** — the Bible language is chosen independently of the interface:
+  scripture, prayers and AI answers follow your Bible language, while the interface
+  follows the phone's language (English, Tamil, Telugu, Hindi, Malayalam).
 - **Offline-first** — every core feature works without internet. Five Bibles ship in
   the app (English WEB + Tamil/Hindi/Telugu/Malayalam IRV); more download on demand.
 - **Audio-first** — on-device text-to-speech and (where available) human-narrated audio.
@@ -18,7 +19,7 @@ the illiterate, the elderly, the persecuted, and the rural.
 
 Kotlin · Jetpack Compose (Material 3) · Room · Hilt · DataStore · Retrofit/OkHttp ·
 Media3/ExoPlayer · Glance widgets. Bible content comes from the key-less, MIT-licensed
-[Free Use Bible API](https://bible.helloao.org/). Min SDK 26, target/compile SDK 35.
+[Free Use Bible API](https://bible.helloao.org/). Min SDK 26, target/compile SDK 36.
 
 ## Build
 
@@ -29,8 +30,12 @@ Media3/ExoPlayer · Glance widgets. Bible content comes from the key-less, MIT-l
 ./gradlew :app:prepareBundledBibles   # regenerate the committed offline Bibles
 ```
 
+Changing a Room entity? Bump the database version, add a migration to `ALL_MIGRATIONS`,
+commit the regenerated schema under `app/schemas/`, and keep `MigrationsTest` green — the
+app never wipes user data to get past a schema change.
+
 The Android toolchain (lint + unit tests + APK) runs in CI on every pull request to
-`main` via [`.github/workflows/android-build.yml`](.github/workflows/android-build.yml).
+`main` and `develop` via [`.github/workflows/android-build.yml`](.github/workflows/android-build.yml).
 Signed release APK + AAB are built by
 [`.github/workflows/android-release.yml`](.github/workflows/android-release.yml) on a
 `v*.*.*` tag.

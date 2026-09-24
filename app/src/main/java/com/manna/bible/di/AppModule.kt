@@ -3,25 +3,24 @@ package com.manna.bible.di
 import android.content.Context
 import androidx.room.Room
 import com.manna.bible.BuildConfig
+import com.manna.bible.data.local.ALL_MIGRATIONS
 import com.manna.bible.data.local.AnnotationDao
 import com.manna.bible.data.local.BibleContentDao
 import com.manna.bible.data.local.ExplanationDao
-import com.manna.bible.data.local.MIGRATION_2_3
-import com.manna.bible.data.local.MIGRATION_3_4
-import com.manna.bible.data.local.MIGRATION_4_5
-import com.manna.bible.data.local.MIGRATION_5_6
 import com.manna.bible.data.local.MannaDatabase
 import com.manna.bible.data.local.PendingDownloadDao
 import com.manna.bible.data.local.PrayerDao
 import com.manna.bible.data.local.SermonDao
 import com.manna.bible.data.local.TranslationDao
 import com.manna.bible.data.remote.GeminiApi
+import com.manna.bible.data.remote.GoogleApiAppIdentityInterceptor
 import com.manna.bible.data.remote.HelloAoApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -66,17 +65,26 @@ object AppModule {
     fun provideDownloadScope(): CoroutineScope =
         CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    /** Dispatcher for CPU-bound work kept off the main thread (see [DefaultDispatcher]). */
+    @Provides
+    @DefaultDispatcher
+    fun provideDefaultDispatcher(): CoroutineDispatcher = Dispatchers.Default
+
     /**
-     * The app's [MannaDatabase]. Applies the additive [MIGRATION_2_3] (offline
-     * content tables) and keeps destructive fallback as a last resort so an
-     * unexpected schema mismatch never hard-crashes startup.
+     * The app's [MannaDatabase], upgraded through the additive [ALL_MIGRATIONS].
+     *
+     * There is deliberately no blanket `fallbackToDestructiveMigration()`: it would
+     * silently delete every highlight, note, bookmark, prayer and sermon note the moment
+     * a future schema bump forgot its migration — and with backup disabled, that data
+     * would be gone for good. Only v1 (a pre-release schema with no user data tables)
+     * may be recreated from scratch.
      */
     @Provides
     @Singleton
     fun provideMannaDatabase(@ApplicationContext context: Context): MannaDatabase =
         Room.databaseBuilder(context, MannaDatabase::class.java, "manna.db")
-            .addMigrations(MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
-            .fallbackToDestructiveMigration()
+            .addMigrations(*ALL_MIGRATIONS)
+            .fallbackToDestructiveMigrationFrom(1)
             .build()
 
     @Provides
@@ -132,13 +140,24 @@ object AppModule {
 
     /**
      * The Gemini REST API. Built on its own base URL (reusing the shared JSON parser
-     * and OkHttp client) so it stays independent of the Bible-content Retrofit.
+     * and the shared OkHttp connection pool) so it stays independent of the
+     * Bible-content Retrofit. Its client adds the app-identity headers that let the API
+     * key be restricted to this app (see [GoogleApiAppIdentityInterceptor]); those
+     * headers are never sent to the Bible content host.
      */
     @Provides
     @Singleton
-    fun provideGeminiApi(json: Json, client: OkHttpClient): GeminiApi = Retrofit.Builder()
+    fun provideGeminiApi(
+        @ApplicationContext context: Context,
+        json: Json,
+        client: OkHttpClient
+    ): GeminiApi = Retrofit.Builder()
         .baseUrl(GEMINI_BASE_URL)
-        .client(client)
+        .client(
+            client.newBuilder()
+                .addInterceptor(GoogleApiAppIdentityInterceptor.forApp(context))
+                .build()
+        )
         .addConverterFactory(json.asConverterFactory(JSON_MEDIA_TYPE.toMediaType()))
         .build()
         .create(GeminiApi::class.java)

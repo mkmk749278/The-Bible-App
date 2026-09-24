@@ -5,6 +5,7 @@ import com.manna.bible.data.remote.GeminiContentDto
 import com.manna.bible.data.remote.GeminiGenerationConfigDto
 import com.manna.bible.data.remote.GeminiPartDto
 import com.manna.bible.data.remote.GeminiRequestDto
+import com.manna.bible.data.remote.GeminiThinkingConfigDto
 import com.manna.bible.domain.model.Denomination
 import com.manna.bible.domain.sermon.CongregationType
 import com.manna.bible.domain.sermon.SermonAiEngine
@@ -50,7 +51,8 @@ class GeminiSermonEngine @Inject constructor(
                     ),
                     generationConfig = GeminiGenerationConfigDto(
                         temperature = 0.5f,
-                        maxOutputTokens = 1024
+                        maxOutputTokens = 1024,
+                        thinkingConfig = GeminiThinkingConfigDto.OFF
                     )
                 )
             )

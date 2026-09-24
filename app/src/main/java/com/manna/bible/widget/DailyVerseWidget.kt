@@ -26,6 +26,7 @@ import com.manna.bible.MainActivity
 import com.manna.bible.R
 import com.manna.bible.data.preferences.PreferencesStore
 import com.manna.bible.domain.daily.DailyVerseProvider
+import com.manna.bible.domain.reader.lineCarrying
 import com.manna.bible.domain.repository.BibleContentRepository
 import com.manna.bible.domain.repository.TranslationRepository
 import dagger.hilt.EntryPoint
@@ -71,6 +72,13 @@ class DailyVerseWidget : GlanceAppWidget() {
         val fallbackTitle = context.getString(R.string.widget_title)
         val fallbackBody = context.getString(R.string.widget_tap_hint)
 
+        // Stealth (Persecution) Mode: scripture on the home screen would give away what the
+        // disguised lock hides, so the widget goes blank until Stealth Mode is turned off.
+        val preferencesStore = entryPoint.preferencesStore()
+        val stealthArmed = preferencesStore.stealthEnabled.first() &&
+            preferencesStore.stealthPinCredential.first().isNotBlank()
+        if (stealthArmed) return WidgetVerse(title = "", body = "")
+
         val ref = entryPoint.dailyVerseProvider().verseForDate(LocalDate.now())
         val translationId = resolveTranslation(entryPoint)
             ?: return WidgetVerse(fallbackTitle, fallbackBody)
@@ -78,7 +86,7 @@ class DailyVerseWidget : GlanceAppWidget() {
         val content = runCatching {
             entryPoint.bibleContentRepository().chapter(translationId, ref.osisId, ref.chapter)
         }.getOrNull()
-        val text = content?.verses?.firstOrNull { it.verse == ref.verse }?.text
+        val text = content?.lineCarrying(ref.verse)?.text
             ?: return WidgetVerse(fallbackTitle, fallbackBody)
 
         val bookName = runCatching {

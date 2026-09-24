@@ -4,6 +4,25 @@ These answers are derived directly from the code and
 [`/PRIVACY_POLICY.md`](../../PRIVACY_POLICY.md). Re-verify them whenever the app
 gains a feature that touches the network, storage, or device identifiers.
 
+> **⚠️ Updated 2026-09-24 — the "no data collected" answer is no longer correct.**
+> Since v0.2.8 the optional AI features send user-provided data to Google's Gemini API:
+> the text a user types into the **Crisis companion** and the **verse-card occasion**
+> box, and the **church tradition** chosen at setup (added to every AI prompt). Declare it:
+>
+> | Data type (Play category) | Collected | Shared | Ephemeral | Optional | Purpose |
+> |---|---|---|---|---|---|
+> | App activity → **Other user-generated content** (crisis / occasion text) | Yes | No — Google acts as a service provider | Yes* | Yes | App functionality |
+> | Personal info → **Religious or political beliefs** (church tradition in AI prompts) | Yes | No — service provider | Yes* | Yes | App functionality |
+>
+> Scripture text, references and the Bible language are not user data. Everything else
+> below (notes, highlights, prayers, settings on-device only) still holds.
+>
+> \* Answer "processed ephemerally" **only if the Gemini API key belongs to a paid
+> (billing-enabled) Google Cloud project.** On the free tier Google may retain prompts and
+> use them to improve its products (with human review), which is not ephemeral and must be
+> disclosed — and is a poor fit for crisis and persecution text. Move the key to a paid
+> project before relying on this answer.
+
 **Why "no data collected":** Google defines *collection* as data transmitted off
 the device to you or a third party in a way tied to a user. Manna's network calls
 send only generic content references (translation/book/chapter) and, optionally,

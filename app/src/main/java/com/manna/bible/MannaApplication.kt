@@ -2,6 +2,7 @@ package com.manna.bible
 
 import android.app.Application
 import com.manna.bible.data.reminder.ReminderCoordinator
+import com.manna.bible.widget.WidgetRefresher
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -11,7 +12,8 @@ import javax.inject.Inject
  * On creation it kicks off [MannaInitializer] to seed bundled content and refresh
  * the translation catalog in the background (never blocking first frame), and
  * starts [ReminderCoordinator] so the daily-verse alarm tracks the saved
- * preferences and is re-armed on every cold start.
+ * preferences and is re-armed on every cold start, and [WidgetRefresher] so the
+ * home-screen widget follows the active translation and Stealth Mode.
  */
 @HiltAndroidApp
 class MannaApplication : Application() {
@@ -22,9 +24,13 @@ class MannaApplication : Application() {
     @Inject
     lateinit var reminderCoordinator: ReminderCoordinator
 
+    @Inject
+    lateinit var widgetRefresher: WidgetRefresher
+
     override fun onCreate() {
         super.onCreate()
         initializer.initialize()
         reminderCoordinator.start()
+        widgetRefresher.start()
     }
 }

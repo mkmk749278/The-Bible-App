@@ -53,8 +53,10 @@ Work through the **Set up your app** checklist on the dashboard.
 
 ### Data safety
 - Complete the **Data safety** form using
-  [`02-data-safety-and-rating.md`](02-data-safety-and-rating.md). Summary: **no
-  data collected, no data shared.**
+  [`02-data-safety-and-rating.md`](02-data-safety-and-rating.md). Summary: since the
+  v0.2.8 AI features, **user-typed text and the chosen church tradition are collected
+  (optional, processed by Google Gemini)** — see the update at the top of that file.
+  Nothing is shared or sold.
 
 ### Government apps
 - No.
@@ -67,8 +69,7 @@ Work through the **Set up your app** checklist on the dashboard.
 
 ### Privacy policy
 - Paste the **public URL** where `PRIVACY_POLICY.md` **(repo)** is hosted.
-  See [§6](#6-host-the-privacy-policy) below. A reachable URL is required even
-  though the app collects no data.
+  See [§6](#6-host-the-privacy-policy) below. A reachable URL is required.
 
 ---
 
@@ -163,7 +164,7 @@ Gist works too.
 - [ ] Ads = none
 - [ ] Content rating questionnaire submitted (Everyone)
 - [ ] Target audience set (13+)
-- [ ] Data safety form submitted (no data collected/shared)
+- [ ] Data safety form submitted (AI features declared — see 02-data-safety-and-rating.md)
 - [ ] Privacy policy URL live and pasted
 - [ ] Store listing text (title/short/full) filled from repo
 - [ ] Icon + feature graphic + ≥2 phone screenshots uploaded

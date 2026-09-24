@@ -30,4 +30,15 @@
     <string name="crisis_ai_offline_hint">AI പ്രതികരണത്തിന് ഇന്റർനെറ്റ് ആവശ്യമാണ്. താഴെയുള്ള വാക്യങ്ങൾ ഓഫ്‌ലൈനിൽ പ്രവർത്തിക്കും.</string>
     <string name="crisis_ai_submit">അയയ്ക്കുക</string>
     <string name="crisis_ai_thinking">നിങ്ങൾക്കായി ഒരു ഭാഗം തിരയുന്നു…</string>
+
+    <!-- Talk to someone now: human help is always one tap away in Crisis Mode. -->
+    <string name="crisis_helpline_title">ഇപ്പോൾത്തന്നെ ഒരാളോട് സംസാരിക്കൂ</string>
+    <string name="crisis_helpline_body">നിങ്ങളുടെ ജീവൻ അവസാനിപ്പിക്കാനുള്ള ചിന്തകൾ ഉണ്ടെങ്കിൽ, അല്ലെങ്കിൽ നിങ്ങൾ അപകടത്തിലാണെങ്കിൽ, ദയവായി വിളിക്കുക. ഒരു യഥാർത്ഥ വ്യക്തി നിങ്ങളോട് സംസാരിക്കും.</string>
+    <string name="crisis_helpline_telemanas">ടെലി-മനസ് · 14416</string>
+    <string name="crisis_helpline_telemanas_detail">സൗജന്യം, 24 മണിക്കൂറും, നിങ്ങളുടെ ഭാഷയിൽ</string>
+    <string name="crisis_helpline_emergency">അടിയന്തരം · 112</string>
+    <string name="crisis_helpline_call_telemanas">ടെലി-മനസിനെ 14416-ൽ വിളിക്കുക</string>
+    <string name="crisis_helpline_call_emergency">അടിയന്തര സേവനത്തെ 112-ൽ വിളിക്കുക</string>
+    <string name="crisis_ai_privacy_note">നിങ്ങൾ എഴുതുന്നത് ഒരു വാക്യം കണ്ടെത്താൻ Google Gemini-ലേക്ക് അയയ്ക്കുന്നു. അത് Manna-യിൽ സൂക്ഷിക്കുന്നില്ല. ദയവായി പേരുകൾ ഉൾപ്പെടുത്തരുത്.</string>
+    <string name="crisis_ai_unavailable">ഇപ്പോൾ ഒരു വാക്യം കണ്ടെത്താൻ കഴിഞ്ഞില്ല. താഴെയുള്ള വാക്യങ്ങൾ നിങ്ങൾക്കായുള്ളതാണ്.</string>
 </resources>
