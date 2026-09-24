@@ -422,12 +422,19 @@ class ReaderViewModel @Inject constructor(
      * that is already inside the app. The catalog emits whenever a translation is
      * registered (the seeder does this after writing its content) or a download commits,
      * so each emission re-checks for content — never busy-polling.
+     *
+     * Content alone is not enough: an on-demand download writes book by book, so the
+     * translation must also be marked downloaded — otherwise an unrelated catalog change
+     * mid-download would open a Bible with only its first few books.
      */
     private fun awaitContent(translationId: String) {
         awaitContentJob?.cancel()
         awaitContentJob = viewModelScope.launch {
             translationRepository.catalog()
-                .firstOrNull { bibleContentRepository.hasContent(translationId) }
+                .firstOrNull { catalog ->
+                    catalog.any { it.id == translationId && it.isDownloaded } &&
+                        bibleContentRepository.hasContent(translationId)
+                }
                 ?: return@launch
             val state = _uiState.value
             val profile = state.profile ?: return@launch

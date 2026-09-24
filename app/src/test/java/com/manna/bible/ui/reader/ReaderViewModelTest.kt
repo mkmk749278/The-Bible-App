@@ -276,6 +276,13 @@ class ReaderViewModelTest {
         advanceUntilIdle()
         assertTrue(vm.uiState.value.isEmptyContent, "nothing to show while the Bible is installing")
 
+        // Content appearing without the translation being marked downloaded (e.g. a download
+        // that has written its first books) must not open a partial Bible.
+        content.available = true
+        catalog.value = listOf(web.copy(name = "World English Bible (refreshed)"))
+        advanceUntilIdle()
+        assertTrue(vm.uiState.value.isEmptyContent, "a partially written Bible must not open")
+
         // The seeder finishes: content is written, then the catalog row is registered.
         content.available = true
         catalog.value = listOf(web.copy(isDownloaded = true, isBundled = true))
